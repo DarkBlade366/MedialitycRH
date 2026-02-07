@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Persistence.Repositories
+{
+    public class EmployeeRepository : IEmployeeRepository
+    {
+        private readonly ApiDbContext _context;
+
+        public EmployeeRepository(ApiDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task AddAsync(Employee employee)
+        {
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Employee?> GetByIdAsync(Guid id)
+        {
+            return await _context.Employees
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
+    }
+}

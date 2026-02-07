@@ -8,14 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Conexion con DB
-//var connection = builder.Configuration.GetConnectionString("DbMedialitycHR");
-//builder.Services.AddDbContext<ApiDbContext>(o =>
-//    o.UseNpgsql(connection, npgsqlOptions =>
-//        npgsqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
-//    .ConfigureWarnings(warnings => 
-//        warnings.Throw(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.MultipleCollectionIncludeWarning))
-//);
+// Conexion con Infrastructure
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Configuración JWT 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 
