@@ -5,6 +5,7 @@ using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

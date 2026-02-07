@@ -5,8 +5,8 @@ services:
     restart: always
     environment:
       POSTGRES_DB: paymentsdb
-      POSTGRES_USER: payments_user
-      POSTGRES_PASSWORD: payments_pass
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: vrdThqZH
     ports:
       - "5432:5432"
     volumes:

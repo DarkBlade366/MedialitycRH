@@ -8,7 +8,7 @@ namespace Application.Employees
 {
     public class CreateEmployeeCommand
     {
-        public string FullName { get; init; }
+        public string FullName { get; init; } 
         public string Email { get; init; }
         public EmployeeRole Role { get; init; }
     }
