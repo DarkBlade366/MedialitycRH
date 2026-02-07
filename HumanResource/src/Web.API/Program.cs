@@ -6,11 +6,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Infrastructure;
+using Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Conexion con Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
+//Conexion con Application
+builder.Services.AddApplication();
 
 // Configuración JWT 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 

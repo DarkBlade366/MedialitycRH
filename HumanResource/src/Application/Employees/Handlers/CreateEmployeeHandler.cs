@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Employees;
+using Application.Employees.Commands;
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace Application.Employees
+namespace Application.Employees.Handlers
 {
     public class CreateEmployeeHandler
     {

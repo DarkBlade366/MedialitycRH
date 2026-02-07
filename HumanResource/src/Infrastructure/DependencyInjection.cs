@@ -19,7 +19,7 @@ namespace Infrastructure
         {
             // DbContext
             services.AddDbContext<ApiDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("DbMedialitycRH")));
+                options.UseNpgsql(configuration.GetConnectionString("DbMedialitycHR")));
 
             // Repositories
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
