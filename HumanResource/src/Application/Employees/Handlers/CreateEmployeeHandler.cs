@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Application.Employees.Commands;
 using Domain.Interfaces;
 using Domain.Models;
-using Application.Common.Security;
+using Domain.Common.Security;
 
 namespace Application.Employees.Handlers
 {
@@ -16,16 +16,17 @@ namespace Application.Employees.Handlers
         {
             _employeeRepository = employeeRepository;
         }
+
         public async Task<Guid> Handle(CreateEmployeeCommand command)
         {
+            var passwordHash = PasswordHasher.Hash(command.Password);
+
             var employee = new Employee(
                 command.FullName,
                 command.Email,
-                command.Role
+                command.Role,
+                passwordHash
             );
-
-            var passwordHash = PasswordHasher.Hash(command.Password);
-            employee.SetPasswordHash(passwordHash);
 
             await _employeeRepository.AddAsync(employee);
 

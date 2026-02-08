@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Domain.Common;
 namespace Infrastructure.Persistence
 {
     public class ApiDbContext : DbContext
@@ -21,7 +22,19 @@ namespace Infrastructure.Persistence
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApiDbContext).Assembly);
 
-            
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.MarkUpdated();
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
 
     }

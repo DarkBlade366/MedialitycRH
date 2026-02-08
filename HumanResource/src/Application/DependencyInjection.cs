@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Application.Employees.Handlers;
 using Application.Employees.Validations;
 using FluentValidation;
+using Application.Auth.Handlers;
+using Application.Auth.Validations;
 
 namespace Application
 {
@@ -15,9 +17,11 @@ namespace Application
         {
             // Register handlers
             services.AddScoped<CreateEmployeeHandler>();
+            services.AddScoped<LoginHandler>();
 
             // Register validators
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidation>();
+            services.AddValidatorsFromAssemblyContaining<LoginValidation>();
 
             return services;
         }

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Enums;
+using Domain.Common;
 
 namespace Domain.Models
 {
-    public class Employee
+    public class Employee : BaseEntity
     {
         public Guid Id { get; private set; }
         public string FullName { get; private set; }  = string.Empty;
@@ -17,22 +18,22 @@ namespace Domain.Models
 
         // Redmine (solo referencia por ahora)
         public string? RedmineUserId { get; private set; }  = string.Empty;
-        protected Employee() { } 
-        public Employee(string fullName, string email, EmployeeRole role) 
+
+        protected Employee() { } // EF Core
+
+        public Employee(string fullName, string email, EmployeeRole role, string passwordHash) 
         { 
             Id = Guid.NewGuid(); 
             FullName = fullName; 
             Email = email; 
             Role = role; 
             IsActive = true; 
+            PasswordHash = passwordHash;
         } 
+        
         public void Deactivate() 
         { 
             IsActive = false; 
-        }
-        public void SetPasswordHash(string passwordHash)
-        {
-            PasswordHash = passwordHash;
         }
     }
 }

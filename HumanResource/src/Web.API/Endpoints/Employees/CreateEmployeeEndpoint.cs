@@ -21,7 +21,7 @@ namespace Web.API.Endpoints.Employees
         public override void Configure()
         {
             Post("/employees");
-            AllowAnonymous();  //luego se especifica
+            Roles("Administrator");
             Validator<CreateEmployeeValidation>();
             Summary(s =>
             {

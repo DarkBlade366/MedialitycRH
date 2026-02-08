@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence;
+using Infrastructure.Security;
+using Application.Common.Security;
 
 namespace Infrastructure
 {
@@ -23,6 +25,9 @@ namespace Infrastructure
 
             // Repositories
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+            //Register other services (e.g., token generator) if needed
+            services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
             return services;
         }

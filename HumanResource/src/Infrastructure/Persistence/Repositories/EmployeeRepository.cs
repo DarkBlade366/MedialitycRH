@@ -29,5 +29,11 @@ namespace Infrastructure.Persistence.Repositories
             return await _context.Employees
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
+
+        public async Task<Employee?> GetByEmailAsync(string email)
+        {
+            return await _context.Set<Employee>()
+                .FirstOrDefaultAsync(e => e.Email == email);
+        }
     }
 }

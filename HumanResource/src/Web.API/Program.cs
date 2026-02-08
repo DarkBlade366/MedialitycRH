@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Infrastructure;
 using Application;
+using Infrastructure.Persistence;
+using Infrastructure.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,15 +48,21 @@ builder.Services
         {
             s.Title = "Api Medialityc for Human Resource";
             s.Description = "API for Medialitic company for human resource";
-            s.Version = "Only User";
         };
     });
 
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
-
 //await DatabaseSeeder.SeedAsync(app.Services);
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<ApiDbContext>();
+
+    await dbContext.Database.MigrateAsync();
+    await AdminSeeder.SeedAsync(dbContext);
+}
 
 app.UseAuthentication(); 
 app.UseAuthorization();

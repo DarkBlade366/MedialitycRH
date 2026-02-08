@@ -10,5 +10,7 @@ namespace Domain.Interfaces
     {
         Task AddAsync(Employee employee);
         Task<Employee?> GetByIdAsync(Guid id);
+
+        Task<Employee?> GetByEmailAsync(string email);
     }
 }
