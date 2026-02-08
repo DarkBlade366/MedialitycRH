@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Application.Employees.Commands;
 using Application.Employees.Handlers;
+using System.Data;
 
 namespace Application.Employees.Validations
 {
@@ -22,6 +23,10 @@ namespace Application.Employees.Validations
 
             RuleFor(x => x.Role)
                 .IsInEnum().WithMessage("Invalid employee role.");
+
+            RuleFor(x => x.Password)
+                .NotEmpty().WithMessage("Password is required.")
+                .MinimumLength(8).WithMessage("Password must be at least 8 characters long.");
         }
     }
 }

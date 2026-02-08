@@ -30,7 +30,8 @@ namespace Web.API.Endpoints.Employees
                 s.ExampleRequest = new CreateEmployeeCommand
                 {
                     FullName = "Juan Pérez",
-                    Email = "juan.perez@gmail.com"
+                    Email = "juan.perez@gmail.com",
+                    Password = "XXXXXXXX"
                 };
             });
         }

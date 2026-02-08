@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Application.Employees.Commands;
 using Domain.Interfaces;
 using Domain.Models;
+using Application.Common.Security;
 
 namespace Application.Employees.Handlers
 {
@@ -22,6 +23,9 @@ namespace Application.Employees.Handlers
                 command.Email,
                 command.Role
             );
+
+            var passwordHash = PasswordHasher.Hash(command.Password);
+            employee.SetPasswordHash(passwordHash);
 
             await _employeeRepository.AddAsync(employee);
 

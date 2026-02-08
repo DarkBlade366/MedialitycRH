@@ -11,6 +11,7 @@ namespace Domain.Models
         public Guid Id { get; private set; }
         public string FullName { get; private set; }  = string.Empty;
         public string Email { get; private set; }  = string.Empty;
+        public string PasswordHash { get; private set; } = string.Empty;
         public EmployeeRole Role { get; private set; }
         public bool IsActive { get; private set; }
 
@@ -28,6 +29,10 @@ namespace Domain.Models
         public void Deactivate() 
         { 
             IsActive = false; 
+        }
+        public void SetPasswordHash(string passwordHash)
+        {
+            PasswordHash = passwordHash;
         }
     }
 }
