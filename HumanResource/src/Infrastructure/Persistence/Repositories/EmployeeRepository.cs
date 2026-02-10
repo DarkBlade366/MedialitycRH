@@ -32,8 +32,29 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task<Employee?> GetByEmailAsync(string email)
         {
-            return await _context.Set<Employee>()
+            return await _context.Employees
                 .FirstOrDefaultAsync(e => e.Email == email);
+        }
+
+        public async Task<(IReadOnlyList<Employee>, int)> GetPagedAsync(int page, int pageSize)
+        {
+            var query = _context.Employees.AsNoTracking();
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderBy(e => e.FullName)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
+        public async Task UpdateAsync(Employee employee)
+        {
+            _context.Employees.Update(employee);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -12,5 +12,8 @@ namespace Domain.Interfaces
         Task<Employee?> GetByIdAsync(Guid id);
 
         Task<Employee?> GetByEmailAsync(string email);
+
+        Task<(IReadOnlyList<Employee>, int totalCount)> GetPagedAsync(int page, int pageSize);
+        Task UpdateAsync(Employee employee);
     }
 }

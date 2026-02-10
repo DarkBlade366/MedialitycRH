@@ -18,10 +18,12 @@ namespace Application
             // Register handlers
             services.AddScoped<CreateEmployeeHandler>();
             services.AddScoped<LoginHandler>();
+            services.AddScoped<GetEmployeesHandler>();
 
             // Register validators
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidation>();
             services.AddValidatorsFromAssemblyContaining<LoginValidation>();
+            services.AddValidatorsFromAssemblyContaining<GetEmployeesValidation>();
 
             return services;
         }
