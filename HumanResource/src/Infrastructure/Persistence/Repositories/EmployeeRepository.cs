@@ -27,12 +27,14 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Employee?> GetByIdAsync(Guid id)
         {
             return await _context.Employees
+                .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<Employee?> GetByEmailAsync(string email)
         {
             return await _context.Employees
+                .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Email == email);
         }
 
