@@ -49,9 +49,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("RedmineUserId")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<int?>("RedmineUserId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Role")
                         .IsRequired()

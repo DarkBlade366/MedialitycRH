@@ -22,6 +22,7 @@ namespace Application
             services.AddScoped<GetEmployeeByIdHandler>();
             services.AddScoped<UpdateEmployeeHandler>();
             services.AddScoped<ChangeEmployeeStatusHandler>();
+            services.AddScoped<ChangeEmployeeRedmineUserIdHandler>();
 
             // Register validators
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidation>();
@@ -30,6 +31,7 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetEmployeeByIdValidation>(); 
             services.AddValidatorsFromAssemblyContaining<UpdateEmployeeValidation>();
             services.AddValidatorsFromAssemblyContaining<ChangeEmployeeStatusValidation>();
+            services.AddValidatorsFromAssemblyContaining<ChangeEmployeeRedmineUserIdValidator>();
 
             return services;
         }

@@ -29,7 +29,6 @@ namespace Web.API.Endpoints.Employees
                 s.Description = "Logically changes an employee's status (IsActive = true/false).";
                 s.ExampleRequest = new ChangeEmployeeStatusCommand
                 {
-                    Id = Guid.NewGuid(),
                     IsActive = false
                 };
             });

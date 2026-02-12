@@ -18,7 +18,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(e => e.Email).IsRequired().HasMaxLength(100);
             builder.Property(e => e.Role).IsRequired().HasConversion<string>();
             builder.Property(e => e.IsActive).IsRequired();
-            builder.Property(e => e.RedmineUserId).HasMaxLength(100);
+            builder.Property(e => e.RedmineUserId);
             builder.Property(e => e.PasswordHash).IsRequired().HasMaxLength(200);
             builder.Property(e => e.CreatedAt).IsRequired();
             builder.Property(e => e.UpdatedAt);

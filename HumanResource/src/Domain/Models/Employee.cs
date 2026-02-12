@@ -16,8 +16,8 @@ namespace Domain.Models
         public EmployeeRole Role { get; private set; }
         public bool IsActive { get; private set; }
 
-        // Redmine (solo referencia por ahora)
-        public string? RedmineUserId { get; private set; }  = string.Empty;
+        // Redmine (solo referencia por ahora) y no se si es en entero guid o string, lo dejo como entero por ahora
+        public int? RedmineUserId { get; private set; }
 
         protected Employee() { } // EF Core
 
@@ -43,6 +43,11 @@ namespace Domain.Models
             FullName = fullName;
             Email = email;
             Role = role;
+        }
+        
+        public void SetRedmineUserId(int redmineUserId)
+        {
+            RedmineUserId = redmineUserId;
         }
     }
 }
