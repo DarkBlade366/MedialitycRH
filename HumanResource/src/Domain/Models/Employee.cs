@@ -35,5 +35,11 @@ namespace Domain.Models
         { 
             IsActive = false; 
         }
+        public void Update(string fullName, string email, EmployeeRole role)
+        {
+            FullName = fullName;
+            Email = email;
+            Role = role;
+        }
     }
 }

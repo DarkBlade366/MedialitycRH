@@ -20,12 +20,14 @@ namespace Application
             services.AddScoped<LoginHandler>();
             services.AddScoped<GetEmployeesHandler>();
             services.AddScoped<GetEmployeeByIdHandler>();
+            services.AddScoped<UpdateEmployeeHandler>();
 
             // Register validators
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidation>();
             services.AddValidatorsFromAssemblyContaining<LoginValidation>();
             services.AddValidatorsFromAssemblyContaining<GetEmployeesValidation>();
-            services.AddValidatorsFromAssemblyContaining<GetEmployeeByIdValidation>();  
+            services.AddValidatorsFromAssemblyContaining<GetEmployeeByIdValidation>(); 
+            services.AddValidatorsFromAssemblyContaining<UpdateEmployeeValidation>();
 
             return services;
         }
