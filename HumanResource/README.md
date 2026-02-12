@@ -134,7 +134,7 @@ Updates employee information.
 
 ## Change Employee Status
 
-PATCH /employees/{id}/status
+PUT /employees/{id}/status
 
 Request:
 
@@ -151,7 +151,7 @@ The status is changed through domain behavior to preserve encapsulation.
 
 ## Set Redmine User ID
 
-PATCH /employees/{id}/redmine
+PUT /employees/{id}/redmine
 
 Request:
 
