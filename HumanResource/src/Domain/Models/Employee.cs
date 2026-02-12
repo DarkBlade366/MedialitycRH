@@ -31,9 +31,12 @@ namespace Domain.Models
             PasswordHash = passwordHash;
         } 
         
-        public void Deactivate() 
-        { 
-            IsActive = false; 
+        public void ChangeStatus(bool isActive)
+        {
+            if (IsActive == isActive)
+                return;
+        
+            IsActive = isActive;
         }
         public void Update(string fullName, string email, EmployeeRole role)
         {

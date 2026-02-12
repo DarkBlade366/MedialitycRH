@@ -12,8 +12,7 @@ namespace Application.Employees.Validations
         public UpdateEmployeeValidation()
         {
             RuleFor(x => x.Id)
-                .NotEmpty()
-                .WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("Employee Id is required.");
 
             RuleFor(x => x.FullName)
                 .NotEmpty().WithMessage("Full name is required.")
