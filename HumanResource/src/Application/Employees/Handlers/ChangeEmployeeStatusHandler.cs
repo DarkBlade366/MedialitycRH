@@ -1,32 +1,32 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Employees.Commands;
-using Domain.Interfaces;
-using Domain.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Application.Employees.Commands;
+    using Domain.Interfaces;
+    using Domain.Models;
 
-namespace Application.Employees.Handlers
-{
-    public class ChangeEmployeeStatusHandler
+    namespace Application.Employees.Handlers
     {
-        private readonly IEmployeeRepository _employeeRepository;
-
-        public ChangeEmployeeStatusHandler(IEmployeeRepository employeeRepository)
+        public class ChangeEmployeeStatusHandler
         {
-            _employeeRepository = employeeRepository;
-        }
+            private readonly IEmployeeRepository _employeeRepository;
 
-        public async Task Handle(ChangeEmployeeStatusCommand command)
-        {
-            var employee = await _employeeRepository.GetByIdAsync(command.Id);
+            public ChangeEmployeeStatusHandler(IEmployeeRepository employeeRepository)
+            {
+                _employeeRepository = employeeRepository;
+            }
 
-            if (employee == null)
-                throw new Exception("Employee not found");
+            public async Task Handle(ChangeEmployeeStatusCommand command)
+            {
+                var employee = await _employeeRepository.GetByIdAsync(command.Id);
 
-            employee.ChangeStatus(command.IsActive);
+                if (employee == null)
+                    throw new Exception("Employee not found");
 
-            await _employeeRepository.UpdateAsync(employee);
+                employee.ChangeStatus(command.IsActive);
+
+                await _employeeRepository.UpdateAsync(employee);
+            }
         }
     }
-}

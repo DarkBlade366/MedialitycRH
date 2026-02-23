@@ -1,0 +1,28 @@
+services:
+  redmine:
+    image: redmine:6
+    container_name: redmine
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      REDMINE_DB_POSTGRES: redmine-db
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: redmine
+    depends_on:
+      - redmine-db
+
+  redmine-db:
+    image: postgres:18
+    container_name: redmine-db
+    restart: always
+    environment:
+      POSTGRES_DB: redmine
+      POSTGRES_USER: redmine
+      POSTGRES_PASSWORD: redmine
+    volumes:
+      - redmine_db_data:/var/lib/postgresql/18/docker
+
+volumes:
+  redmine_db_data:

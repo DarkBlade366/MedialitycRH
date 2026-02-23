@@ -8,6 +8,7 @@ using Application.Employees.Validations;
 using FluentValidation;
 using Application.Auth.Handlers;
 using Application.Auth.Validations;
+using Application.Redmine;
 
 namespace Application
 {
@@ -23,6 +24,7 @@ namespace Application
             services.AddScoped<UpdateEmployeeHandler>();
             services.AddScoped<ChangeEmployeeStatusHandler>();
             services.AddScoped<ChangeEmployeeRedmineUserIdHandler>();
+            services.AddScoped<SyncRedmineTimeEntriesHandler>();
 
             // Register validators
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidation>();

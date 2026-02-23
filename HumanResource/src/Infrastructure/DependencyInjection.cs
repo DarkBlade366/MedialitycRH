@@ -12,6 +12,8 @@ using Infrastructure.Persistence.Configurations;
 using Infrastructure.Persistence;
 using Infrastructure.Security;
 using Application.Common.Security;
+using Infrastructure.Redmine;
+using Application.Redmine;
 
 namespace Infrastructure
 {
@@ -22,9 +24,19 @@ namespace Infrastructure
             // DbContext
             services.AddDbContext<ApiDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DbMedialitycHR")));
+    
+            //Redmine
+            services.AddHttpClient<IRedmineService, RedmineClient>(client =>
+            {
+                var baseUrl = configuration["Redmine:BaseUrl"]
+                ?? throw new InvalidOperationException("Redmine BaseUrl not configured");
+
+                client.BaseAddress = new Uri(baseUrl);
+            });
 
             // Repositories
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
 
             //Register other services (e.g., token generator) if needed
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();

@@ -16,6 +16,7 @@ namespace Infrastructure.Persistence
 
         //DbSets
         public DbSet<Employee> Employees => Set<Employee>();
+        public DbSet<TimeEntry> TimeEntries => Set<TimeEntry>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
