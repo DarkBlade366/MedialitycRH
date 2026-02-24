@@ -39,12 +39,15 @@ namespace Application.Redmine
 
                     if (exists)
                         continue;
+                    var spentOnUtc = e.SpentOn.Kind == DateTimeKind.Utc
+                        ? e.SpentOn
+                        : DateTime.SpecifyKind(e.SpentOn, DateTimeKind.Utc);
 
                     list.Add(new TimeEntry(
                         e.Id,
                         employee.Id,
                         e.Hours,
-                        e.SpentOn,
+                        spentOnUtc,
                         e.Project.Name));
                 }
 
