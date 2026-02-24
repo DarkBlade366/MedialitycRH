@@ -33,12 +33,15 @@ namespace Application.Redmine
                 var entries = await _redmineService.GetTimeEntriesAsync(from, to, employee.RedmineUserId);
                 var list = new List<TimeEntry>();
 
+                var redmineIds = entries.Select(x => x.Id).ToList();
+                var existingIds = await _timeRepository.GetExistingRedmineIdsAsync(redmineIds);
+                var existingIdsSet = existingIds.ToHashSet();
+
                 foreach (var e in entries)
                 {
-                    var exists = await _timeRepository.ExistsByRedmineIdAsync(e.Id);
-
-                    if (exists)
+                    if (existingIdsSet.Contains(e.Id))
                         continue;
+
                     var spentOnUtc = e.SpentOn.Kind == DateTimeKind.Utc
                         ? e.SpentOn
                         : DateTime.SpecifyKind(e.SpentOn, DateTimeKind.Utc);

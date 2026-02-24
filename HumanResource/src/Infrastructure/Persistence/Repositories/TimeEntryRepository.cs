@@ -38,5 +38,14 @@ namespace Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<List<int>> GetExistingRedmineIdsAsync(List<int> redmineIds)
+        {
+            return await _context.Set<TimeEntry>()
+                .Where(x => redmineIds.Contains(x.RedmineTimeEntryId))
+                .Select(x => x.RedmineTimeEntryId)
+                .ToListAsync();
+        }
+
     }
 }
