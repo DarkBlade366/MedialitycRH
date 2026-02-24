@@ -14,6 +14,7 @@
             Task<bool> ExistsByRedmineIdAsync(int redmineId); 
             
             Task<List<TimeEntry>> GetByEmployeeAndPeriodAsync(Guid employeeId, DateTime from, DateTime to);
+            Task<(List<TimeEntry> Items, int TotalCount)> GetPagedFilteredAsync(Guid? employeeId, DateTime? from, DateTime? to, int page, int pageSize);
             public Task<List<int>> GetExistingRedmineIdsAsync(List<int> redmineIds);
         }
     }

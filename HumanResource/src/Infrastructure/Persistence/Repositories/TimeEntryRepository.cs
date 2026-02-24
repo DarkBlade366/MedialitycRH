@@ -47,5 +47,30 @@ namespace Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
+        public async Task<(List<TimeEntry>, int)> GetPagedFilteredAsync(Guid? employeeId, DateTime? from, DateTime? to, int page, int pageSize)
+        {
+            var query = _context.TimeEntries.AsQueryable();
+
+            if (employeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == employeeId.Value);
+
+            if (from.HasValue)
+                query = query.Where(x => x.SpentOn >= from.Value);
+
+            if (to.HasValue)
+                query = query.Where(x => x.SpentOn <= to.Value);
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(x => x.SpentOn)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+        
+            return (items, totalCount);
+        }
+
     }
 }

@@ -29,6 +29,7 @@ namespace Application
             services.AddScoped<SyncRedmineTimeEntriesHandler>();
             services.AddScoped<SyncRedmineUsersHandler>();
             services.AddScoped<ListTimeEntriesHandler>();
+            services.AddScoped<ListPagedTimeEntriesHandler>();
 
 
             // Register validators
@@ -40,6 +41,7 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeEmployeeStatusValidation>();
             services.AddValidatorsFromAssemblyContaining<ChangeEmployeeRedmineUserIdValidator>();
             services.AddValidatorsFromAssemblyContaining<ListTimeEntriesQueryValidator>();
+            services.AddValidatorsFromAssemblyContaining<ListPagedTimeEntriesValidator>();
 
             return services;
         }
