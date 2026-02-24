@@ -58,5 +58,19 @@ namespace Infrastructure.Persistence.Repositories
             _context.Employees.Update(employee);
             await _context.SaveChangesAsync();
         }
+        
+        public async Task<List<string>> GetExistingEmailsAsync(List<string> emails)
+        {
+            return await _context.Set<Employee>()
+                .Where(x => emails.Contains(x.Email))
+                .Select(x => x.Email)
+                .ToListAsync();
+        }
+        
+        public async Task AddRangeAsync(List<Employee> employees)
+        {
+            await _context.Set<Employee>().AddRangeAsync(employees);
+            await _context.SaveChangesAsync();
+        }
     }
 }

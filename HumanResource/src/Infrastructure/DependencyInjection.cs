@@ -29,9 +29,14 @@ namespace Infrastructure
             services.AddHttpClient<IRedmineService, RedmineClient>(client =>
             {
                 var baseUrl = configuration["Redmine:BaseUrl"]
-                ?? throw new InvalidOperationException("Redmine BaseUrl not configured");
-
+                    ?? throw new InvalidOperationException("Redmine BaseUrl not configured");
+            
+                var apiKey = configuration["Redmine:ApiKey"]
+                    ?? throw new InvalidOperationException("Redmine ApiKey not configured");
+            
                 client.BaseAddress = new Uri(baseUrl);
+            
+                client.DefaultRequestHeaders.Add("X-Redmine-API-Key", apiKey);
             });
 
             // Repositories

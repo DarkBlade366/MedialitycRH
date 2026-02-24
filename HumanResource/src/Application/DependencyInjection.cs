@@ -25,6 +25,8 @@ namespace Application
             services.AddScoped<ChangeEmployeeStatusHandler>();
             services.AddScoped<ChangeEmployeeRedmineUserIdHandler>();
             services.AddScoped<SyncRedmineTimeEntriesHandler>();
+            services.AddScoped<SyncRedmineUsersHandler>();
+
 
             // Register validators
             services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidation>();
