@@ -10,6 +10,7 @@ namespace Domain.Models
     {
         public Guid Id { get; private set; }
         public int RedmineTimeEntryId { get; private set; }
+        public int RedmineProjectId { get; private set; }
         public Guid EmployeeId { get; private set; }
         public double Hours { get; private set; }
         public DateTime SpentOn { get; private set; }
@@ -17,10 +18,11 @@ namespace Domain.Models
 
         protected TimeEntry() { }
 
-        public TimeEntry(int redmineTimeEntryId, Guid employeeId, double hours, DateTime spentOn, string projectName)
+        public TimeEntry(int redmineTimeEntryId, int redmineProjectId, Guid employeeId, double hours, DateTime spentOn, string projectName)
         {
             Id = Guid.NewGuid();
             RedmineTimeEntryId = redmineTimeEntryId;
+            RedmineProjectId = redmineProjectId;
             EmployeeId = employeeId;
             Hours = hours;
             SpentOn = spentOn;

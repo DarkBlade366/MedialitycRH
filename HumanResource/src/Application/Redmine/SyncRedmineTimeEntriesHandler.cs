@@ -27,9 +27,6 @@ namespace Application.Redmine
 
             foreach (var employee in employees.Item1)
             {
-                if (!employee.RedmineUserId.HasValue)
-                    continue;
-
                 var entries = await _redmineService.GetTimeEntriesAsync(from, to, employee.RedmineUserId);
                 var list = new List<TimeEntry>();
 
@@ -48,6 +45,7 @@ namespace Application.Redmine
 
                     list.Add(new TimeEntry(
                         e.Id,
+                        e.Project.Id,
                         employee.Id,
                         e.Hours,
                         spentOnUtc,

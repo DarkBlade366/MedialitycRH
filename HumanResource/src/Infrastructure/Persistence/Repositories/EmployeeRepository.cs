@@ -72,5 +72,12 @@ namespace Infrastructure.Persistence.Repositories
             await _context.Set<Employee>().AddRangeAsync(employees);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> ExistsByRedmineUserIdAsync(int redmineUserId)
+        {
+            return await _context.Employees
+                .AnyAsync(x => x.RedmineUserId == redmineUserId);
+        }
+
     }
 }

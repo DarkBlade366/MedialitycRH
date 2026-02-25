@@ -22,6 +22,12 @@ namespace Application.Employees.Handlers
 
             if (employee == null)
                 throw new Exception("Employee not found");
+            
+            var exists = await _repository
+                .ExistsByRedmineUserIdAsync(command.RedmineUserId);
+
+            if (exists)
+                throw new InvalidOperationException($"An employee with RedmineUserId {command.RedmineUserId} already exists.");
 
             employee.SetRedmineUserId(command.RedmineUserId);
 

@@ -27,6 +27,9 @@ namespace Application.Employees.Validations
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(8).WithMessage("Password must be at least 8 characters long.");
+
+            RuleFor(x => x.RedmineUserId)
+                .GreaterThan(0).WithMessage("Redmine User ID must be a positive integer.");
         }
     }
 }

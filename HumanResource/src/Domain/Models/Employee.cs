@@ -16,17 +16,17 @@ namespace Domain.Models
         public EmployeeRole Role { get; private set; }
         public bool IsActive { get; private set; }
 
-        // Redmine (solo referencia por ahora) y no se si es en entero guid o string, lo dejo como entero por ahora
-        public int? RedmineUserId { get; private set; }
+        public int RedmineUserId { get; private set; }
 
         protected Employee() { } // EF Core
 
-        public Employee(string fullName, string email, EmployeeRole role, string passwordHash) 
+        public Employee(string fullName, string email, EmployeeRole role, string passwordHash, int redmineUserId)
         { 
             Id = Guid.NewGuid(); 
             FullName = fullName; 
             Email = email; 
             Role = role; 
+            RedmineUserId = redmineUserId;
             IsActive = true; 
             PasswordHash = passwordHash;
         } 

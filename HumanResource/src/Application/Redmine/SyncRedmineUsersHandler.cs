@@ -50,10 +50,9 @@ namespace Application.Redmine
                     $"{user.FirstName} {user.LastName}",
                     user.Email,
                     EmployeeRole.Employee,
-                    BCrypt.Net.BCrypt.HashPassword("Temp1234!")
+                    BCrypt.Net.BCrypt.HashPassword("Temp1234!"),
+                    user.Id
                 );
-
-                employee.SetRedmineUserId(user.Id);
 
                 newEmployees.Add(employee);
             }

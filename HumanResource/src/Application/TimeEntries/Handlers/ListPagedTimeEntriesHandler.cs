@@ -42,7 +42,8 @@ namespace Application.TimeEntries.Handlers
                 EmployeeId = x.EmployeeId,
                 Hours = x.Hours,
                 SpentOn = x.SpentOn,
-                ProjectName = x.ProjectName
+                ProjectName = x.ProjectName,
+                ProjectId = x.RedmineProjectId
             }).ToList();
 
             var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);

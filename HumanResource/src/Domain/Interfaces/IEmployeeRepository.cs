@@ -18,6 +18,9 @@ namespace Domain.Interfaces
         
         Task<List<string>> GetExistingEmailsAsync(List<string> emails);
 
+        public Task<bool> ExistsByRedmineUserIdAsync(int redmineUserId);
+
         Task UpdateAsync(Employee employee);
+
     }
 }

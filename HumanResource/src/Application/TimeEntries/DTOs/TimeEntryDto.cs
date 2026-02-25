@@ -12,5 +12,6 @@ namespace Application.TimeEntries.DTOs
         public double Hours { get; set; }
         public DateTime SpentOn { get; set; }
         public string ProjectName { get; set; } = string.Empty;
+        public int ProjectId { get; set; }
     }
 }

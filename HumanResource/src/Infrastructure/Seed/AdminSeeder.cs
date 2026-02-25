@@ -21,6 +21,7 @@ namespace Infrastructure.Seed
                 return;
 
             var admin = new Employee(
+                redmineUserId: 0, // Asignar un ID de Redmine válido si es necesario
                 fullName: "System Administrator",
                 email: "admin@system.local",
                 role: EmployeeRole.Administrator,

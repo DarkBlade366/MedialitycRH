@@ -26,6 +26,7 @@ namespace Application.Employees.Handlers
             var items = employees.Select(e => new EmployeeListItemDto
             {
                 Id = e.Id,
+                RedmineUserId = e.RedmineUserId,
                 FullName = e.FullName,
                 Email = e.Email,
                 Role = e.Role.ToString(),
