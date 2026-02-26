@@ -30,7 +30,11 @@ namespace Web.API.Endpoints.Redmine
         public override async Task HandleAsync(CancellationToken ct)
         {
             var created = await _handler.Handle();
-            await Send.OkAsync(new { Created = created }, ct);
+            await Send.OkAsync(new
+            {
+                Message = "Project synchronization completed",
+                CreatedProjects = created
+            }, ct);
         }
     }
 }

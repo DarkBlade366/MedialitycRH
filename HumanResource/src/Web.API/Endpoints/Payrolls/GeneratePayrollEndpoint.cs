@@ -27,7 +27,7 @@ namespace Web.API.Endpoints.Payrolls
                 s.Summary = "Generate payroll for employee in given period";
                 s.Description = "Generates a payroll including base salary, project bonus and overtime for the specified employee and date range (UTC required).";
                 s.ExampleRequest = new GeneratePayrollCommand
-                {
+                {   
                     From = DateTime.UtcNow.AddMonths(-1),
                     To = DateTime.UtcNow
                 };

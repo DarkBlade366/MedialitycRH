@@ -37,6 +37,7 @@ namespace Application
             services.AddScoped<ListPagedTimeEntriesHandler>();
             services.AddScoped<GeneratePayrollHandler>();
             services.AddScoped<ApprovePayrollHandler>();
+            services.AddScoped<GetPayrollPdfHandler>();
 
 
             // Register validators

@@ -33,8 +33,12 @@ namespace Web.API.Endpoints.Redmine
             var from = DateTime.UtcNow.AddDays(-30);
             var to = DateTime.UtcNow;
 
-            await _handler.Handle(from, to);
-            await Send.OkAsync("Synchronization completed", ct);
+            var created = await _handler.Handle(from, to);
+            await Send.OkAsync(new
+            {
+                Message = "Time entry synchronization completed",
+                CreatedTimeEntries = created
+            }, ct);
         }
     }
 }

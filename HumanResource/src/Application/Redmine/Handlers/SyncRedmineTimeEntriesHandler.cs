@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Redmine;
 using Application.Redmine.Interfaces;
 using Domain.Interfaces;
 using Domain.Models;
@@ -22,18 +21,23 @@ namespace Application.Redmine.Handlers
             _timeRepository = timeRepository;
         }
 
-        public async Task Handle(DateTime from, DateTime to)
+        public async Task<int> Handle(DateTime from, DateTime to)
         {
             var employees = await _employeeRepository.GetPagedAsync(1, 1000);
+            int created = 0;
 
             foreach (var employee in employees.Item1)
             {
-                var entries = await _redmineService.GetTimeEntriesAsync(from, to, employee.RedmineUserId);
-                var list = new List<TimeEntry>();
+                var entries = await _redmineService
+                    .GetTimeEntriesAsync(from, to, employee.RedmineUserId);
 
                 var redmineIds = entries.Select(x => x.Id).ToList();
-                var existingIds = await _timeRepository.GetExistingRedmineIdsAsync(redmineIds);
+                var existingIds = await _timeRepository
+                    .GetExistingRedmineIdsAsync(redmineIds);
+
                 var existingIdsSet = existingIds.ToHashSet();
+
+                var list = new List<TimeEntry>();
 
                 foreach (var e in entries)
                 {
@@ -51,11 +55,15 @@ namespace Application.Redmine.Handlers
                         e.Hours,
                         spentOnUtc,
                         e.Project.Name));
+
+                    created++;
                 }
 
                 if (list.Count > 0)
                     await _timeRepository.AddRangeAsync(list);
             }
+
+            return created;
         }
     }
 }

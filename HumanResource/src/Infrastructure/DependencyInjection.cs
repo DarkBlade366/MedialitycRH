@@ -16,6 +16,8 @@ using Infrastructure.Redmine;
 using Application.Redmine.Handlers;
 using Infrastructure.Repositories;
 using Application.Redmine.Interfaces;
+using Infrastructure.Reports;
+using Application.Payrolls.Interfaces;
 
 namespace Infrastructure
 {
@@ -51,6 +53,7 @@ namespace Infrastructure
 
             //Register other services (e.g., token generator) if needed
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<IPayrollPdfGenerator, PayrollPdfGenerator>();   
 
             return services;
         }

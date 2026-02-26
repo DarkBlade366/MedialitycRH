@@ -33,7 +33,7 @@ namespace Web.API.Endpoints.Redmine
             var created = await _handler.Handle();
 
             await Send.OkAsync(new
-{
+            {
                 Message = "User synchronization completed",
                 CreatedEmployees = created
             }, ct);
