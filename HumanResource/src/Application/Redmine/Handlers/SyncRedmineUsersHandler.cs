@@ -2,20 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Redmine.Interfaces;
+using Domain.Common.Security;
 using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace Application.Redmine
+namespace Application.Redmine.Handlers
 {
     public class SyncRedmineUsersHandler
     {
         private readonly IRedmineService _redmineService;
         private readonly IEmployeeRepository _employeeRepository;
 
-        public SyncRedmineUsersHandler(
-            IRedmineService redmineService,
-            IEmployeeRepository employeeRepository)
+        public SyncRedmineUsersHandler(IRedmineService redmineService, IEmployeeRepository employeeRepository)
         {
             _redmineService = redmineService;
             _employeeRepository = employeeRepository;
@@ -50,7 +50,7 @@ namespace Application.Redmine
                     $"{user.FirstName} {user.LastName}",
                     user.Email,
                     EmployeeRole.Employee,
-                    BCrypt.Net.BCrypt.HashPassword("Temp1234!"),
+                    PasswordHasher.Hash("Temp1234!"),
                     user.Id
                 );
 

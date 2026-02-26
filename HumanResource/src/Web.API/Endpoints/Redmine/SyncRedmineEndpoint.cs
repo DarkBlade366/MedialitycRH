@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Redmine;
+using Application.Redmine.Handlers;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.Redmine
@@ -18,7 +19,7 @@ namespace Web.API.Endpoints.Redmine
 
         public override void Configure()
         {
-            Post("/redmine/sync");
+            Post("/redmine/sync-timeEntries");
             Roles("Administrator");
             Summary(s =>
             {

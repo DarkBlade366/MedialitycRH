@@ -9,6 +9,7 @@ using Infrastructure;
 using Application;
 using Infrastructure.Persistence;
 using Infrastructure.Seed;
+using Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructure(builder.Configuration);
 //Conexion con Application
 builder.Services.AddApplication();
+//Conexion con Domain
+builder.Services.AddScoped<IPayrollEngine, PayrollEngine>();
 
 // Configuración JWT 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) 

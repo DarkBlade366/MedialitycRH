@@ -2,30 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Common;
 using Domain.Enums;
+using Domain.Common;
 
 namespace Domain.Models
 {
-    public class RoleSalary : BaseEntity
+    public class SalaryConfiguration : BaseEntity
     {
         public Guid Id { get; private set; }
-
         public EmployeeRole Role { get; private set; }
         public decimal BaseHourlyRate { get; private set; }
 
-        private RoleSalary() { }
+        protected SalaryConfiguration() { }
 
-        public RoleSalary(EmployeeRole role, decimal baseHourlyRate)
+        public SalaryConfiguration(EmployeeRole role, decimal baseHourlyRate)
         {
             Id = Guid.NewGuid();
             Role = role;
             BaseHourlyRate = baseHourlyRate;
         }
 
-        public void UpdateRate(decimal newRate)
+        public void UpdateBaseRate(decimal newRate)
         {
             BaseHourlyRate = newRate;
+            MarkUpdated();
         }
     }
 }

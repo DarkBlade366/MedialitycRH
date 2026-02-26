@@ -17,9 +17,12 @@ namespace Infrastructure.Persistence
         //DbSets
         public DbSet<Employee> Employees => Set<Employee>();
         public DbSet<TimeEntry> TimeEntries => Set<TimeEntry>();
-        public DbSet<Payroll> Payrolls  => Set<Payroll>();
-        public DbSet<PayrollLine> PayrollLines  => Set<PayrollLine>();
-        public DbSet<RoleSalary> RoleSalaries  => Set<RoleSalary>();
+        public DbSet<Project> Projects => Set<Project>();
+        public DbSet<Payroll> Payrolls => Set<Payroll>();
+        public DbSet<PayrollLine> PayrollLines => Set<PayrollLine>();
+        public DbSet<PayrollComponent> PayrollComponents => Set<PayrollComponent>();
+        public DbSet<SalaryConfiguration> SalaryConfigurations => Set<SalaryConfiguration>();
+        public DbSet<ProjectBonusConfiguration> ProjectBonusConfigurations => Set<ProjectBonusConfiguration>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

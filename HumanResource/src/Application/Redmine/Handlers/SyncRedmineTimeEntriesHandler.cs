@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Redmine;
+using Application.Redmine.Interfaces;
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace Application.Redmine
+namespace Application.Redmine.Handlers
 {
     public class SyncRedmineTimeEntriesHandler
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Application.Redmine;
+using Application.Redmine.Interfaces;
 using Application.Redmine.DTOs;
 using Microsoft.Extensions.Configuration;
 

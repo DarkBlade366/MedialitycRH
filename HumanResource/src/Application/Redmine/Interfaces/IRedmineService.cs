@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Redmine.DTOs;
 
-namespace Application.Redmine
+namespace Application.Redmine.Interfaces
 {
     public interface IRedmineService
     {

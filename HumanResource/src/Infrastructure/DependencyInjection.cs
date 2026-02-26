@@ -13,7 +13,9 @@ using Infrastructure.Persistence;
 using Infrastructure.Security;
 using Application.Common.Security;
 using Infrastructure.Redmine;
-using Application.Redmine;
+using Application.Redmine.Handlers;
+using Infrastructure.Repositories;
+using Application.Redmine.Interfaces;
 
 namespace Infrastructure
 {
@@ -42,6 +44,10 @@ namespace Infrastructure
             // Repositories
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
+            services.AddScoped<ISalaryConfigurationRepository, SalaryConfigurationRepository>();
+            services.AddScoped<IProjectBonusConfigurationRepository, ProjectBonusConfigurationRepository>();
+            services.AddScoped<IPayrollRepository, PayrollRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
 
             //Register other services (e.g., token generator) if needed
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();

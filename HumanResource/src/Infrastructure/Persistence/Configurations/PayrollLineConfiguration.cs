@@ -13,19 +13,11 @@ namespace Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<PayrollLine> builder)
         {
             builder.ToTable("payroll_lines");
-            builder.HasKey(pl => pl.Id);
-            builder.Property(pl => pl.ProjectId).IsRequired();
-            builder.Property(pl => pl.ProjectName).IsRequired().HasMaxLength(200);
-            builder.Property(pl => pl.Hours).IsRequired().HasColumnType("decimal(10,2)");
-            builder.Property(pl => pl.HourlyRate).IsRequired().HasColumnType("decimal(10,2)");
-            builder.Property(pl => pl.Amount).IsRequired().HasColumnType("decimal(12,2)");
-            builder.Property(pl => pl.CreatedAt).IsRequired();
-            builder.Property(pl => pl.UpdatedAt);
-
-            builder.HasOne(pl => pl.Payroll)
-                .WithMany(p => p.Lines)
-                .HasForeignKey(pl => pl.PayrollId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasKey(p => p.Id);
+            builder.Property(p => p.ProjectName).HasMaxLength(200).IsRequired();
+            builder.Property(p => p.Hours).HasColumnType("decimal(10,2)");
+            builder.Property(p => p.HourlyRate).HasColumnType("decimal(10,2)");
+            builder.Property(p => p.Amount).HasColumnType("decimal(12,2)");
         }
     }
 }
