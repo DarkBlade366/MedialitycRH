@@ -6,8 +6,7 @@ using Application.Payrolls.Handlers;
 
 namespace Web.API.Endpoints.Payrolls
 {
-    public class ApprovePayrollEndpoint 
-        : Endpoint<ApprovePayrollCommand>
+    public class ApprovePayrollEndpoint : EndpointWithoutRequest
     {
         private readonly ApprovePayrollHandler _handler;
 
@@ -31,10 +30,17 @@ namespace Web.API.Endpoints.Payrolls
             });
         }
 
-        public override async Task HandleAsync(ApprovePayrollCommand req, CancellationToken ct)
+        public override async Task HandleAsync(CancellationToken ct)
         {
+            var payrollId = Route<Guid>("PayrollId");
+
+            var req = new ApprovePayrollCommand
+            {
+                PayrollId = payrollId
+            };
+
             await _handler.Handle(req);
-            await Send.OkAsync(ct);
+            await Send.NoContentAsync(ct);
         }
     }
 }

@@ -15,6 +15,7 @@ using Application.TimeEntries.Validations;
 //using Application.Projects.Validations;
 using Application.Payrolls.Handlers;
 using Application.Payrolls.Validations;
+using Application.SalaryConfigurations.Handlers;
 
 namespace Application
 {
@@ -38,6 +39,8 @@ namespace Application
             services.AddScoped<GeneratePayrollHandler>();
             services.AddScoped<ApprovePayrollHandler>();
             services.AddScoped<GetPayrollPdfHandler>();
+            services.AddScoped<SyncSalaryConfigurationsHandler>();
+            services.AddScoped<UpdateSalaryConfigurationHandler>();
 
 
             // Register validators

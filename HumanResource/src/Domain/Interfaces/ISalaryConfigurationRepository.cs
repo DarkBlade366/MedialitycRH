@@ -9,6 +9,9 @@ namespace Domain.Interfaces
 {
     public interface ISalaryConfigurationRepository
     {
+        Task<List<SalaryConfiguration>> GetAllAsync();
         Task<SalaryConfiguration?> GetByRoleAsync(EmployeeRole role);
+        Task AddAsync(SalaryConfiguration configuration);
+        Task UpdateAsync(SalaryConfiguration configuration);
     }
 }
