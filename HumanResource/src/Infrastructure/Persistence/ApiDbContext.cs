@@ -23,17 +23,18 @@ namespace Infrastructure.Persistence
 
         //DbSets
         public DbSet<Employee> Employees => Set<Employee>();
+        public DbSet<EmployeeAguinaldoBalance> EmployeeAguinaldoBalances => Set<EmployeeAguinaldoBalance>();
+        public DbSet<EmployeeVacationBalance> EmployeeVacationBalances => Set<EmployeeVacationBalance>();
         public DbSet<TimeEntry> TimeEntries => Set<TimeEntry>();
         public DbSet<Project> Projects => Set<Project>();
+        public DbSet<ProjectMilestone> ProjectMilestones { get; set; }
         public DbSet<Payroll> Payrolls => Set<Payroll>();
         public DbSet<PayrollComponent> PayrollComponents => Set<PayrollComponent>();
         public DbSet<BaseSalaryRule> BaseSalaryRules => Set<BaseSalaryRule>();
         public DbSet<VacationRule> VacationRules => Set<VacationRule>();
         public DbSet<VacationPayment> VacationPayments => Set<VacationPayment>();
-        public DbSet<EmployeeVacationBalance> EmployeeVacationBalances => Set<EmployeeVacationBalance>();
         public DbSet<AguinaldoRule> AguinaldoRules => Set<AguinaldoRule>();
         public DbSet<AguinaldoPayment> AguinaldoPayments => Set<AguinaldoPayment>();
-        public DbSet<EmployeeAguinaldoBalance> EmployeeAguinaldoBalances => Set<EmployeeAguinaldoBalance>();
         public DbSet<MilestoneRule> MilestoneRules => Set<MilestoneRule>();
         public DbSet<MilestonePayment> MilestonePayments => Set<MilestonePayment>();
         public DbSet<DeductionRule> DeductionRules => Set<DeductionRule>();
