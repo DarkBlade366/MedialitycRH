@@ -32,16 +32,15 @@ namespace Application.Features.Redmine.Handlers
             if (!redmineUsers.Any())
                 return 0;
 
-            var emails = redmineUsers
-                .Where(x => !string.IsNullOrWhiteSpace(x.Email))
-                .Select(x => x.Email!)
-                .ToList();
+            var redmineIds = redmineUsers
+                .Select(u => u.Id)
+                .ToHashSet();
 
-            var existingEmails = await _employeeRepository.GetExistingEmailsAsync(emails);
-            var existingEmployees = await _employeeRepository.GetPagedAsync(1, int.MaxValue);
-            var existingEmployeesList = existingEmployees.Item1.ToList();
+            var existingEmployees = await _employeeRepository.GetAllActiveAsync();
 
-            var existingEmailsSet = existingEmails.ToHashSet();
+            var employeeDictionary = existingEmployees
+                .ToDictionary(e => e.RedmineUserId);
+
             var newEmployees = new List<Employee>();
 
             foreach (var user in redmineUsers)
@@ -49,9 +48,17 @@ namespace Application.Features.Redmine.Handlers
                 if (string.IsNullOrWhiteSpace(user.Email))
                     continue;
 
-                var employee = existingEmployeesList.FirstOrDefault(e => e.Email == user.Email);
+                if (employeeDictionary.TryGetValue(user.Id, out var employee))
+                {
+                    var fullName = $"{user.FirstName} {user.LastName}";
 
-                if (employee == null)
+                    if (employee.FullName != fullName)
+                    {
+                        employee.Update(fullName, user.Email, employee.Role);
+                        employee.SetRedmineUserId(user.Id);
+                    }
+                }
+                else
                 {
                     var newEmployee = new Employee(
                         $"{user.FirstName} {user.LastName}",
@@ -60,31 +67,22 @@ namespace Application.Features.Redmine.Handlers
                         PasswordHasher.Hash("Temp1234"),
                         user.Id
                     );
+
                     newEmployees.Add(newEmployee);
-                }
-                else
-                {
-                    if (employee.FullName != $"{user.FirstName} {user.LastName}" || employee.RedmineUserId != user.Id)
-                    {
-                        employee.Update($"{user.FirstName} {user.LastName}", user.Email, employee.Role);
-                        employee.SetRedmineUserId(user.Id);
-                        await _employeeRepository.UpdateAsync(employee);
-                    }
                 }
             }
 
             if (newEmployees.Any())
                 await _employeeRepository.AddRangeAsync(newEmployees);
 
-            var redmineIds = redmineUsers.Select(u => u.Id).ToHashSet();
-            var toDeactivate = existingEmployeesList
-                .Where(e => !redmineIds.Contains(e.RedmineUserId) && e.Role != EmployeeRole.Administrator) 
+            var toDeactivate = existingEmployees
+                .Where(e => !redmineIds.Contains(e.RedmineUserId)
+                        && e.Role != EmployeeRole.Administrator)
                 .ToList();
 
             foreach (var emp in toDeactivate)
             {
-                emp.ChangeStatus(false); //desactivar en lugar de borrar
-                await _employeeRepository.UpdateAsync(emp);
+                emp.ChangeStatus(false); //desactivo en vez de borrar
             }
 
             await _unitOfWork.SaveChangesAsync(ct);

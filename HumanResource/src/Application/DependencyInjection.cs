@@ -8,6 +8,8 @@ using Application.Features.Redmine.Handlers;
 using Application.Features.TimeEntries.Handlers;
 using Application.Features.TimeEntries.Validations;
 using Application.Features.Payrolls.Validations;
+using Application.Features.Projects.Handlers;
+using Application.Features.Projects.Validations;
 
 namespace Application
 {
@@ -25,7 +27,10 @@ namespace Application
             services.AddScoped<SyncRedmineUsersHandler>();
             services.AddScoped<SyncRedmineProjectsHandler>();
             services.AddScoped<ListTimeEntriesHandler>();
+            services.AddScoped<GetProjectByIdHandler>();
             services.AddScoped<ListPagedTimeEntriesHandler>();
+            services.AddScoped<GetProjectsPagedHandler>();
+            services.AddScoped<GetEmployeeByRedmineUserIdHandler>();
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
             // services.AddScoped<GetPayrollPdfHandler>();
@@ -41,6 +46,10 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ListPagedTimeEntriesValidator>();
             services.AddValidatorsFromAssemblyContaining<GeneratePayrollValidator>();
             services.AddValidatorsFromAssemblyContaining<ApprovePayrollValidation>();
+            services.AddValidatorsFromAssemblyContaining<GetProjectByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProjectsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetEmployeeByRedmineUserIdValidation>();
+
 
             return services;
         }

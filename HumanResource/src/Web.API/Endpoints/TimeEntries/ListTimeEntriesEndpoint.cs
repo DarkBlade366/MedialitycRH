@@ -30,8 +30,8 @@ namespace Web.API.Endpoints.TimeEntries
                 s.Description = "Returns all time entries for a given employee between the specified date range (UTC required).";
                 s.ExampleRequest = new ListTimeEntriesQuery
                 {
-                    From = DateTime.Parse("2024-01-01T00:00:00Z"),
-                    To = DateTime.Parse("2024-01-31T23:59:59Z")
+                    From = DateTime.UtcNow.AddDays(-30),
+                    To = DateTime.UtcNow
                 };
             });
         }

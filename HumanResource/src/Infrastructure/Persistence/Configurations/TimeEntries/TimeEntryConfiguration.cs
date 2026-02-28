@@ -20,7 +20,6 @@ namespace Infrastructure.Persistence.Configurations.TimeEntries
             builder.Property(t => t.EmployeeId).IsRequired();
             builder.Property(t => t.Hours).IsRequired().HasPrecision(18, 2);
             builder.Property(t => t.SpentOn).IsRequired();
-            builder.Property(t => t.ProjectName).IsRequired().HasMaxLength(200);
         }
     }
 }

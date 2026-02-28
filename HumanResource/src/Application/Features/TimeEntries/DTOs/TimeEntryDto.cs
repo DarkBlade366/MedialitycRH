@@ -11,7 +11,6 @@ namespace Application.Features.TimeEntries.DTOs
         public Guid EmployeeId { get; set; }
         public decimal Hours { get; set; }
         public DateTime SpentOn { get; set; }
-        public string ProjectName { get; set; } = string.Empty;
         public int ProjectId { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Interfaces;
 using Application.Features.Redmine.Interfaces;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.TimeEntries.Aggregates;
@@ -15,15 +16,18 @@ namespace Application.Features.Redmine.Handlers
         private readonly IRedmineService _redmineService;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ITimeEntryRepository _timeRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public SyncRedmineTimeEntriesHandler(
             IRedmineService redmineService,
             IEmployeeRepository employeeRepository,
-            ITimeEntryRepository timeRepository)
+            ITimeEntryRepository timeRepository,
+            IUnitOfWork unitOfWork)
         {
             _redmineService = redmineService;
             _employeeRepository = employeeRepository;
             _timeRepository = timeRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<int> Handle(DateTime from, DateTime to, CancellationToken ct = default)
@@ -61,8 +65,7 @@ namespace Application.Features.Redmine.Handlers
                         e.Project.Id,
                         employee.Id,
                         e.Hours,
-                        spentOnUtc,
-                        e.Project.Name));
+                        spentOnUtc));
 
                     created++;
                 }
@@ -71,6 +74,7 @@ namespace Application.Features.Redmine.Handlers
                     await _timeRepository.AddRangeAsync(listToAdd);
             }
 
+            await _unitOfWork.SaveChangesAsync(ct);
             return created;
         }
     }

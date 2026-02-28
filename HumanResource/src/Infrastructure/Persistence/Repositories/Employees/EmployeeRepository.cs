@@ -54,7 +54,7 @@ namespace Infrastructure.Persistence.Repositories.Employees
             return (items, totalCount);
         }
 
-        public async Task UpdateAsync(Employee employee)
+        public void UpdateAsync(Employee employee)
         {
             _context.Employees.Update(employee);
         }
@@ -98,6 +98,20 @@ namespace Infrastructure.Persistence.Repositories.Employees
                 .Include(e => e.VacationBalance)
                 .Include(e => e.AguinaldoBalance)
                 .FirstOrDefaultAsync(e => e.RedmineUserId == redmineUserId);
+        }
+
+        public async Task<List<Employee>> GetByRedmineIdsAsync(HashSet<int> redmineIds)
+        {
+            return await _context.Employees
+                .Where(e => redmineIds.Contains(e.RedmineUserId))
+                .ToListAsync();
+        }
+
+        public async Task<List<Employee>> GetAllActiveAsync()
+        {
+            return await _context.Employees
+                .Where(e => e.IsActive)
+                .ToListAsync();
         }
     }
 }

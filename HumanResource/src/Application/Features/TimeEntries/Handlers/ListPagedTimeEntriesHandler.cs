@@ -42,7 +42,6 @@ namespace Application.Features.TimeEntries.Handlers
                 EmployeeId = x.EmployeeId,
                 Hours = x.Hours,
                 SpentOn = x.SpentOn,
-                ProjectName = x.ProjectName,
                 ProjectId = x.RedmineProjectId
             }).ToList();
 

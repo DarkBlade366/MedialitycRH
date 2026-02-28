@@ -24,7 +24,9 @@ namespace Domain.Features.Employees.Interfaces
         public Task<bool> ExistsByRedmineUserIdAsync(int redmineUserId);
         
 
-        Task UpdateAsync(Employee employee);
+        void UpdateAsync(Employee employee);
 
+        Task<List<Employee>> GetByRedmineIdsAsync(HashSet<int> redmineIds);
+        Task<List<Employee>> GetAllActiveAsync();
     }
 }

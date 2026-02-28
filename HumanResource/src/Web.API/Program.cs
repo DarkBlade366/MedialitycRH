@@ -10,6 +10,8 @@ using Application;
 using Infrastructure.Persistence;
 using Infrastructure.Seed;
 using Domain.Features.Payrolls.Services.Engines;
+using Domain.Features.Payrolls.Services.Interfaces;
+using Domain.Features.Payrolls.Services.Calculators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,13 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 //Conexion con Domain
 builder.Services.AddScoped<PayrollEngine>();
+builder.Services.AddScoped<IEarningCalculator, BaseSalaryCalculator>();
+builder.Services.AddScoped<IEarningCalculator, OvertimeCalculator>();
+builder.Services.AddScoped<IEarningCalculator, ProductivityCalculator>();
+builder.Services.AddScoped<IEarningCalculator, MilestoneCalculator>();
+builder.Services.AddScoped<IEarningCalculator, AguinaldoCalculator>();
+builder.Services.AddScoped<IEarningCalculator, VacationCalculator>();
+builder.Services.AddScoped<IDeductionCalculator, DeductionCalculator>();
 
 // Configuración JWT 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

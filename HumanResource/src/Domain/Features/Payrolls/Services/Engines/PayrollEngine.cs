@@ -11,10 +11,12 @@ namespace Domain.Features.Payrolls.Services.Engines
 {
     public class PayrollEngine
     {
-        private readonly IReadOnlyCollection<IEarningCalculator> _earningCalculators;
-        private readonly IReadOnlyCollection<IDeductionCalculator> _deductionCalculators;
+        private readonly IEnumerable<IEarningCalculator> _earningCalculators;
+        private readonly IEnumerable<IDeductionCalculator> _deductionCalculators;
 
-        public PayrollEngine(IReadOnlyCollection<IEarningCalculator> earningCalculators, IReadOnlyCollection<IDeductionCalculator> deductionCalculators)
+        public PayrollEngine(
+            IEnumerable<IEarningCalculator> earningCalculators, 
+            IEnumerable<IDeductionCalculator> deductionCalculators)
         {
             _earningCalculators = earningCalculators 
                 ?? throw new ArgumentNullException(nameof(earningCalculators));
