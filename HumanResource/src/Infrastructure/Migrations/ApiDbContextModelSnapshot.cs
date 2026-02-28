@@ -22,7 +22,7 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Models.Employee", b =>
+            modelBuilder.Entity("Domain.Features.Employees.Aggregates.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,10 +61,225 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("employees", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.Payroll", b =>
+            modelBuilder.Entity("Domain.Features.Employees.Entities.EmployeeAguinaldoBalance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("AccruedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("PaidAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
+                    b.ToTable("employee_aguinaldo_balances", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Employees.Entities.EmployeeVacationBalance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("AccruedDays")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("UsedDays")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
+                    b.ToTable("employee_vacation_balances", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.AguinaldoPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AguinaldoRuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PayrollId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayrollId");
+
+                    b.ToTable("aguinaldo_payments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.MilestonePayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MilestoneRuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PayrollId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayrollId");
+
+                    b.ToTable("milestone_payments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.OvertimePayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OvertimeRuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PayrollId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayrollId");
+
+                    b.ToTable("overtime_payments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.ProductivityPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PayrollId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductivityRuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayrollId");
+
+                    b.ToTable("productivity_payments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.VacationPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PayrollId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("VacationRuleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayrollId");
+
+                    b.ToTable("vacation_payments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payroll", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -76,51 +291,47 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("PeriodFrom")
+                    b.Property<DateTime>("PeriodEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("PeriodTo")
+                    b.Property<DateTime>("PeriodStart")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("TotalHours")
-                        .HasColumnType("decimal(12,2)");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId", "PeriodFrom", "PeriodTo")
-                        .IsUnique();
-
                     b.ToTable("payrolls", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.PayrollComponent", b =>
+            modelBuilder.Entity("Domain.Features.Payrolls.Entities.PayrollComponent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(14,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
-                    b.Property<Guid>("PayrollId")
+                    b.Property<Guid?>("PayrollId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Type")
@@ -137,31 +348,124 @@ namespace Infrastructure.Migrations
                     b.ToTable("payroll_components", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.PayrollLine", b =>
+            modelBuilder.Entity("Domain.Features.Payrolls.Rules.AguinaldoRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("MonthlyAccrualPercentage")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("numeric(5,4)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("PayMonth")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("aguinaldo_rules", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Rules.BaseSalaryRule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(12,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal>("HourlyRate")
-                        .HasColumnType("decimal(10,2)");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
-                    b.Property<decimal>("Hours")
-                        .HasColumnType("decimal(10,2)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
-                    b.Property<Guid>("PayrollId")
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("base_salary_rules", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Rules.DeductionRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ProjectName")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsMandatory")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<decimal>("Percentage")
+                        .HasPrecision(5, 4)
+                        .HasColumnType("numeric(5,4)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("deduction_rules", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Rules.MilestoneRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BonusAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MilestoneName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("RedmineProjectId")
                         .HasColumnType("integer");
@@ -171,12 +475,110 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PayrollId");
-
-                    b.ToTable("payroll_lines", (string)null);
+                    b.ToTable("milestone_rules", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.Project", b =>
+            modelBuilder.Entity("Domain.Features.Payrolls.Rules.OvertimeRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<decimal>("OvertimeMultiplier")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
+
+                    b.Property<int>("StandardHoursPerPeriod")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("overtime_rules", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Rules.ProductivityRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BonusAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPercentage")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("MinimumTarget")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("productivity_rules", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Rules.VacationRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("AccrualRatePerMonth")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("PayVacationOnUse")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("vacation_rules", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Features.Projects.Aggregates.Project", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -198,60 +600,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("projects", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.ProjectBonusConfiguration", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("ExtraHourlyRate")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("RedmineProjectId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RedmineProjectId")
-                        .IsUnique();
-
-                    b.ToTable("project_bonus_configurations", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Models.SalaryConfiguration", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("BaseHourlyRate")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Role")
-                        .IsUnique();
-
-                    b.ToTable("salary_configurations", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Models.TimeEntry", b =>
+            modelBuilder.Entity("Domain.Features.TimeEntries.Aggregates.TimeEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -263,8 +612,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid");
 
-                    b.Property<double>("Hours")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Hours")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
@@ -291,29 +641,99 @@ namespace Infrastructure.Migrations
                     b.ToTable("time_entries", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Models.PayrollComponent", b =>
+            modelBuilder.Entity("Domain.Features.Employees.Entities.EmployeeAguinaldoBalance", b =>
                 {
-                    b.HasOne("Domain.Models.Payroll", null)
+                    b.HasOne("Domain.Features.Employees.Aggregates.Employee", null)
+                        .WithOne("AguinaldoBalance")
+                        .HasForeignKey("Domain.Features.Employees.Entities.EmployeeAguinaldoBalance", "EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Features.Employees.Entities.EmployeeVacationBalance", b =>
+                {
+                    b.HasOne("Domain.Features.Employees.Aggregates.Employee", null)
+                        .WithOne("VacationBalance")
+                        .HasForeignKey("Domain.Features.Employees.Entities.EmployeeVacationBalance", "EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.AguinaldoPayment", b =>
+                {
+                    b.HasOne("Domain.Features.Payrolls.Aggregates.Payroll", null)
+                        .WithMany("AguinaldoPayments")
+                        .HasForeignKey("PayrollId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.MilestonePayment", b =>
+                {
+                    b.HasOne("Domain.Features.Payrolls.Aggregates.Payroll", null)
+                        .WithMany("MilestonePayments")
+                        .HasForeignKey("PayrollId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.OvertimePayment", b =>
+                {
+                    b.HasOne("Domain.Features.Payrolls.Aggregates.Payroll", null)
+                        .WithMany("OvertimePayments")
+                        .HasForeignKey("PayrollId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.ProductivityPayment", b =>
+                {
+                    b.HasOne("Domain.Features.Payrolls.Aggregates.Payroll", null)
+                        .WithMany("ProductivityPayments")
+                        .HasForeignKey("PayrollId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payments.VacationPayment", b =>
+                {
+                    b.HasOne("Domain.Features.Payrolls.Aggregates.Payroll", null)
+                        .WithMany("VacationPayments")
+                        .HasForeignKey("PayrollId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Features.Payrolls.Entities.PayrollComponent", b =>
+                {
+                    b.HasOne("Domain.Features.Payrolls.Aggregates.Payroll", null)
                         .WithMany("Components")
                         .HasForeignKey("PayrollId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Domain.Features.Employees.Aggregates.Employee", b =>
+                {
+                    b.Navigation("AguinaldoBalance")
+                        .IsRequired();
+
+                    b.Navigation("VacationBalance")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Models.PayrollLine", b =>
+            modelBuilder.Entity("Domain.Features.Payrolls.Aggregates.Payroll", b =>
                 {
-                    b.HasOne("Domain.Models.Payroll", null)
-                        .WithMany("Lines")
-                        .HasForeignKey("PayrollId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    b.Navigation("AguinaldoPayments");
 
-            modelBuilder.Entity("Domain.Models.Payroll", b =>
-                {
                     b.Navigation("Components");
 
-                    b.Navigation("Lines");
+                    b.Navigation("MilestonePayments");
+
+                    b.Navigation("OvertimePayments");
+
+                    b.Navigation("ProductivityPayments");
+
+                    b.Navigation("VacationPayments");
                 });
 #pragma warning restore 612, 618
         }

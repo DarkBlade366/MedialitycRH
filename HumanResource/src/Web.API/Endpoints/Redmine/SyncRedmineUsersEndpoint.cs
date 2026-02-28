@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Redmine;
-using Application.Redmine.Handlers;
+using Application.Features.Redmine;
+using Application.Features.Redmine.Handlers;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.Redmine
@@ -23,14 +23,14 @@ namespace Web.API.Endpoints.Redmine
             Roles("Administrator");
             Summary(s =>
             {
-                s.Summary = "Synchronize Redmine users";
+                s.Summary = "Synchronize Redmine users.";
                 s.Description = "Creates local employees from Redmine users if they do not exist.";
             });
         }
 
         public override async Task HandleAsync(CancellationToken ct)
         {
-            var created = await _handler.Handle();
+            var created = await _handler.Handle(ct);
 
             await Send.OkAsync(new
             {

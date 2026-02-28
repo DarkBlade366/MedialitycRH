@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Models;
+using Domain.Features.Employees.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Persistence;
-using Domain.Enums;
+using Domain.Features.Employees.Enums;
 using Domain.Common.Security;
 
 namespace Infrastructure.Seed
 {
-    public static class AdminSeeder 
+    public static class AdminSeeder
     {
         public static async Task SeedAsync(ApiDbContext context)
         {

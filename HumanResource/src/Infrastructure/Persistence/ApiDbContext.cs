@@ -2,16 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Domain.Common;
+using Domain.Features.Payrolls.Rules;
+using Domain.Features.Payrolls.Aggregates;
+using Domain.Features.Payrolls.Aggregates.Payments;
+using Domain.Features.Employees.Aggregates;
+using Domain.Features.TimeEntries.Aggregates;
+using Domain.Features.Projects.Aggregates;
+using Domain.Features.Payrolls.Entities;
+using Domain.Features.Employees.Entities;
 namespace Infrastructure.Persistence
 {
     public class ApiDbContext : DbContext
     {
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
-            
+
         }
 
         //DbSets
@@ -19,10 +26,21 @@ namespace Infrastructure.Persistence
         public DbSet<TimeEntry> TimeEntries => Set<TimeEntry>();
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<Payroll> Payrolls => Set<Payroll>();
-        public DbSet<PayrollLine> PayrollLines => Set<PayrollLine>();
         public DbSet<PayrollComponent> PayrollComponents => Set<PayrollComponent>();
-        public DbSet<SalaryConfiguration> SalaryConfigurations => Set<SalaryConfiguration>();
-        public DbSet<ProjectBonusConfiguration> ProjectBonusConfigurations => Set<ProjectBonusConfiguration>();
+        public DbSet<BaseSalaryRule> BaseSalaryRules => Set<BaseSalaryRule>();
+        public DbSet<VacationRule> VacationRules => Set<VacationRule>();
+        public DbSet<VacationPayment> VacationPayments => Set<VacationPayment>();
+        public DbSet<EmployeeVacationBalance> EmployeeVacationBalances => Set<EmployeeVacationBalance>();
+        public DbSet<AguinaldoRule> AguinaldoRules => Set<AguinaldoRule>();
+        public DbSet<AguinaldoPayment> AguinaldoPayments => Set<AguinaldoPayment>();
+        public DbSet<EmployeeAguinaldoBalance> EmployeeAguinaldoBalances => Set<EmployeeAguinaldoBalance>();
+        public DbSet<MilestoneRule> MilestoneRules => Set<MilestoneRule>();
+        public DbSet<MilestonePayment> MilestonePayments => Set<MilestonePayment>();
+        public DbSet<DeductionRule> DeductionRules => Set<DeductionRule>();
+        public DbSet<OvertimeRule> OvertimeRules => Set<OvertimeRule>();
+        public DbSet<OvertimePayment> OvertimePayments => Set<OvertimePayment>();
+        public DbSet<ProductivityRule> ProductivityRules => Set<ProductivityRule>();
+        public DbSet<ProductivityPayment> ProductivityPayments => Set<ProductivityPayment>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

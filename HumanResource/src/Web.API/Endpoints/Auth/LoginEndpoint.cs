@@ -25,12 +25,12 @@ namespace Web.API.Endpoints.Auth
             Validator<LoginValidation>();
             Summary(s =>
             {
-                s.Summary = "Iniciar sesión";
-                s.Description = "Inicia sesión con las credenciales proporcionadas.";
+                s.Summary = "Login.";
+                s.Description = "Logs in with the provided credentials.";
                 s.ExampleRequest = new LoginCommand
                 {
-                    Email = "juan.perez@gmail.com",
-                    Password = "XXXXXXXX"
+                    Email = "admin@system.local",
+                    Password = "Admin123"
                 };
             });
         }
@@ -39,6 +39,6 @@ namespace Web.API.Endpoints.Auth
         {
             var response = await _handler.Handle(command);
             await Send.OkAsync(response, ct);
-        }   
+        }
     }
 }

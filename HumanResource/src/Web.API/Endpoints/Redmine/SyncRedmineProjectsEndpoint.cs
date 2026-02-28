@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Redmine.Handlers;
+using Application.Features.Redmine.Handlers;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.Redmine
@@ -22,14 +22,14 @@ namespace Web.API.Endpoints.Redmine
             Roles("Administrator", "HumanResources");
             Summary(s =>
             {
-                s.Summary = "Synchronize projects from Redmine";
+                s.Summary = "Synchronize projects from Redmine.";
                 s.Description = "Fetches projects from Redmine and updates the local database. Returns the number of projects created.";
             });
         }
 
         public override async Task HandleAsync(CancellationToken ct)
         {
-            var created = await _handler.Handle();
+            var created = await _handler.Handle(ct);
             await Send.OkAsync(new
             {
                 Message = "Project synchronization completed",

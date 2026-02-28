@@ -6,7 +6,7 @@ using Application.Auth.Commands;
 using Application.Auth.DTOs;
 using Application.Common.Security;
 using Domain.Common.Security;
-using Domain.Interfaces;
+using Domain.Features.Employees.Interfaces;
 namespace Application.Auth.Handlers
 {
     public class LoginHandler

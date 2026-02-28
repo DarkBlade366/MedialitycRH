@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.TimeEntries.DTOs;
-using Application.TimeEntries.Handlers;
-using Application.TimeEntries.Queries;
-using Application.TimeEntries.Validations;
+using Application.Features.TimeEntries.DTOs;
+using Application.Features.TimeEntries.Handlers;
+using Application.Features.TimeEntries.Queries;
+using Application.Features.TimeEntries.Validations;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.TimeEntries
@@ -26,7 +26,7 @@ namespace Web.API.Endpoints.TimeEntries
             Validator<ListTimeEntriesQueryValidator>();
             Summary(s =>
             {
-                s.Summary = "List time entries by employee and date range";
+                s.Summary = "List time entries by employee and date range.";
                 s.Description = "Returns all time entries for a given employee between the specified date range (UTC required).";
                 s.ExampleRequest = new ListTimeEntriesQuery
                 {

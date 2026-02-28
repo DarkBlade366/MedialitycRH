@@ -44,7 +44,7 @@ namespace Infrastructure.Security
                 signingCredentials: creds
             );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

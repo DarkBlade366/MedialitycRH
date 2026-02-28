@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Common;
-using Application.Employees.DTOs;
-using Application.Employees.Handlers;
-using Application.Employees.Queries;
-using Application.Employees.Validations;
+using Application.Features.Employees.DTOs;
+using Application.Features.Employees.Handlers;
+using Application.Features.Employees.Queries;
+using Application.Features.Employees.Validations;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.Employees
 {
-    public class GetEmployeesEndpoint : Endpoint<GetEmployeesQuery, PagedResponse<EmployeeListItemDto>>
+    public class GetEmployeesEndpoint : Endpoint<GetEmployeesQuery, PagedResponse<GetEmployeesResponse>>
     {
         private readonly GetEmployeesHandler _handler;
 
@@ -27,8 +27,8 @@ namespace Web.API.Endpoints.Employees
             Validator<GetEmployeesValidation>();
             Summary(s =>
             {
-                s.Summary = "Obtener empleados paginados";
-                s.Description = "Devuelve la lista de empleados con paginación.";
+                s.Summary = "Get paged employees.";
+                s.Description = "Returns the list of employees with pagination.";
                 s.ExampleRequest = new GetEmployeesQuery
                 {
                     Page = 1,

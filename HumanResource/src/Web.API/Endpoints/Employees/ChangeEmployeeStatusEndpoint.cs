@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Employees.Commands;
-using Application.Employees.Handlers;
-using Application.Employees.Validations;
+using Application.Features.Employees.Commands;
+using Application.Features.Employees.Handlers;
+using Application.Features.Employees.Validations;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.Employees
@@ -25,7 +25,7 @@ namespace Web.API.Endpoints.Employees
             Validator<ChangeEmployeeStatusValidation>();
             Summary(s =>
             {
-                s.Summary = "Change employee status";
+                s.Summary = "Change employee status.";
                 s.Description = "Logically changes an employee's status (IsActive = true/false).";
                 s.ExampleRequest = new ChangeEmployeeStatusCommand
                 {
@@ -36,7 +36,7 @@ namespace Web.API.Endpoints.Employees
 
         public override async Task HandleAsync(ChangeEmployeeStatusCommand req, CancellationToken ct)
         {
-            await _handler.Handle(req);
+            await _handler.Handle(req, ct);
             await Send.NoContentAsync(ct);
         }
     }

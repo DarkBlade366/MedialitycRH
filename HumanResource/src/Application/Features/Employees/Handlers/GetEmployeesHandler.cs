@@ -1,0 +1,48 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Application.Common;
+using Application.Features.Employees.DTOs;
+using Application.Features.Employees.Queries;
+using Domain.Features.Employees.Interfaces;
+
+namespace Application.Features.Employees.Handlers
+{
+    public class GetEmployeesHandler
+    {
+        private readonly IEmployeeRepository _repository;
+
+        public GetEmployeesHandler(IEmployeeRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<PagedResponse<GetEmployeesResponse>> Handle(GetEmployeesQuery query)
+        {
+            var (employees, total) = await _repository.GetPagedAsync(query.Page, query.PageSize);
+
+            var items = employees.Select(e => new GetEmployeesResponse
+            {
+                Id = e.Id,
+                RedmineUserId = e.RedmineUserId,
+                FullName = e.FullName,
+                Email = e.Email,
+                Role = e.Role.ToString(),
+                IsActive = e.IsActive
+                // Balance no se muestra aquí, solo en GetEmployeeById
+            }).ToList();
+
+            var totalPages = (int)Math.Ceiling(total / (double)query.PageSize);
+
+            return new PagedResponse<GetEmployeesResponse>
+            {
+                Items = items,
+                Page = query.Page,
+                PageSize = query.PageSize,
+                TotalItems = total,
+                TotalPages = totalPages
+            };
+        }
+    }
+}

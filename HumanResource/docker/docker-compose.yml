@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:18
     container_name: payments_postgres
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: paymentsdb
       POSTGRES_USER: postgres
@@ -12,16 +12,5 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/18/docker
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: payments_rabbitmq
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-
 volumes:
-  postgres_data:  
-  rabbitmq_data:
+  postgres_data:

@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Employees.Commands;
-using Application.Employees.Handlers;
-using Application.Employees.Validations;
+using Application.Features.Employees.Commands;
+using Application.Features.Employees.Handlers;
+using Application.Features.Employees.Validations;
+using Domain.Features.Employees.Enums;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.Employees
@@ -25,20 +26,22 @@ namespace Web.API.Endpoints.Employees
             Validator<CreateEmployeeValidation>();
             Summary(s =>
             {
-                s.Summary = "Crear un nuevo empleado";
-                s.Description = "Crea un nuevo empleado con los datos proporcionados.";
+                s.Summary = "Create a new employee.";
+                s.Description = "Creates a new employee with the provided data.";
                 s.ExampleRequest = new CreateEmployeeCommand
                 {
                     FullName = "Juan Pérez",
                     Email = "juan.perez@gmail.com",
-                    Password = "XXXXXXXX"
+                    Password = "XXXXXXXX",
+                    RedmineUserId = 100,
+                    Role = EmployeeRole.Employee
                 };
             });
         }
 
         public override async Task HandleAsync(CreateEmployeeCommand req, CancellationToken ct)
         {
-            var id = await _handler.Handle(req);
+            var id = await _handler.Handle(req, ct);
             await Send.OkAsync(id, ct);
         }
     }
