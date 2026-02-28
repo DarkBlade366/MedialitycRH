@@ -11,6 +11,7 @@ namespace Domain.Features.Projects.Interfaces
         Task<List<ProjectMilestone>> GetByProjectIdAsync(int redmineProjectId);
         Task<ProjectMilestone?> GetByProjectAndNameAsync(int projectId, string name);
         Task AddRangeAsync(List<ProjectMilestone> milestones);
-        Task<List<ProjectMilestone>> GetCompletedUnpaidAsync();
+        Task<List<ProjectMilestone>> GetCompletedAsync();
+        Task<List<ProjectMilestone>> GetAllAsync();
     }
 }

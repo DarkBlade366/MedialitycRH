@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Features.Projects.Aggregates;
+using Domain.Features.Projects.Enums;
 using Domain.Features.Projects.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,11 +38,16 @@ namespace Infrastructure.Persistence.Repositories.Projects
             await _context.ProjectMilestones.AddRangeAsync(milestones);
         }
     
-        public async Task<List<ProjectMilestone>> GetCompletedUnpaidAsync()
+        public async Task<List<ProjectMilestone>> GetCompletedAsync()
         {
             return await _context.ProjectMilestones
-                .Where(x => x.CompletedAt != null && !x.IsPaid)
+                .Where(x => x.Status == MilestoneStatus.Completed)
                 .ToListAsync();
+        }
+
+        public async Task<List<ProjectMilestone>> GetAllAsync()
+        {
+            return await _context.ProjectMilestones.ToListAsync();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Infrastructure.Persistence.Configurations.Proyects
             builder.Property(x => x.RedmineProjectId).IsRequired();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
             builder.Property(x => x.CompletedAt);
-            builder.Property(x => x.IsPaid).IsRequired();
+            builder.Property(x => x.Status).IsRequired().HasConversion<string>();
             builder.HasIndex(x => new { x.RedmineProjectId, x.Name })   .IsUnique();
         }
     }

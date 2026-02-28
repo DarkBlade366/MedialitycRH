@@ -6,7 +6,7 @@ using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Entities;
 using Domain.Features.Payrolls.Aggregates;
 using Domain.Features.Payrolls.Rules;
-using Domain.Features.Payrolls.ValueObjects;
+using Domain.Features.Projects.Aggregates;
 
 namespace Domain.Features.Payrolls.Services.Context
 {
@@ -41,7 +41,7 @@ namespace Domain.Features.Payrolls.Services.Context
 
         //Milestones
         public IReadOnlyCollection<MilestoneRule> MilestoneRules { get; }
-        public IReadOnlyCollection<CompletedMilestone> CompletedMilestones { get; }
+        public IReadOnlyCollection<ProjectMilestone> ProjectMilestones { get; }
 
         //Period
         public DateTime PeriodStart { get; }
@@ -65,7 +65,7 @@ namespace Domain.Features.Payrolls.Services.Context
             EmployeeAguinaldoBalance aguinaldoBalance,
 
             IReadOnlyCollection<MilestoneRule> milestoneRules,
-            IReadOnlyCollection<CompletedMilestone> completedMilestones,
+            IReadOnlyCollection<ProjectMilestone> projectMilestones,
 
             DateTime periodStart,
             DateTime periodEnd)
@@ -91,7 +91,7 @@ namespace Domain.Features.Payrolls.Services.Context
             AguinaldoBalance = aguinaldoBalance;
 
             MilestoneRules = milestoneRules ?? new List<MilestoneRule>();
-            CompletedMilestones = completedMilestones ?? new List<CompletedMilestone>();
+            ProjectMilestones = projectMilestones ?? new List<ProjectMilestone>();
 
             PeriodStart = periodStart;
             PeriodEnd = periodEnd;

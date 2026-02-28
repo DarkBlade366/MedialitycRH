@@ -55,6 +55,7 @@ namespace Infrastructure
             services.AddScoped<IVacationRuleRepository, VacationRuleRepository>();
             services.AddScoped<IBaseSalaryRuleRepository, BaseSalaryRuleRepository>();
             services.AddScoped<IAguinaldoRuleRepository, AguinaldoRuleRepository>();
+            services.AddScoped<IProjectMilestoneRepository, ProjectMilestoneRepository>();
 
             // Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -54,5 +54,35 @@ namespace Infrastructure.Redmine
             var result = JsonSerializer.Deserialize<RedmineTimeEntriesResponse>(content);
             return result?.TimeEntries ?? new();
         }
+
+        public async Task<List<RedmineProjectDto>> GetAllProjectsAsync()
+        {
+            var response = await _httpClient.GetAsync("/projects.json");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<RedmineProjectsResponse>(content);
+            return result?.Projects ?? new();
+        }
+
+        public async Task<List<RedmineMilestoneDto>> GetProjectMilestonesAsync(int projectId)
+        {
+            var url = $"/projects/{projectId}/versions.json";
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<RedmineMilestonesResponse>(content);
+            
+            return result?.Milestones
+                .Select(m => new RedmineMilestoneDto
+                {
+                    ProjectId = projectId,
+                    Name = m.Name,
+                    Status = m.Status,   
+                    CompletedAt = m.CompletedAt
+                })
+                .ToList() ?? new List<RedmineMilestoneDto>();
+        }
     }
 }

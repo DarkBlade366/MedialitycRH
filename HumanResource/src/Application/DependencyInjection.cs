@@ -31,6 +31,7 @@ namespace Application
             services.AddScoped<ListPagedTimeEntriesHandler>();
             services.AddScoped<GetProjectsPagedHandler>();
             services.AddScoped<GetEmployeeByRedmineUserIdHandler>();
+            services.AddScoped<SyncRedmineMilestonesHandler>();
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
             // services.AddScoped<GetPayrollPdfHandler>();
