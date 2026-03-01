@@ -25,8 +25,16 @@ namespace Domain.Features.Payrolls.Services.Calculators
 
             // Pago por uso
             if (rule.PayVacationOnUse && context.VacationDaysUsed > 0)
-            {
-                var dailyRate = context.BaseSalaryRule.Amount / 30m;
+            {   
+                var baseSalaryRule = context.BaseSalaryRules
+                    .FirstOrDefault(r =>
+                        r.Role == context.EmployeeRole &&
+                        r.IsActive);
+
+                if (baseSalaryRule == null)
+                    throw new Exception("No active base salary rule found for employee role.");
+
+                var dailyRate = baseSalaryRule.Amount / 30m;
                 var amount = dailyRate * context.VacationDaysUsed;
 
                 payroll.AddComponent(new PayrollComponent(

@@ -20,7 +20,15 @@ namespace Domain.Features.Payrolls.Services.Calculators
             if (rule == null || !rule.IsActive)
                 return;
 
-            var monthlyAccrual = context.BaseSalaryRule.Amount * rule.MonthlyAccrualPercentage;
+            var baseSalaryRule = context.BaseSalaryRules
+                .FirstOrDefault(r =>
+                    r.Role == context.EmployeeRole &&
+                    r.IsActive);
+
+            if (baseSalaryRule == null)
+                throw new Exception("No active base salary rule found for employee role.");
+
+            var monthlyAccrual = baseSalaryRule.Amount * rule.MonthlyAccrualPercentage;
             context.AguinaldoBalance.Accrue(monthlyAccrual);
 
             payroll.AddComponent(new PayrollComponent(

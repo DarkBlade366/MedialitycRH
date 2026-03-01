@@ -16,6 +16,8 @@ using Application.Features.Payrolls.Rules.Milestones.Handlers;
 using Application.Features.Payrolls.Rules.Milestones.Validations;
 using Application.Features.Payrolls.Rules.Aguinaldo.Handlers;
 using Application.Features.Payrolls.Rules.Aguinaldo.Validations;
+using Application.Features.Payrolls.Rules.BaseSalary.Handlers;
+using Application.Features.Payrolls.Rules.BaseSalary.Validations;
 
 namespace Application
 {
@@ -48,6 +50,10 @@ namespace Application
             services.AddScoped<CreateAguinaldoRuleHandler>();
             services.AddScoped<GetAguinaldoRuleByIdHandler>();
             services.AddScoped<GetAguinaldoRulesPagedHandler>();
+            services.AddScoped<CreateBaseSalaryRuleHandler>();
+            services.AddScoped<ChangeBaseSalaryRuleStatusHandler>();
+            services.AddScoped<GetBaseSalaryRuleByIdHandler>();
+            services.AddScoped<GetBaseSalaryRulesPagedHandler>();
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
             // services.AddScoped<GetPayrollPdfHandler>();
@@ -75,6 +81,10 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeAguinaldoRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetAguinaldoRulesPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<GetAguinaldoByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateBaseSalaryRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeBaseSalaryRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetBaseSalaryRuleByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetBaseSalaryRulesPagedValidator>();
 
 
             return services;

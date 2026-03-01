@@ -17,22 +17,16 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
+        public async Task<List<VacationRule>> GetAllAsync()
+        {
+            return await _context.VacationRules
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<VacationRule?> GetByIdAsync(Guid id)
         {
-            return await _context.VacationRules
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<IReadOnlyCollection<VacationRule>> GetAllAsync()
-        {
-            return await _context.VacationRules.ToListAsync();
-        }
-
-        public async Task<IReadOnlyCollection<VacationRule>> GetActiveAsync()
-        {
-            return await _context.VacationRules
-                .Where(r => r.IsActive)
-                .ToListAsync();
+            return await _context.VacationRules.FindAsync(id);
         }
 
         public async Task AddAsync(VacationRule rule)
@@ -43,11 +37,6 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         public void Update(VacationRule rule)
         {
             _context.VacationRules.Update(rule);
-        }
-
-        public void Remove(VacationRule rule)
-        {
-            _context.VacationRules.Remove(rule);
         }
     }
 }

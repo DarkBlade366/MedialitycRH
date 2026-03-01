@@ -9,11 +9,9 @@ namespace Domain.Features.Payrolls.Interfaces
 {
     public interface IVacationRuleRepository
     {
+        Task<List<VacationRule>> GetAllAsync();
         Task<VacationRule?> GetByIdAsync(Guid id);
-        Task<IReadOnlyCollection<VacationRule>> GetAllAsync();
-        Task<IReadOnlyCollection<VacationRule>> GetActiveAsync();
         Task AddAsync(VacationRule rule);
         void Update(VacationRule rule);
-        void Remove(VacationRule rule);
     }
 }

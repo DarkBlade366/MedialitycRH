@@ -17,22 +17,16 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
+        public async Task<List<DeductionRule>> GetAllAsync()
+        {
+            return await _context.DeductionRules
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<DeductionRule?> GetByIdAsync(Guid id)
         {
-            return await _context.DeductionRules
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<IReadOnlyCollection<DeductionRule>> GetAllAsync()
-        {
-            return await _context.DeductionRules.ToListAsync();
-        }
-
-        public async Task<IReadOnlyCollection<DeductionRule>> GetActiveAsync()
-        {
-            return await _context.DeductionRules
-                .Where(r => r.IsActive)
-                .ToListAsync();
+            return await _context.DeductionRules.FindAsync(id);
         }
 
         public async Task AddAsync(DeductionRule rule)
@@ -43,11 +37,6 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         public void Update(DeductionRule rule)
         {
             _context.DeductionRules.Update(rule);
-        }
-
-        public void Remove(DeductionRule rule)
-        {
-            _context.DeductionRules.Remove(rule);
         }
     }
 }

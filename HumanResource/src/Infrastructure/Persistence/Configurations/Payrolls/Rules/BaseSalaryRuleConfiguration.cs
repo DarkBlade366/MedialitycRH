@@ -15,6 +15,7 @@ namespace Infrastructure.Persistence.Configurations.Payrolls.Rules
             builder.ToTable("base_salary_rules");
             builder.HasKey(r => r.Id);
             builder.Property(r => r.Amount).IsRequired().HasPrecision(18, 2);
+            builder.Property(r => r.Role).IsRequired().HasConversion<string>();
             builder.Property(r => r.IsActive).IsRequired();
             builder.Property(r => r.Name).IsRequired().HasMaxLength(100);
         }

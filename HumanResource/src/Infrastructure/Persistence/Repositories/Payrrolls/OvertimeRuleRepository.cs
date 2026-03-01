@@ -17,22 +17,16 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
+        public async Task<List<OvertimeRule>> GetAllAsync()
+        {
+            return await _context.OvertimeRules
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<OvertimeRule?> GetByIdAsync(Guid id)
         {
-            return await _context.OvertimeRules
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<IReadOnlyCollection<OvertimeRule>> GetAllAsync()
-        {
-            return await _context.OvertimeRules.ToListAsync();
-        }
-
-        public async Task<IReadOnlyCollection<OvertimeRule>> GetActiveAsync()
-        {
-            return await _context.OvertimeRules
-                .Where(r => r.IsActive)
-                .ToListAsync();
+            return await _context.OvertimeRules.FindAsync(id);
         }
 
         public async Task AddAsync(OvertimeRule rule)
@@ -43,11 +37,6 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         public void Update(OvertimeRule rule)
         {
             _context.OvertimeRules.Update(rule);
-        }
-
-        public void Remove(OvertimeRule rule)
-        {
-            _context.OvertimeRules.Remove(rule);
         }
     }
 }

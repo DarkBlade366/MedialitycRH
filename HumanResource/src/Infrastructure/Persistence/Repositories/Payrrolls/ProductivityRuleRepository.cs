@@ -17,22 +17,16 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
+        public async Task<List<ProductivityRule>> GetAllAsync()
+        {
+            return await _context.ProductivityRules
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<ProductivityRule?> GetByIdAsync(Guid id)
         {
-            return await _context.ProductivityRules
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<IReadOnlyCollection<ProductivityRule>> GetAllAsync()
-        {
-            return await _context.ProductivityRules.ToListAsync();
-        }
-
-        public async Task<IReadOnlyCollection<ProductivityRule>> GetActiveAsync()
-        {
-            return await _context.ProductivityRules
-                .Where(r => r.IsActive)
-                .ToListAsync();
+            return await _context.ProductivityRules.FindAsync(id);
         }
 
         public async Task AddAsync(ProductivityRule rule)
@@ -43,11 +37,6 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         public void Update(ProductivityRule rule)
         {
             _context.ProductivityRules.Update(rule);
-        }
-
-        public void Remove(ProductivityRule rule)
-        {
-            _context.ProductivityRules.Remove(rule);
         }
     }
 }

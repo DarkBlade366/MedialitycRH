@@ -8,11 +8,9 @@ namespace Domain.Features.Payrolls.Interfaces
 {
     public interface IProductivityRuleRepository
     {
+        Task<List<ProductivityRule>> GetAllAsync();
         Task<ProductivityRule?> GetByIdAsync(Guid id);
-        Task<IReadOnlyCollection<ProductivityRule>> GetAllAsync();
-        Task<IReadOnlyCollection<ProductivityRule>> GetActiveAsync();
         Task AddAsync(ProductivityRule rule);
         void Update(ProductivityRule rule);
-        void Remove(ProductivityRule rule);
     }
 }

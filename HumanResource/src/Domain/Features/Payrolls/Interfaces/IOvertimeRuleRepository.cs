@@ -8,11 +8,9 @@ namespace Domain.Features.Payrolls.Interfaces
 {
     public interface IOvertimeRuleRepository
     {
+        Task<List<OvertimeRule>> GetAllAsync();
         Task<OvertimeRule?> GetByIdAsync(Guid id);
-        Task<IReadOnlyCollection<OvertimeRule>> GetAllAsync();
-        Task<IReadOnlyCollection<OvertimeRule>> GetActiveAsync();
         Task AddAsync(OvertimeRule rule);
         void Update(OvertimeRule rule);
-        void Remove(OvertimeRule rule);
     }
 }

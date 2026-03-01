@@ -8,11 +8,9 @@ namespace Domain.Features.Payrolls.Interfaces
 {
     public interface IDeductionRuleRepository
     {
+        Task<List<DeductionRule>> GetAllAsync();
         Task<DeductionRule?> GetByIdAsync(Guid id);
-        Task<IReadOnlyCollection<DeductionRule>> GetAllAsync();
-        Task<IReadOnlyCollection<DeductionRule>> GetActiveAsync();
         Task AddAsync(DeductionRule rule);
         void Update(DeductionRule rule);
-        void Remove(DeductionRule rule);
     }
 }

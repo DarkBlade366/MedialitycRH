@@ -8,8 +8,8 @@ namespace Application.Features.Milestones.Queries
 {
     public class GetMilestonesPagedQuery
     {
-        public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
+        public int Page { get; set; }
+        public int PageSize { get; set; }
         public int? RedmineProjectId { get; set; }
         public string? Status { get; set; }
         public DateTime? From { get; set; }
