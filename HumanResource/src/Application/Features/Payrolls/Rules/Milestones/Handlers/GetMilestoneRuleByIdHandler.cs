@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Application.Features.Payrolls.Rules.Milestones.DTOs;
+using Application.Features.Payrolls.Rules.Milestones.Queries;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 
@@ -18,9 +19,9 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
             _repository = repository;
         }
     
-        public async Task<MilestoneRuleResponse?> HandleAsync(Guid id)
+        public async Task<MilestoneRuleResponse?> HandleAsync(GetMilestoneRuleByIdQuery query)
         {
-            var rule = await _repository.GetByIdAsync(id);
+            var rule = await _repository.GetByIdAsync(query.Id);
     
             if (rule is null)
                 return null;

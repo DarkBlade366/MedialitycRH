@@ -14,6 +14,8 @@ using Application.Features.Milestones.Handlers;
 using Application.Features.Milestones.Validations;
 using Application.Features.Payrolls.Rules.Milestones.Handlers;
 using Application.Features.Payrolls.Rules.Milestones.Validations;
+using Application.Features.Payrolls.Rules.Aguinaldo.Handlers;
+using Application.Features.Payrolls.Rules.Aguinaldo.Validations;
 
 namespace Application
 {
@@ -42,6 +44,10 @@ namespace Application
             services.AddScoped<CreateMilestoneRuleHandler>();
             services.AddScoped<GetMilestoneRuleByIdHandler>();
             services.AddScoped<GetMilestoneRulesPagedHandler>();
+            services.AddScoped<ChangeAguinaldoRuleStatusHandler>();
+            services.AddScoped<CreateAguinaldoRuleHandler>();
+            services.AddScoped<GetAguinaldoRuleByIdHandler>();
+            services.AddScoped<GetAguinaldoRulesPagedHandler>();
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
             // services.AddScoped<GetPayrollPdfHandler>();
@@ -60,10 +66,15 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetProjectByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProjectsPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<GetEmployeeByRedmineUserIdValidation>();
-            services.AddValidatorsFromAssemblyContaining<GetMilestoneByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetMilestonesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetMilestoneByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetMilestoneRulesPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateMilestoneRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeMilestoneRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateAguinaldoRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeAguinaldoRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetAguinaldoRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetAguinaldoByIdValidator>();
 
 
             return services;

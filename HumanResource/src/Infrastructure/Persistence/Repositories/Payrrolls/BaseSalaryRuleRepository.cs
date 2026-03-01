@@ -16,22 +16,16 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
+        public async Task<List<BaseSalaryRule>> GetAllAsync()
+        {
+            return await _context.BaseSalaryRules
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<BaseSalaryRule?> GetByIdAsync(Guid id)
         {
-            return await _context.BaseSalaryRules
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<BaseSalaryRule?> GetActiveAsync()
-        {
-            return await _context.BaseSalaryRules
-                .FirstOrDefaultAsync(r => r.IsActive);
-        }
-
-        public async Task<IReadOnlyCollection<BaseSalaryRule>> GetAllAsync()
-        {
-            return await _context.BaseSalaryRules
-                .ToListAsync();
+            return await _context.BaseSalaryRules.FindAsync(id);
         }
 
         public async Task AddAsync(BaseSalaryRule rule)
@@ -42,11 +36,6 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         public void Update(BaseSalaryRule rule)
         {
             _context.BaseSalaryRules.Update(rule);
-        }
-
-        public void Remove(BaseSalaryRule rule)
-        {
-            _context.BaseSalaryRules.Remove(rule);
         }
     }
 }

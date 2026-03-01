@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Entities;
+using Domain.Features.Employees.Enums;
 using Domain.Features.Payrolls.Aggregates;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Projects.Aggregates;
@@ -12,13 +13,12 @@ namespace Domain.Features.Payrolls.Services.Context
 {
     public class PayrollCalculationContext
     {
-        public int TotalWorkedHours { get; }
+        public int TotalWorkedHours { get; }        
+        public decimal HourlyRate { get; }
 
         //Salary 
-        public BaseSalaryRule BaseSalaryRule { get; }
-
-        //Por Hora
-        public decimal HourlyRate { get; }
+        public IReadOnlyCollection<BaseSalaryRule> BaseSalaryRules { get; }
+        public EmployeeRole EmployeeRole { get; }
 
         //Overtime
         public IReadOnlyCollection<OvertimeRule> OvertimeRules { get; }
@@ -48,9 +48,12 @@ namespace Domain.Features.Payrolls.Services.Context
         public DateTime PeriodEnd { get; }
 
         public PayrollCalculationContext(
-            BaseSalaryRule? baseSalaryRule,
+            IReadOnlyCollection<BaseSalaryRule> baseSalaryRules,
+            EmployeeRole employeeRole,
+
             decimal hourlyRate,
             int totalWorkedHours,
+
             IReadOnlyCollection<OvertimeRule> overtimeRules,
             IReadOnlyCollection<DeductionRule> deductionRules,
 
@@ -69,11 +72,10 @@ namespace Domain.Features.Payrolls.Services.Context
 
             DateTime periodStart,
             DateTime periodEnd)
-        {
-            if (baseSalaryRule == null)
-                throw new ArgumentNullException(nameof(baseSalaryRule));
-            
-            BaseSalaryRule = baseSalaryRule;
+        {            
+            BaseSalaryRules = baseSalaryRules ?? new List<BaseSalaryRule>();
+            EmployeeRole = employeeRole;
+
             HourlyRate = hourlyRate;
             TotalWorkedHours = totalWorkedHours;
 

@@ -114,24 +114,36 @@ namespace Domain.Features.Payrolls.Aggregates
 
         public void AddAguinaldoPayment(Guid ruleId, decimal amount, DateTime paidAt)
         {
+            if (Status != PayrollStatus.Draft && Status != PayrollStatus.Calculated)
+                throw new InvalidOperationException("Cannot add aguinaldo payment unless payroll is Draft or Calculated.");
+
             _aguinaldoPayments.Add(new AguinaldoPayment(this.Id, ruleId, amount, paidAt));
             MarkUpdated();
         }
 
         public void AddVacationPayment(Guid ruleId, decimal amount, DateTime paidAt)
         {
+            if (Status != PayrollStatus.Draft && Status != PayrollStatus.Calculated)
+                throw new InvalidOperationException("Cannot add vacation payment unless payroll is Draft or Calculated.");
+
             _vacationPayments.Add(new VacationPayment(this.Id, ruleId, amount, paidAt));
             MarkUpdated();
         }
 
         public void AddProductivityPayment(Guid ruleId, decimal amount, DateTime paidAt)
         {
+            if (Status != PayrollStatus.Draft && Status != PayrollStatus.Calculated)
+                throw new InvalidOperationException("Cannot add productivity payment unless payroll is Draft or Calculated.");
+
             _productivityPayments.Add(new ProductivityPayment(this.Id, ruleId, amount, paidAt));
             MarkUpdated();
         }
 
         public void AddOvertimePayment(Guid ruleId, decimal amount, DateTime paidAt)
         {
+            if (Status != PayrollStatus.Draft && Status != PayrollStatus.Calculated)
+                throw new InvalidOperationException("Cannot add overtime payment unless payroll is Draft or Calculated.");
+
             _overtimePayments.Add(new OvertimePayment(this.Id, ruleId, amount, paidAt));
             MarkUpdated();
         }

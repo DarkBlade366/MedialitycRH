@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Features.Milestones.Validations;
 using Application.Features.Payrolls.Rules.Milestones.DTOs;
 using Application.Features.Payrolls.Rules.Milestones.Handlers;
+using Application.Features.Payrolls.Rules.Milestones.Queries;
+using Application.Features.Payrolls.Rules.Milestones.Validations;
 using FastEndpoints;
 
-namespace Web.API.Endpoints.Payrolls.Rules.Milestone
+namespace Web.API.Endpoints.Payrolls.Rules.Milestones
 {
-    public class GetMilestoneRuleByIdEndpoint: EndpointWithoutRequest<MilestoneRuleResponse>
+    public class GetMilestoneRuleByIdEndpoint: Endpoint<GetMilestoneRuleByIdQuery, MilestoneRuleResponse>
     {
         private readonly GetMilestoneRuleByIdHandler _handler;
     
@@ -22,6 +25,7 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestone
         {
             Get("/milestone-rules/{id:guid}");
             Roles("Administrator");
+            Validator<GetMilestoneRuleByIdValidator>();
             Summary(s =>
             {
                 s.Summary = "Get a milestone rule by its ID.";
@@ -33,19 +37,14 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestone
             });
         }
     
-        public override async Task HandleAsync(CancellationToken ct)
+        public override async Task HandleAsync(GetMilestoneRuleByIdQuery request, CancellationToken ct)
         {
-            var id = Route<Guid>("id");
-    
-            var result = await _handler.HandleAsync(id);
-    
-            if (result is null)
-            {
-                await Send.NotFoundAsync();
-                return;
-            }
-    
-            await Send.OkAsync(result);
+            var result = await _handler.HandleAsync(request);
+            
+            if (result == null)
+                await Send.NotFoundAsync(ct);
+            else
+                await Send.OkAsync(result, ct);
         }
     }
 }

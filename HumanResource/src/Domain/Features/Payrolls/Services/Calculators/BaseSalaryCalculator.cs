@@ -14,9 +14,12 @@ namespace Domain.Features.Payrolls.Services.Calculators
     {
         public void Calculate(Payroll payroll, PayrollCalculationContext context)
         {
-            var rule = context.BaseSalaryRule;
+            var rule = context.BaseSalaryRules
+                .FirstOrDefault(r => 
+                    r.Role == context.EmployeeRole && 
+                    r.IsActive);
 
-            if (rule == null || !rule.IsActive)
+            if (rule == null)
                 return;
 
             var component = new PayrollComponent(

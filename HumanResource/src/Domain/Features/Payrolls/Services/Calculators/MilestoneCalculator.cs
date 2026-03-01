@@ -37,7 +37,7 @@ namespace Domain.Features.Payrolls.Services.Calculators
                             $"Milestone Bonus - {rule.MilestoneName}",
                             rule.BonusAmount));
 
-                        payroll.AddMilestonePayment(rule.Id, rule.BonusAmount, System.DateTime.Now);
+                        payroll.AddMilestonePayment(rule.Id, rule.BonusAmount, DateTime.Now);
                     }
                 }
             }

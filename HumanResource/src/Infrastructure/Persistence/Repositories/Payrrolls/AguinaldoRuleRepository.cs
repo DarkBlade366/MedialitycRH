@@ -16,22 +16,16 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
+        public async Task<List<AguinaldoRule>> GetAllAsync()
+        {
+            return await _context.AguinaldoRules
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<AguinaldoRule?> GetByIdAsync(Guid id)
         {
-            return await _context.AguinaldoRules
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<AguinaldoRule?> GetActiveAsync()
-        {
-            return await _context.AguinaldoRules
-                .FirstOrDefaultAsync(r => r.IsActive);
-        }
-
-        public async Task<IReadOnlyCollection<AguinaldoRule>> GetAllAsync()
-        {
-            return await _context.AguinaldoRules
-                .ToListAsync();
+            return await _context.AguinaldoRules.FindAsync(id);
         }
 
         public async Task AddAsync(AguinaldoRule rule)
@@ -42,11 +36,6 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         public void Update(AguinaldoRule rule)
         {
             _context.AguinaldoRules.Update(rule);
-        }
-
-        public void Remove(AguinaldoRule rule)
-        {
-            _context.AguinaldoRules.Remove(rule);
         }
     }
 }

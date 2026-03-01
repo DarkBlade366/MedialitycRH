@@ -8,7 +8,7 @@ using Application.Features.Payrolls.Rules.Milestones.Handlers;
 using Application.Features.Payrolls.Rules.Milestones.Queries;
 using FastEndpoints;
 
-namespace Web.API.Endpoints.Payrolls.Rules.Milestone
+namespace Web.API.Endpoints.Payrolls.Rules.Milestones
 {
     public class GetMilestoneRulesPagedEndpoint 
         : Endpoint<GetMilestoneRulesPagedQuery, PagedResponse<MilestoneRuleResponse>>

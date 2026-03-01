@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Features.Payrolls.Rules.Aguinaldo.Validations;
 using Application.Features.Payrolls.Rules.Milestones.Commands;
 using Application.Features.Payrolls.Rules.Milestones.DTOs;
 using Application.Features.Payrolls.Rules.Milestones.Handlers;
+using Application.Features.Payrolls.Rules.Milestones.Validations;
 using FastEndpoints;
 
-namespace Web.API.Endpoints.Payrolls.Rules.Milestone
+namespace Web.API.Endpoints.Payrolls.Rules.Milestones
 {
     public class ChangeMilestoneRuleStatusEndpoint : Endpoint<ChangeMilestoneRuleStatusCommand>
     {
@@ -22,6 +24,7 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestone
         {
             Put("/milestone-rules/{id:guid}/status");
             Roles("Administrator");
+            Validator<ChangeMilestoneRuleStatusValidator>();
             Summary(s =>
             {
                 s.Summary = "Change the status of a milestone rule.";

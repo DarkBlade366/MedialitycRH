@@ -38,6 +38,9 @@ namespace Domain.Features.Payrolls.Services.Calculators
                     PayrollComponentCategory.Earning,
                     "Aguinaldo Payment",
                     totalToPay));
+                
+                payroll.AddAguinaldoPayment(rule.Id, totalToPay, DateTime.Now);
+                
             }
         }
     }

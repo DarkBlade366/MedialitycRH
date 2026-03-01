@@ -7,11 +7,9 @@ namespace Domain.Features.Payrolls.Interfaces
 {
     public interface IAguinaldoRuleRepository
     {
+        Task<List<AguinaldoRule>> GetAllAsync();
         Task<AguinaldoRule?> GetByIdAsync(Guid id);
-        Task<AguinaldoRule?> GetActiveAsync();
-        Task<IReadOnlyCollection<AguinaldoRule>> GetAllAsync();
         Task AddAsync(AguinaldoRule rule);
         void Update(AguinaldoRule rule);
-        void Remove(AguinaldoRule rule);
     }
 }

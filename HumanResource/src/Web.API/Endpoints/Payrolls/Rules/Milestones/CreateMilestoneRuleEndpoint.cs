@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Application.Features.Payrolls.Rules.Milestones.Commands;
 using Application.Features.Payrolls.Rules.Milestones.DTOs;
 using Application.Features.Payrolls.Rules.Milestones.Handlers;
+using Application.Features.Payrolls.Rules.Milestones.Validations;
 using FastEndpoints;
 
-namespace Web.API.Endpoints.Payrolls.Rules.Milestone
+namespace Web.API.Endpoints.Payrolls.Rules.Milestones
 {
     public class CreateMilestoneRuleEndpoint : Endpoint<CreateMilestoneRuleCommand, MilestoneRuleResponse>
     {
@@ -23,6 +24,7 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestone
         {
             Post("/milestone-rules");
             Roles("Administrator");
+            Validator<CreateMilestoneRuleValidator>();
             Summary(s =>
             {
                 s.Summary = "Creates a new milestone rule.";

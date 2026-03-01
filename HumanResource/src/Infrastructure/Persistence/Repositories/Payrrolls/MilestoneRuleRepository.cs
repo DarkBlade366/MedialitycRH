@@ -17,7 +17,7 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
-            public async Task<List<MilestoneRule>> GetAllAsync()
+        public async Task<List<MilestoneRule>> GetAllAsync()
         {
             return await _context.MilestoneRules
                 .AsNoTracking()
