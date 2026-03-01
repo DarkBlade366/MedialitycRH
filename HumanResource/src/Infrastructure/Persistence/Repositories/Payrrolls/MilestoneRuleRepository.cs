@@ -17,22 +17,16 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
             _context = context;
         }
 
+            public async Task<List<MilestoneRule>> GetAllAsync()
+        {
+            return await _context.MilestoneRules
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<MilestoneRule?> GetByIdAsync(Guid id)
         {
-            return await _context.MilestoneRules
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<IReadOnlyCollection<MilestoneRule>> GetAllAsync()
-        {
-            return await _context.MilestoneRules.ToListAsync();
-        }
-
-        public async Task<IReadOnlyCollection<MilestoneRule>> GetActiveAsync()
-        {
-            return await _context.MilestoneRules
-                .Where(r => r.IsActive)
-                .ToListAsync();
+            return await _context.MilestoneRules.FindAsync(id);
         }
 
         public async Task AddAsync(MilestoneRule rule)
@@ -43,11 +37,6 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         public void Update(MilestoneRule rule)
         {
             _context.MilestoneRules.Update(rule);
-        }
-
-        public void Remove(MilestoneRule rule)
-        {
-            _context.MilestoneRules.Remove(rule);
         }
     }
 }

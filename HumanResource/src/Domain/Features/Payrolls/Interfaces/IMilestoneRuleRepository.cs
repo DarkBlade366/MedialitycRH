@@ -8,11 +8,9 @@ namespace Domain.Features.Payrolls.Interfaces
 {
     public interface IMilestoneRuleRepository
     {
+        Task<List<MilestoneRule>> GetAllAsync();
         Task<MilestoneRule?> GetByIdAsync(Guid id);
-        Task<IReadOnlyCollection<MilestoneRule>> GetAllAsync();
-        Task<IReadOnlyCollection<MilestoneRule>> GetActiveAsync();
         Task AddAsync(MilestoneRule rule);
         void Update(MilestoneRule rule);
-        void Remove(MilestoneRule rule);
     }
 }

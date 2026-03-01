@@ -12,6 +12,8 @@ using Application.Features.Projects.Handlers;
 using Application.Features.Projects.Validations;
 using Application.Features.Milestones.Handlers;
 using Application.Features.Milestones.Validations;
+using Application.Features.Payrolls.Rules.Milestones.Handlers;
+using Application.Features.Payrolls.Rules.Milestones.Validations;
 
 namespace Application
 {
@@ -36,6 +38,10 @@ namespace Application
             services.AddScoped<SyncRedmineMilestonesHandler>();
             services.AddScoped<GetMilestoneByIdHandler>();
             services.AddScoped<GetMilestonesPagedHandler>();
+            services.AddScoped<ChangeMilestoneRuleStatusHandler>();
+            services.AddScoped<CreateMilestoneRuleHandler>();
+            services.AddScoped<GetMilestoneRuleByIdHandler>();
+            services.AddScoped<GetMilestoneRulesPagedHandler>();
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
             // services.AddScoped<GetPayrollPdfHandler>();
@@ -56,6 +62,8 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetEmployeeByRedmineUserIdValidation>();
             services.AddValidatorsFromAssemblyContaining<GetMilestoneByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetMilestonesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetMilestoneRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateMilestoneRuleValidator>();
 
 
             return services;
