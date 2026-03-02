@@ -15,6 +15,7 @@ namespace Infrastructure.Persistence.Configurations.Payrolls.Entities
         {
             builder.ToTable("payroll_components");
             builder.HasKey(pc => pc.Id);
+            builder.Property(pc => pc.RuleId).IsRequired();
             builder.Property(pc => pc.Type).IsRequired().HasConversion<string>();
             builder.Property(pc => pc.Category).IsRequired().HasConversion<string>();
             builder.Property(pc => pc.Description).IsRequired().HasMaxLength(200);

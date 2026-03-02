@@ -41,7 +41,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                     PayrollComponentType.VacationPay,
                     PayrollComponentCategory.Earning,
                     "Vacation Payment",
-                    amount));
+                    amount,
+                    rule.Id));
 
                 balance.Use(context.VacationDaysUsed);
             }

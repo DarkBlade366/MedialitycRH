@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Common;
 
 namespace Domain.Features.Payrolls.Aggregates.Payments
 {
-    public class AguinaldoPayment
+    public class AguinaldoPayment : BaseEntity
     {
         public Guid Id { get; private set; }
         public Guid PayrollId { get; private set; }

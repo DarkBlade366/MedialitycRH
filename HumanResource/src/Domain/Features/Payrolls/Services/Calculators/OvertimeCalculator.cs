@@ -30,7 +30,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                 PayrollComponentType.Overtime,
                 PayrollComponentCategory.Earning,
                 $"Overtime {overtimeHours} hours",
-                overtimeAmount);
+                overtimeAmount,
+                rule.Id);
 
             payroll.AddComponent(component);
         }

@@ -26,7 +26,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                 PayrollComponentType.BaseSalary,
                 PayrollComponentCategory.Earning,
                 rule.Name,
-                rule.Amount);
+                rule.Amount,
+                rule.Id);
 
             payroll.AddComponent(component);
         }

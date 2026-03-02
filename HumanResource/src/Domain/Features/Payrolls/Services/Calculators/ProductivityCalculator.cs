@@ -71,7 +71,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                 PayrollComponentType.ProductivityBonus,
                 PayrollComponentCategory.Earning,
                 "Proportional Productivity Bonus",
-                finalAmount));
+                finalAmount,
+                rule.Id));
             
             payroll.AddProductivityPayment(rule.Id, finalAmount, DateTime.UtcNow);
         }

@@ -17,6 +17,8 @@ namespace Infrastructure.Persistence.Configurations.Payrolls.Rules
             builder.Property(r => r.Percentage).IsRequired().HasPrecision(5, 4);
             builder.Property(r => r.IsActive).IsRequired();
             builder.Property(r => r.Name).IsRequired().HasMaxLength(100);
+            builder.Property(r => r.Type).IsRequired().HasConversion<string>();
+            builder.Property(r => r.IsActive).IsRequired();
         }
     }
 }

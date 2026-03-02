@@ -35,7 +35,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                 PayrollComponentType.Aguinaldo,
                 PayrollComponentCategory.Accrual,
                 "Aguinaldo Accrual",
-                monthlyAccrual));
+                monthlyAccrual,
+                rule.Id));
 
             if (context.PeriodEnd.Month == rule.PayMonth)
             {
@@ -45,7 +46,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                     PayrollComponentType.Aguinaldo,
                     PayrollComponentCategory.Earning,
                     "Aguinaldo Payment",
-                    totalToPay));
+                    totalToPay,
+                    rule.Id));
                 
                 payroll.AddAguinaldoPayment(rule.Id, totalToPay, DateTime.Now);
                 

@@ -7,6 +7,7 @@ namespace Domain.Features.Payrolls.Entities
     public class PayrollComponent : BaseEntity
     {
         public Guid Id { get; private set; }
+        public Guid RuleId { get; private set; }
 
         public PayrollComponentType Type { get; private set; }
 
@@ -22,7 +23,8 @@ namespace Domain.Features.Payrolls.Entities
             PayrollComponentType type,
             PayrollComponentCategory category,
             string description,
-            decimal amount)
+            decimal amount,
+            Guid ruleId)
         {
             if (string.IsNullOrWhiteSpace(description))
                 throw new ArgumentException("Description cannot be empty.");
@@ -35,6 +37,7 @@ namespace Domain.Features.Payrolls.Entities
             Category = category;
             Description = description;
             Amount = amount;
+            RuleId = ruleId;
         }
     }
 }

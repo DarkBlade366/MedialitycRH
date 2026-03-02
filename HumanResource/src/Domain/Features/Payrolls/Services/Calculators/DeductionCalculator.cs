@@ -14,24 +14,41 @@ namespace Domain.Features.Payrolls.Services.Calculators
     {
         public void Calculate(Payroll payroll, PayrollCalculationContext context)
         {
-            var gross = payroll.Components
+            var basicSalary = payroll.Components
+                .Where(c => c.Type == PayrollComponentType.BaseSalary)
+                .Sum(c => c.Amount);
+
+            var totalEarnings = payroll.Components
                 .Where(c => c.Category == PayrollComponentCategory.Earning)
                 .Sum(c => c.Amount);
 
+            if (basicSalary <= 0 && totalEarnings <= 0)
+                return;
+
             foreach (var rule in context.DeductionRules.Where(r => r.IsActive))
             {
-                var amount = gross * rule.Percentage;
+                decimal baseAmount = rule.Type switch
+                {
+                    DeductionType.BasicSalary => basicSalary,
+                    DeductionType.TotalEarnings => totalEarnings,
+                    _ => 0m
+                };
+
+                if (baseAmount <= 0)
+                    continue;
+
+                var amount = baseAmount * rule.Percentage;
 
                 if (amount <= 0)
                     continue;
 
-                var component = new PayrollComponent(
+                payroll.AddComponent(new PayrollComponent(
                     PayrollComponentType.LegalDeduction,
                     PayrollComponentCategory.Deduction,
-                    rule.Name,
-                    amount);
-
-                payroll.AddComponent(component);
+                    rule.Description,
+                    amount,
+                    rule.Id
+                ));
             }
         }
     }
