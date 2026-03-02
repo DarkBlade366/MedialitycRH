@@ -78,6 +78,8 @@ namespace Application
             services.AddScoped<ChangeVacationRuleStatusHandler>();
             services.AddScoped<GetVacationRuleByIdHandler>();
             services.AddScoped<GetVacationRulesPagedHandler>();
+            services.AddScoped<GetVacationBalanceHandler>();
+            services.AddScoped<UseVacationHandler>();
 
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
@@ -126,6 +128,8 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeVacationRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetVacationRuleByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetVacationRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetVacationBalanceQueryValidator>();
+            services.AddValidatorsFromAssemblyContaining<UseVacationCommandValidator>();
 
 
             return services;

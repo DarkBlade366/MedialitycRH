@@ -30,7 +30,6 @@ namespace Application.Features.Employees.Handlers
                 Email = e.Email,
                 Role = e.Role.ToString(),
                 IsActive = e.IsActive
-                // Balance no se muestra aquí, solo en GetEmployeeById
             }).ToList();
 
             var totalPages = (int)Math.Ceiling(total / (double)query.PageSize);

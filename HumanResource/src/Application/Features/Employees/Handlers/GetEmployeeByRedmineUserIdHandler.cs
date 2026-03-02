@@ -12,14 +12,12 @@ namespace Application.Features.Employees.Handlers
     public class GetEmployeeByRedmineUserIdHandler
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IUnitOfWork _unitOfWork;
 
         public GetEmployeeByRedmineUserIdHandler(
             IEmployeeRepository employeeRepository,
             IUnitOfWork unitOfWork)
         {
             _employeeRepository = employeeRepository;
-            _unitOfWork = unitOfWork;
         }
 
         public async Task<GetEmployeeByIdResponse> Handle(
