@@ -29,6 +29,12 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
                 command.RedmineProjectId,
                 command.MilestoneName,
                 command.BonusAmount);
+
+            var existingActive = (await _repository.GetAllAsync())
+                .Any(r => r.IsActive);
+        
+            if (existingActive)
+                throw new Exception("There is already an active milestone rule.");
     
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

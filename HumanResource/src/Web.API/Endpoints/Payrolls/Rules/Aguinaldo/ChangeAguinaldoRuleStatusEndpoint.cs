@@ -7,12 +7,12 @@ using Application.Features.Payrolls.Rules.Aguinaldo.Handlers;
 using Application.Features.Payrolls.Rules.Aguinaldo.Validations;
 using FastEndpoints;
 
-namespace Web.API.Endpoints.Payrolls.Rules.Aguinaldos
+namespace Web.API.Endpoints.Payrolls.Rules.Aguinaldo
 {
-    public class ChangeAguinaldoEndpoint : Endpoint<ChangeAguinaldoRuleStatusCommand>
+    public class ChangeAguinaldoRuleStatusEndpoint : Endpoint<ChangeAguinaldoRuleStatusCommand>
     {
         private readonly ChangeAguinaldoRuleStatusHandler _handler;
-        public ChangeAguinaldoEndpoint(ChangeAguinaldoRuleStatusHandler handler)
+        public ChangeAguinaldoRuleStatusEndpoint(ChangeAguinaldoRuleStatusHandler handler)
         {
             _handler = handler;
         }

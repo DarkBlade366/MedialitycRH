@@ -15,8 +15,9 @@ namespace Infrastructure.Persistence.Configurations.Payrolls.Rules
             builder.ToTable("productivity_rules");
             builder.HasKey(r => r.Id);
             builder.Property(r => r.MinimumTarget).IsRequired().HasPrecision(5, 2);
-            builder.Property(r => r.BonusAmount).IsRequired().HasPrecision(18, 2);
-            builder.Property(r => r.IsPercentage).IsRequired();
+            builder.Property(r => r.BonusValue).IsRequired().HasPrecision(10, 2);
+            builder.Property(r => r.BonusType).IsRequired().HasConversion<string>();
+            builder.Property(r => r.FullBonusTarget).IsRequired().HasPrecision(10, 2);
             builder.Property(r => r.IsActive).IsRequired();
             builder.Property(r => r.Name).IsRequired().HasMaxLength(100);
         }

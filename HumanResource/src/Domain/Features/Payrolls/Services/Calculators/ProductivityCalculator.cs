@@ -14,35 +14,66 @@ namespace Domain.Features.Payrolls.Services.Calculators
     public class ProductivityCalculator : IEarningCalculator
     {
         public void Calculate(Payroll payroll, PayrollCalculationContext context)
-        {
+        {   
             var rule = context.ProductivityRule;
 
             if (rule == null || !rule.IsActive)
                 return;
 
-            if (context.ProductivityMetric < rule.MinimumTarget)
+            var metric = context.ProductivityMetric;
+    
+            if (metric <= rule.MinimumTarget)
                 return;
 
-            decimal amount;
+            decimal proportionalFactor;
 
-            if (rule.IsPercentage)
+            if (metric >= rule.FullBonusTarget)
             {
-                var gross = payroll.Components
-                    .Where(c => c.Category == PayrollComponentCategory.Earning)
-                    .Sum(c => c.Amount);
-
-                amount = gross * rule.BonusAmount;
+                proportionalFactor = 1m;
             }
             else
             {
-                amount = rule.BonusAmount;
+                proportionalFactor =
+                    (metric - rule.MinimumTarget) /
+                    (rule.FullBonusTarget - rule.MinimumTarget);
             }
+
+            decimal fullBonusAmount = 0;
+
+            switch (rule.BonusType)
+            {
+                case BonusType.FixedAmount:
+                    fullBonusAmount = rule.BonusValue;
+                    break;
+
+                case BonusType.Percentage:
+
+                    var gross = payroll.Components
+                        .Where(c => c.Category == PayrollComponentCategory.Earning)
+                        .Sum(c => c.Amount);
+
+                    fullBonusAmount = gross * (rule.BonusValue / 100m);
+                    break;
+            }
+
+            var finalAmount = fullBonusAmount * proportionalFactor;
+
+            if (rule.MaxBonusCap.HasValue &&
+                finalAmount > rule.MaxBonusCap.Value)
+            {
+                finalAmount = rule.MaxBonusCap.Value;
+            }
+
+            if (finalAmount <= 0)
+                return;
 
             payroll.AddComponent(new PayrollComponent(
                 PayrollComponentType.ProductivityBonus,
                 PayrollComponentCategory.Earning,
-                "Productivity Bonus",
-                amount));
+                "Proportional Productivity Bonus",
+                finalAmount));
+            
+            payroll.AddProductivityPayment(rule.Id, finalAmount, DateTime.UtcNow);
         }
     }
 }

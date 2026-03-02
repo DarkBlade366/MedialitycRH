@@ -16,7 +16,7 @@ using Infrastructure.Persistence.Repositories.Payrrolls;
 using Infrastructure.Persistence.Repositories.TimeEntries;
 using Infrastructure.Persistence.Repositories.Employees;
 using Infrastructure.Persistence.Repositories;
-using Application.Features.Payrolls.Interfaces;
+using Application.Features.Payrolls.Payroll.Interfaces;
 using Application.Common.Interfaces;
 using Infrastructure.Interfaces;
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
-using Application.Features.Payrolls.Commands;
+using Application.Features.Payrolls.Payroll.Commands;
 
-namespace Application.Features.Payrolls.Validations
+namespace Application.Features.Payrolls.Payroll.Validations
 {
     public class ApprovePayrollValidation : AbstractValidator<ApprovePayrollCommand>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Features.Payrolls.DTOs
+namespace Application.Features.Payrolls.Payroll.DTOs
 {
     public class GeneratePayrollResponse
     {

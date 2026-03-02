@@ -9,7 +9,7 @@ using Application.Features.Payrolls.Rules.Aguinaldo.Queries;
 using Application.Features.Payrolls.Rules.Aguinaldo.Validations;
 using FastEndpoints;
 
-namespace Web.API.Endpoints.Payrolls.Rules.Aguinaldos
+namespace Web.API.Endpoints.Payrolls.Rules.Aguinaldo
 {
     public class GetAguinaldoRulesPagedEndpoint
         : Endpoint<GetAguinaldoRulesPagedQuery, PagedResponse<AguinaldoRuleResponse>>

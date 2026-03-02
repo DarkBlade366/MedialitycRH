@@ -8,18 +8,18 @@ namespace Domain.Features.Payrolls.Rules
     public class DeductionRule : PayrollRule
     {
         public decimal Percentage { get; private set; }
-        public bool IsMandatory { get; private set; }
+        public string Descripcion { get; private set; } = string.Empty;
 
         private DeductionRule() : base("Deduction Rule") { }
 
-        public DeductionRule(string name, decimal percentage, bool isMandatory)
+        public DeductionRule(string name, decimal percentage, string descripcion)
             : base(name)
         {
             if (percentage <= 0 || percentage > 1)
                 throw new ArgumentException("Percentage must be between 0 and 1.");
 
             Percentage = percentage;
-            IsMandatory = isMandatory;
+            Descripcion = descripcion;
         }
     }
 }

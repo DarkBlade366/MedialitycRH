@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Features.Payrolls.Aggregates;
 
-namespace Application.Features.Payrolls.Interfaces
+namespace Application.Features.Payrolls.Payroll.Interfaces
 {
     public interface IPayrollPdfGenerator
     {
-        byte[] Generate(Payroll payroll, string employeeName);
+        byte[] Generate(Domain.Features.Payrolls.Aggregates.Payroll payroll, string employeeName);
     }
 }

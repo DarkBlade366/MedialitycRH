@@ -24,6 +24,12 @@ namespace Application.Features.Payrolls.Rules.BaseSalary.Handlers
         public async Task HandleAsync(ChangeBaseSalaryRuleStatusCommand command)
         {
             var rule = await _repository.GetByIdAsync(command.Id);
+
+            var existingActive = (await _repository.GetAllAsync())
+                .Any(r => r.IsActive);
+        
+            if (existingActive)
+                throw new Exception("A base salary rule is already disabled; enable it.");
     
             if (rule is null)
                 throw new Exception("Base salary rule not found.");

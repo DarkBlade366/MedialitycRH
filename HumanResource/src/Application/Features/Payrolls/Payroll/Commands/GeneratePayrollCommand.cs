@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Features.Payrolls.Commands
+namespace Application.Features.Payrolls.Payroll.Commands
 {
     public class GeneratePayrollCommand
     {

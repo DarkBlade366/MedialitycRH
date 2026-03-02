@@ -7,9 +7,9 @@ using FluentValidation;
 
 namespace Application.Features.Payrolls.Rules.Aguinaldo.Validations
 {
-    public class GetAguinaldoByIdValidator : AbstractValidator<GetAguinaldoRuleByIdQuery>
+    public class GetAguinaldoRuleByIdValidator : AbstractValidator<GetAguinaldoRuleByIdQuery>
     {
-        public GetAguinaldoByIdValidator()
+        public GetAguinaldoRuleByIdValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("El ID es requerido.");

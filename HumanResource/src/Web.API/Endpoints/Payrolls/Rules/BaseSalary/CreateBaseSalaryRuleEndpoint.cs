@@ -10,11 +10,11 @@ using FastEndpoints;
 
 namespace Web.API.Endpoints.Payrolls.Rules.BaseSalary
 {
-    public class CreateBaseSalaryEndpoint : Endpoint<CreateBaseSalaryRuleCommand, BaseSalaryRuleResponse>
+    public class CreateBaseSalaryRuleEndpoint : Endpoint<CreateBaseSalaryRuleCommand, BaseSalaryRuleResponse>
     {
         private readonly CreateBaseSalaryRuleHandler _handler;
 
-        public CreateBaseSalaryEndpoint(CreateBaseSalaryRuleHandler handler)
+        public CreateBaseSalaryRuleEndpoint(CreateBaseSalaryRuleHandler handler)
         {
             _handler = handler;
         }

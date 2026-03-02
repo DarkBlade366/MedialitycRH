@@ -7,7 +7,6 @@ using Application.Auth.Validations;
 using Application.Features.Redmine.Handlers;
 using Application.Features.TimeEntries.Handlers;
 using Application.Features.TimeEntries.Validations;
-using Application.Features.Payrolls.Validations;
 using Application.Features.Projects.Handlers;
 using Application.Features.Projects.Validations;
 using Application.Features.Milestones.Handlers;
@@ -18,6 +17,11 @@ using Application.Features.Payrolls.Rules.Aguinaldo.Handlers;
 using Application.Features.Payrolls.Rules.Aguinaldo.Validations;
 using Application.Features.Payrolls.Rules.BaseSalary.Handlers;
 using Application.Features.Payrolls.Rules.BaseSalary.Validations;
+using Application.Features.Payrolls.Payroll.Validations;
+using Application.Features.Payrolls.Rules.Overtime.Handlers;
+using Application.Features.Payrolls.Rules.Overtime.Validations;
+using Application.Features.Payrolls.Rules.Productivity.Handlers;
+using Application.Features.Payrolls.Rules.Productivity.Validations;
 
 namespace Application
 {
@@ -54,6 +58,15 @@ namespace Application
             services.AddScoped<ChangeBaseSalaryRuleStatusHandler>();
             services.AddScoped<GetBaseSalaryRuleByIdHandler>();
             services.AddScoped<GetBaseSalaryRulesPagedHandler>();
+            services.AddScoped<CreateOvertimeRuleHandler>();
+            services.AddScoped<ChangeOvertimeRuleStatusHandler>();
+            services.AddScoped<GetOvertimeRuleByIdHandler>();
+            services.AddScoped<GetOvertimeRulesPagedHandler>();
+            services.AddScoped<CreateProductivityRuleHandler>();
+            services.AddScoped<ChangeProductivityRuleStatusHandler>();
+            services.AddScoped<GetProductivityRuleByIdHandler>();
+            services.AddScoped<GetProductivityRulesPagedHandler>();
+
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
             // services.AddScoped<GetPayrollPdfHandler>();
@@ -80,11 +93,19 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<CreateAguinaldoRuleValidator>();
             services.AddValidatorsFromAssemblyContaining<ChangeAguinaldoRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetAguinaldoRulesPagedValidator>();
-            services.AddValidatorsFromAssemblyContaining<GetAguinaldoByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetAguinaldoRuleByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateBaseSalaryRuleValidator>();
             services.AddValidatorsFromAssemblyContaining<ChangeBaseSalaryRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetBaseSalaryRuleByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetBaseSalaryRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateOvertimeRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeOvertimeRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetOvertimeRuleByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetOvertimeRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateProductivityRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeProductivityRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProductivityRuleByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProductivityRulesPagedValidator>();
 
 
             return services;

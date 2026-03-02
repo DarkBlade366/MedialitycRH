@@ -8,12 +8,12 @@ using Application.Features.Payrolls.Rules.Aguinaldo.Handlers;
 using Application.Features.Payrolls.Rules.Aguinaldo.Validations;
 using FastEndpoints;
 
-namespace Web.API.Endpoints.Payrolls.Rules.Aguinaldos
+namespace Web.API.Endpoints.Payrolls.Rules.Aguinaldo
 {
-    public class CreateAguinaldoEndpoint : Endpoint<CreateAguinaldoRuleCommand, AguinaldoRuleResponse>
+    public class CreateAguinaldoRuleEndpoint : Endpoint<CreateAguinaldoRuleCommand, AguinaldoRuleResponse>
     {
         private readonly CreateAguinaldoRuleHandler _handler;
-        public CreateAguinaldoEndpoint(CreateAguinaldoRuleHandler handler)
+        public CreateAguinaldoRuleEndpoint(CreateAguinaldoRuleHandler handler)
         {
             _handler = handler;
         }
