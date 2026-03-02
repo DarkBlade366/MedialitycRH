@@ -17,16 +17,14 @@ namespace Domain.Features.Payrolls.Services.Calculators
         {
             var rule = context.VacationRule;
 
-            if (rule == null)
-                return;
-
-            if (!rule.PayVacationOnUse || context.VacationDaysUsed <= 0)
+            if (rule == null || context.VacationDaysUsed <= 0)
                 return;
 
             var baseSalaryRule = context.BaseSalaryRules
                 .FirstOrDefault(r =>
                         r.Role == context.EmployeeRole &&
                         r.IsActive);
+                        
             if (baseSalaryRule == null)
                 throw new Exception("No active base salary rule found for employee role.");
 

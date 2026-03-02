@@ -25,9 +25,6 @@ namespace Application.Features.Payrolls.Rules.Vacation.Handlers
             if (query.IsActive.HasValue)
                 allRules = allRules.Where(r => r.IsActive == query.IsActive.Value).ToList();
     
-            if (query.PayVacationOnUse.HasValue)
-                allRules = allRules.Where(r => r.PayVacationOnUse == query.PayVacationOnUse.Value).ToList();
-    
             var totalItems = allRules.Count;
 
             var paged = allRules
@@ -37,7 +34,6 @@ namespace Application.Features.Payrolls.Rules.Vacation.Handlers
                 {
                     Id = r.Id,
                     AccrualRatePerMonth = r.AccrualRatePerMonth,
-                    PayVacationOnUse = r.PayVacationOnUse,
                     IsActive = r.IsActive
                 })
                 .ToList();

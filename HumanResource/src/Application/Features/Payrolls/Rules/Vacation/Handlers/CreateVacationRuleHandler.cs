@@ -36,8 +36,7 @@ namespace Application.Features.Payrolls.Rules.Vacation.Handlers
                 throw new Exception("A vacation rule is already disabled; enable it.");
 
             var rule = new VacationRule(
-                command.AccrualRatePerMonth,
-                command.PayVacationOnUse);
+                command.AccrualRatePerMonth);
 
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();
@@ -46,15 +45,8 @@ namespace Application.Features.Payrolls.Rules.Vacation.Handlers
             {
                 Id = rule.Id,
                 AccrualRatePerMonth = rule.AccrualRatePerMonth,
-                PayVacationOnUse = rule.PayVacationOnUse,
                 IsActive = rule.IsActive
             };
         }
-
-        // var existingActive = (await _repository.GetAllAsync())
-        //         .Any(r => r.IsActive);
-        
-        //     if (existingActive)
-        //         throw new Exception("There is already an active vacation rule.");
     }
 }

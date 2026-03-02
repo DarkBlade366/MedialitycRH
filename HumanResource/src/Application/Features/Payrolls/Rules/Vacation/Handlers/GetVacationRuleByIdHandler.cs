@@ -28,7 +28,6 @@ namespace Application.Features.Payrolls.Rules.Vacation.Handlers
             {
                 Id = rule.Id,
                 AccrualRatePerMonth = rule.AccrualRatePerMonth,
-                PayVacationOnUse = rule.PayVacationOnUse,
                 IsActive = rule.IsActive
             };
         }

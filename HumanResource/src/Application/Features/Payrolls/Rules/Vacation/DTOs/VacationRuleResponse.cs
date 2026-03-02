@@ -9,7 +9,6 @@ namespace Application.Features.Payrolls.Rules.Vacation.DTOs
     {
         public Guid Id { get; set; }
         public decimal AccrualRatePerMonth { get; set; }
-        public bool PayVacationOnUse { get; set; }
         public bool IsActive { get; set; }
     }
 }

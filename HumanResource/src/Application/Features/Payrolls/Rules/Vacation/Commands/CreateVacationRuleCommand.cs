@@ -8,6 +8,5 @@ namespace Application.Features.Payrolls.Rules.Vacation.Commands
     public class CreateVacationRuleCommand
     {
         public decimal AccrualRatePerMonth { get; set; }
-        public bool PayVacationOnUse { get; set; }
     }
 }

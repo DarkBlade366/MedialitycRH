@@ -30,8 +30,7 @@ namespace Web.API.Endpoints.Payrolls.Rules.Vacation
                 s.Description = "Defines how many days are accrued per month and whether vacation is paid on use.";
                 s.ExampleRequest = new CreateVacationRuleCommand
                 {
-                    AccrualRatePerMonth = 1.25m,
-                    PayVacationOnUse = true
+                    AccrualRatePerMonth = 1.25m
                 };
             });
         }

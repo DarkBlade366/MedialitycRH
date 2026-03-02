@@ -84,8 +84,6 @@ namespace Domain.Features.Employees.Aggregates
             MarkUpdated();
         }
 
-        // 👇 MÉTODOS DE DOMINIO PARA BALANCES
-
         public void AccrueAguinaldo(decimal amount)
         {
             _aguinaldoBalance.Accrue(amount);
