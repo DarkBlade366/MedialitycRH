@@ -16,8 +16,8 @@ namespace Domain.Features.Payrolls.Rules
 
         private DeductionRule() : base("Deduction Rule") { }
 
-        public DeductionRule(string name, decimal percentage, string description, DeductionType type)
-            : base(name)
+        public DeductionRule(decimal percentage, string description, DeductionType type)
+            : base("Deduction Rule")
         {
             if (string.IsNullOrWhiteSpace(description))
                 throw new ArgumentException("Description cannot be empty.");

@@ -22,6 +22,8 @@ using Application.Features.Payrolls.Rules.Overtime.Handlers;
 using Application.Features.Payrolls.Rules.Overtime.Validations;
 using Application.Features.Payrolls.Rules.Productivity.Handlers;
 using Application.Features.Payrolls.Rules.Productivity.Validations;
+using Application.Features.Payrolls.Rules.Deduction.Handlers;
+using Application.Features.Payrolls.Rules.Deduction.Validations;
 
 namespace Application
 {
@@ -66,6 +68,10 @@ namespace Application
             services.AddScoped<ChangeProductivityRuleStatusHandler>();
             services.AddScoped<GetProductivityRuleByIdHandler>();
             services.AddScoped<GetProductivityRulesPagedHandler>();
+            services.AddScoped<CreateDeductionRuleHandler>();
+            services.AddScoped<ChangeDeductionRuleStatusHandler>();
+            services.AddScoped<GetDeductionRuleByIdHandler>();
+            services.AddScoped<GetDeductionRulesPagedHandler>();
 
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
@@ -106,6 +112,10 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeProductivityRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProductivityRuleByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProductivityRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateDeductionRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeDeductionRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetDeductionRuleByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetDeductionRulesPagedValidator>();
 
 
             return services;

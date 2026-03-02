@@ -11,7 +11,7 @@ using FastEndpoints;
 
 namespace Web.API.Endpoints.Payrolls.Rules.Milestones
 {
-    public class GetMilestoneRuleByIdEndpoint: Endpoint<GetMilestoneRuleByIdQuery, MilestoneRuleResponse>
+    public class GetMilestoneRuleByIdEndpoint : Endpoint<GetMilestoneRuleByIdQuery, MilestoneRuleResponse>
     {
         private readonly GetMilestoneRuleByIdHandler _handler;
     

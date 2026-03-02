@@ -31,9 +31,13 @@ namespace Application.Features.Payrolls.Rules.Overtime.Handlers
 
             var existingActive = (await _repository.GetAllAsync())
                 .Any(r => r.IsActive);
+            var existingInactive = (await _repository.GetAllAsync())
+                .Any(r => !r.IsActive);
         
             if (existingActive)
                 throw new Exception("There is already an active overtime rule.");
+            if (existingInactive)
+                throw new Exception("An overtime rule is already disabled; enable it.");
 
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

@@ -11,7 +11,15 @@ namespace Application.Features.Payrolls.Rules.Deduction.Validations
     {
         public CreateDeductionRuleValidator()
         {
-            
+            RuleFor(x => x.Description)
+                .NotEmpty().WithMessage("Description is required.");
+
+            RuleFor(x => x.Percentage)
+                .GreaterThan(0).WithMessage("Percentage must be greater than 0.")
+                .LessThanOrEqualTo(1).WithMessage("Percentage cannot be greater than 1.");
+
+            RuleFor(x => x.Type)
+                .NotEmpty().WithMessage("A DeductionType is required");
         }
     }
 }

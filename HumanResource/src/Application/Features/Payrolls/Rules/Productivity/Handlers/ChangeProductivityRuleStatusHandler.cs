@@ -28,12 +28,6 @@ namespace Application.Features.Payrolls.Rules.Productivity.Handlers
             if (rule is null)
                 throw new Exception("Productivity rule not found.");
 
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("A productivity rule is already disabled; enable it.");
-    
             if (command.IsActive)
                 if (rule.IsActive)
                     throw new Exception("Productivity rule is already active.");

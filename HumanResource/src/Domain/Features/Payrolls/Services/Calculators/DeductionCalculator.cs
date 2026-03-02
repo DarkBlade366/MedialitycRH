@@ -49,6 +49,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                     amount,
                     rule.Id
                 ));
+
+                payroll.AddDeductionPayment(rule.Id, amount, DateTime.UtcNow);
             }
         }
     }

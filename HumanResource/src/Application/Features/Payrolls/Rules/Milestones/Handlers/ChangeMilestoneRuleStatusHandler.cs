@@ -27,12 +27,6 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
     
             if (rule is null)
                 throw new Exception("Milestone rule not found.");
-
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("A milestone rule is already disabled; enable it.");
     
             if (command.IsActive)
                 if (rule.IsActive)

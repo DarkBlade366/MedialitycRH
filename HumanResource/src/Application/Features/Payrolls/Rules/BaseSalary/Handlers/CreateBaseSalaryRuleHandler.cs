@@ -27,14 +27,18 @@ namespace Application.Features.Payrolls.Rules.BaseSalary.Handlers
         public async Task<BaseSalaryRuleResponse> HandleAsync(CreateBaseSalaryRuleCommand command)
         {
             var roleEnum = Enum.Parse<EmployeeRole>(command.Role, true);
+
+            var rule = new BaseSalaryRule(roleEnum, command.Amount);
             
             var existingActive = (await _repository.GetAllAsync())
                 .Any(x => x.Role == roleEnum && x.IsActive);
+            var existingInactive = (await _repository.GetAllAsync())
+                .Any(x => x.Role == roleEnum && !x.IsActive);
     
             if (existingActive)
                 throw new Exception("There is already an active base salary rule for this role.");
-    
-            var rule = new BaseSalaryRule(roleEnum, command.Amount);
+            if (existingActive)
+                throw new Exception("A base salary rule for this role is already disabled; enable it.");
     
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

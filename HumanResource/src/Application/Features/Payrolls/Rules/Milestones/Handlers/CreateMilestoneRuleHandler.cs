@@ -32,9 +32,13 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
 
             var existingActive = (await _repository.GetAllAsync())
                 .Any(r => r.IsActive);
+            var existingInactive = (await _repository.GetAllAsync())
+                .Any(r => !r.IsActive);
         
             if (existingActive)
                 throw new Exception("There is already an active milestone rule.");
+            if (existingInactive)
+                throw new Exception("A milestone rule is already disabled; enable it.");
     
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

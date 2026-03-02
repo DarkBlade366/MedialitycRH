@@ -42,7 +42,6 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestones
             CancellationToken ct)
         {
             var result = await _handler.HandleAsync(req);
-
             await Send.OkAsync(result);
         }
     }

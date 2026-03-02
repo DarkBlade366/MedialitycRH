@@ -24,12 +24,6 @@ namespace Application.Features.Payrolls.Rules.Aguinaldo.Handlers
         public async Task HandleAsync(ChangeAguinaldoRuleStatusCommand command)
         {
             var rule = await _repository.GetByIdAsync(command.Id);
-
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("An aguinaldo rule is already disabled; enable it.");
     
             if (rule is null)
                 throw new Exception("Aguinaldo rule not found.");

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Features.Payrolls.Enums;
 
 namespace Application.Features.Payrolls.Rules.Deduction.Queries
 {
@@ -9,5 +10,7 @@ namespace Application.Features.Payrolls.Rules.Deduction.Queries
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
+        public bool? IsActive { get; set; }
+        public DeductionType? Type { get; set; }
     }
 }

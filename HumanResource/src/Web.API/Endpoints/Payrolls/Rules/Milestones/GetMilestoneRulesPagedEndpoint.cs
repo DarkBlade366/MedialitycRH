@@ -6,6 +6,7 @@ using Application.Common;
 using Application.Features.Payrolls.Rules.Milestones.DTOs;
 using Application.Features.Payrolls.Rules.Milestones.Handlers;
 using Application.Features.Payrolls.Rules.Milestones.Queries;
+using Application.Features.Payrolls.Rules.Milestones.Validations;
 using FastEndpoints;
 
 namespace Web.API.Endpoints.Payrolls.Rules.Milestones
@@ -24,6 +25,7 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestones
         {
             Get("/milestone-rules");
             Roles("Administrator");
+            Validator<GetMilestoneRulesPagedValidator>();
             Summary(s =>
             {
                 s.Summary = "Get a paginated list of milestone rules.";
@@ -41,7 +43,6 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestones
             CancellationToken ct)
         {
             var result = await _handler.HandleAsync(req);
-
             await Send.OkAsync(result);
         }
     }

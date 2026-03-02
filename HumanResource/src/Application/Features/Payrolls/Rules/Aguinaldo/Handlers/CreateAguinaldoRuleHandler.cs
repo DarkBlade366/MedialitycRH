@@ -31,9 +31,13 @@ namespace Application.Features.Payrolls.Rules.Aguinaldo.Handlers
 
             var existingActive = (await _repository.GetAllAsync())
                 .Any(r => r.IsActive);
+            var existingInactive = (await _repository.GetAllAsync())
+                .Any(r => !r.IsActive);
         
             if (existingActive)
                 throw new Exception("There is already an active aguinaldo rule.");
+            if (existingInactive)
+                throw new Exception("An aguinaldo rule is already disabled; enable it.");
 
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

@@ -27,12 +27,6 @@ namespace Application.Features.Payrolls.Rules.Overtime.Handlers
     
             if (rule is null)
                 throw new Exception("Overtime rule not found.");
-
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("An overtime rule is already disabled; enable it.");
     
             if (command.IsActive)
                 if (rule.IsActive)
