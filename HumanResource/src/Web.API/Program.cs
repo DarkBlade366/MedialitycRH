@@ -12,6 +12,7 @@ using Infrastructure.Seed;
 using Domain.Features.Payrolls.Services.Engines;
 using Domain.Features.Payrolls.Services.Interfaces;
 using Domain.Features.Payrolls.Services.Calculators;
+using Web.API.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,9 @@ builder.Services.AddScoped<IEarningCalculator, MilestoneCalculator>();
 builder.Services.AddScoped<IEarningCalculator, AguinaldoCalculator>();
 builder.Services.AddScoped<IEarningCalculator, VacationCalculator>();
 builder.Services.AddScoped<IDeductionCalculator, DeductionCalculator>();
+
+//Services
+builder.Services.AddHostedService<VacationAccrualBackgroundService>();
 
 // Configuración JWT 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -26,6 +26,7 @@ using Application.Features.Payrolls.Rules.Deduction.Handlers;
 using Application.Features.Payrolls.Rules.Deduction.Validations;
 using Application.Features.Payrolls.Rules.Vacation.Validations;
 using Application.Features.Payrolls.Rules.Vacation.Handlers;
+using Application.Services;
 
 namespace Application
 {
@@ -131,6 +132,8 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetVacationBalanceQueryValidator>();
             services.AddValidatorsFromAssemblyContaining<UseVacationCommandValidator>();
 
+            //other services
+            services.AddScoped<VacationAccrualService>();
 
             return services;
         }

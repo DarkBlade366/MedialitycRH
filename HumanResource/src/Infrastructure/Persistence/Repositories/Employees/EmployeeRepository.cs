@@ -111,6 +111,8 @@ namespace Infrastructure.Persistence.Repositories.Employees
         {
             return await _context.Employees
                 .Where(e => e.IsActive)
+                .Include(e => e.VacationBalance)
+                .Include(e => e.AguinaldoBalance)
                 .ToListAsync();
         }
     }

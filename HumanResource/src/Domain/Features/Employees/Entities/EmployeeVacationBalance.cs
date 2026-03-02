@@ -15,6 +15,8 @@ namespace Domain.Features.Employees.Entities
         public decimal UsedDays { get; private set; }
         public decimal AvailableDays => AccruedDays - UsedDays;
 
+        public DateTime? LastAccrualDate { get; private set; }
+
         private EmployeeVacationBalance() { }
 
         internal EmployeeVacationBalance(Guid employeeId)
@@ -23,6 +25,7 @@ namespace Domain.Features.Employees.Entities
             EmployeeId = employeeId;
             AccruedDays = 0;
             UsedDays = 0;
+            LastAccrualDate = null;
         }
 
         internal void Accrue(decimal days)
@@ -31,6 +34,7 @@ namespace Domain.Features.Employees.Entities
                 throw new ArgumentException("Days must be positive.");
 
             AccruedDays += days;
+            LastAccrualDate = DateTime.UtcNow;
             MarkUpdated();
         }
 
@@ -44,6 +48,15 @@ namespace Domain.Features.Employees.Entities
 
             UsedDays += days;
             MarkUpdated();
+        }
+
+        public bool HasAccruedThisMonth()
+        {
+            if (!LastAccrualDate.HasValue)
+                return false;
+
+            var now = DateTime.UtcNow;
+            return LastAccrualDate.Value.Year == now.Year && LastAccrualDate.Value.Month == now.Month;
         }
     }
 }
