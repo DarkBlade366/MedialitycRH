@@ -12,7 +12,7 @@ namespace Application.Features.Payrolls.Rules.Deduction.Validations
         public ChangeDeductionRuleStatusValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("Deduction Id is required.");
         }
     }
 }

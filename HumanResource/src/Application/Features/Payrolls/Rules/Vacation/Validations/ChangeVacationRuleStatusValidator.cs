@@ -12,7 +12,7 @@ namespace Application.Features.Payrolls.Rules.Vacation.Validations
         public ChangeVacationRuleStatusValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("Vacation Id is required.");
         }
     }
 }

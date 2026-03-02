@@ -12,7 +12,7 @@ namespace Application.Features.Payrolls.Rules.Milestones.Validations
         public ChangeMilestoneRuleStatusValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("Milestone Id is required.");
         }
     }
 }

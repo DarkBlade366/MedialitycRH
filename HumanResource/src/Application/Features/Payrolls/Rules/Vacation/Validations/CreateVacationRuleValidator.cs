@@ -11,7 +11,9 @@ namespace Application.Features.Payrolls.Rules.Vacation.Validations
     { 
         public CreateVacationRuleValidator()
         {
-            
+            RuleFor(x => x.AccrualRatePerMonth)
+                .GreaterThan(0).WithMessage("Accrual rate must be greater than 0.")
+                .LessThanOrEqualTo(5).WithMessage("Accrual rate cannot exceed 5 days per month.");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Application.Features.Payrolls.Rules.Aguinaldo.Validations
         public ChangeAguinaldoRuleStatusValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("Aguinaldo Id is required.");
         }
     }
 }

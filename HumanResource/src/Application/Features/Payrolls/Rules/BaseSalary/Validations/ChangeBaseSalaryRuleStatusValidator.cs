@@ -12,7 +12,7 @@ namespace Application.Features.Payrolls.Rules.BaseSalary.Validations
         public ChangeBaseSalaryRuleStatusValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("BaseSalary Id is required.");
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Features.Payrolls.Aggregates;
+using Domain.Features.Payrolls.Aggregates.Payments;
 using Domain.Features.Payrolls.Entities;
 using Domain.Features.Payrolls.Enums;
 using Domain.Features.Payrolls.Services.Context;
@@ -15,37 +16,31 @@ namespace Domain.Features.Payrolls.Services.Calculators
         public void Calculate(Payroll payroll, PayrollCalculationContext context)
         {
             var rule = context.VacationRule;
-            var balance = context.VacationBalance;
 
-            if (rule == null || balance == null)
+            if (rule == null)
                 return;
 
-            // Accrual mensual
-            balance.Accrue(rule.AccrualRatePerMonth);
+            if (!rule.PayVacationOnUse || context.VacationDaysUsed <= 0)
+                return;
 
-            // Pago por uso
-            if (rule.PayVacationOnUse && context.VacationDaysUsed > 0)
-            {   
-                var baseSalaryRule = context.BaseSalaryRules
-                    .FirstOrDefault(r =>
+            var baseSalaryRule = context.BaseSalaryRules
+                .FirstOrDefault(r =>
                         r.Role == context.EmployeeRole &&
                         r.IsActive);
+            if (baseSalaryRule == null)
+                throw new Exception("No active base salary rule found for employee role.");
 
-                if (baseSalaryRule == null)
-                    throw new Exception("No active base salary rule found for employee role.");
+            var dailyRate = baseSalaryRule.Amount / 30m;
+            var amount = dailyRate * context.VacationDaysUsed;
 
-                var dailyRate = baseSalaryRule.Amount / 30m;
-                var amount = dailyRate * context.VacationDaysUsed;
+            payroll.AddComponent(new PayrollComponent(
+                PayrollComponentType.VacationPay,
+                PayrollComponentCategory.Earning,
+                "Vacation Payment",
+                amount,
+                rule.Id));
 
-                payroll.AddComponent(new PayrollComponent(
-                    PayrollComponentType.VacationPay,
-                    PayrollComponentCategory.Earning,
-                    "Vacation Payment",
-                    amount,
-                    rule.Id));
-
-                balance.Use(context.VacationDaysUsed);
-            }
+            payroll.AddVacationPayment(rule.Id, amount, DateTime.UtcNow);
         }
     }
 }

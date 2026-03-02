@@ -24,6 +24,8 @@ using Application.Features.Payrolls.Rules.Productivity.Handlers;
 using Application.Features.Payrolls.Rules.Productivity.Validations;
 using Application.Features.Payrolls.Rules.Deduction.Handlers;
 using Application.Features.Payrolls.Rules.Deduction.Validations;
+using Application.Features.Payrolls.Rules.Vacation.Validations;
+using Application.Features.Payrolls.Rules.Vacation.Handlers;
 
 namespace Application
 {
@@ -72,6 +74,10 @@ namespace Application
             services.AddScoped<ChangeDeductionRuleStatusHandler>();
             services.AddScoped<GetDeductionRuleByIdHandler>();
             services.AddScoped<GetDeductionRulesPagedHandler>();
+            services.AddScoped<CreateVacationRuleHandler>();
+            services.AddScoped<ChangeVacationRuleStatusHandler>();
+            services.AddScoped<GetVacationRuleByIdHandler>();
+            services.AddScoped<GetVacationRulesPagedHandler>();
 
             // services.AddScoped<GeneratePayrollHandler>();
             // services.AddScoped<ApprovePayrollHandler>();
@@ -116,6 +122,10 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeDeductionRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetDeductionRuleByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetDeductionRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateVacationRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeVacationRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetVacationRuleByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetVacationRulesPagedValidator>();
 
 
             return services;

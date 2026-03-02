@@ -13,7 +13,7 @@ namespace Application.Features.Payrolls.Rules.Overtime.Validations
         public ChangeOvertimeRuleStatusValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("Overtime Id is required.");
         }
     }
 }

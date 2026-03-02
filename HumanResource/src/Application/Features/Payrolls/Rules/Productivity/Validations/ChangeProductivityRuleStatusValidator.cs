@@ -13,7 +13,7 @@ namespace Application.Features.Payrolls.Rules.Productivity.Validations
         public ChangeProductivityRuleStatusValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Employee Id is required.");
+                .NotEmpty().WithMessage("Productivity Id is required.");
         }
     }
 }
