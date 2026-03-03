@@ -25,20 +25,28 @@ namespace Application.Features.Payrolls.Rules.Aguinaldo.Handlers
 
         public async Task<AguinaldoRuleResponse> HandleAsync(CreateAguinaldoRuleCommand command)
         {
+            var allRules = (await _repository.GetAllAsync()).ToList();
+
+            var existingActive = allRules.FirstOrDefault(r => r.IsActive);
+            if (existingActive != null)
+                throw new Exception("There is already an active aguinaldo rule.");
+
+            var existingIdentical = allRules.FirstOrDefault(r =>
+                r.MonthlyAccrualPercentage == command.MonthlyAccrualPercentage &&
+                r.PayMonth == command.PayMonth);
+
+            if (existingIdentical != null)
+            {
+                if (existingIdentical.IsActive)
+                    throw new Exception("There is already an active aguinaldo rule.");
+                else
+                    throw new Exception($"An aguinaldo rule with {command.MonthlyAccrualPercentage}% monthly accrual for month {command.PayMonth} already exists but is disabled. Enable it instead of creating a new one.");
+            }
+
             var rule = new AguinaldoRule(
                 command.MonthlyAccrualPercentage,
                 command.PayMonth);
-
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-            var existingInactive = (await _repository.GetAllAsync())
-                .Any(r => !r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("There is already an active aguinaldo rule.");
-            if (existingInactive)
-                throw new Exception("An aguinaldo rule is already disabled; enable it.");
-
+            
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();
 

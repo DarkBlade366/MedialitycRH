@@ -49,5 +49,12 @@ namespace Infrastructure.Persistence.Repositories.Projects
         {
             return await _context.ProjectMilestones.ToListAsync();
         }
+
+        public async Task<bool> ExistsAsync(int redmineProjectId, string milestoneName)
+        {
+            return await _context.ProjectMilestones
+                .AnyAsync(m => m.RedmineProjectId == redmineProjectId && 
+                                m.Name == milestoneName);
+        }
     }
 }

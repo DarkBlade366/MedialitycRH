@@ -25,18 +25,28 @@ namespace Application.Features.Payrolls.Rules.Vacation.Handlers
 
         public async Task<VacationRuleResponse> HandleAsync(CreateVacationRuleCommand command)
         {
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-            var existingInactive = (await _repository.GetAllAsync())
-                .Any(r => !r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("There is already an active vacation rule.");
-            if (existingInactive)
-                throw new Exception("A vacation rule is already disabled; enable it.");
+            var allRules = (await _repository.GetAllAsync()).ToList();
 
-            var rule = new VacationRule(
-                command.AccrualRatePerMonth);
+            var active = allRules.FirstOrDefault(r => r.IsActive);
+            if (active != null)
+                throw new Exception(
+                    $"There is already an active vacation rule with accrual rate {active.AccrualRatePerMonth}.");
+
+            var identical = allRules.FirstOrDefault(r =>
+                r.AccrualRatePerMonth == command.AccrualRatePerMonth);
+
+            if (identical != null)
+            {
+                if (identical.IsActive)
+                    throw new Exception(
+                        $"A vacation rule with accrual rate {command.AccrualRatePerMonth} is already active.");
+                else
+                    throw new Exception(
+                        $"A vacation rule with accrual rate {command.AccrualRatePerMonth} already exists but is disabled. " +
+                        "Enable it instead of creating a new one.");
+            }
+
+            var rule = new VacationRule(command.AccrualRatePerMonth);
 
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

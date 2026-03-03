@@ -67,6 +67,8 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             CreatePayrollCommand command,
             CancellationToken cancellationToken)
         {
+            Console.WriteLine($"[HANDLER] Creando nómina para período: {command.periodStart} - {command.periodEnd}");
+
             //Periodo invalido
             if (command.periodStart >= command.periodEnd)
                 throw new Exception("Invalid payroll period.");
@@ -76,7 +78,7 @@ namespace Application.Features.Payrolls.Payroll.Handlers
                 .ExistsOverlappingPayroll(
                     command.employeeId, 
                     command.periodStart, 
-                        command.periodEnd);
+                    command.periodEnd);
 
             if (overlap)
                 throw new Exception("Payroll period overlaps with existing payroll.");
@@ -173,17 +175,15 @@ namespace Application.Features.Payrolls.Payroll.Handlers
                 command.periodEnd
             );
 
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
-                command.employeeId,
-                command.periodStart,
-                command.periodEnd);
+            Console.WriteLine($"[HANDLER] Contexto preparado, iniciando cálculo...");
 
-            _payrollEngine.Calculate(command.employeeId, context);
+            var payroll = _payrollEngine.Calculate(command.employeeId, context);
 
             await _payrollRepository.AddAsync(payroll);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            Console.WriteLine($"[HANDLER] Nómina creada exitosamente");
             return new PayrollResponse
             {
                 Id = payroll.Id,

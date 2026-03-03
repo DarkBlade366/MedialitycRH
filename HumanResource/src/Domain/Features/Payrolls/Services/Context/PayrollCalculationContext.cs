@@ -13,39 +13,39 @@ namespace Domain.Features.Payrolls.Services.Context
 {
     public class PayrollCalculationContext
     {
-        public int TotalWorkedHours { get; }
+        public int TotalWorkedHours { get; init; }
 
         //Salary 
-        public IReadOnlyCollection<BaseSalaryRule> BaseSalaryRules { get; }
-        public EmployeeRole EmployeeRole { get; }
+        public IReadOnlyCollection<BaseSalaryRule> BaseSalaryRules { get; init; }
+        public EmployeeRole EmployeeRole { get; init; }
 
         //Overtime
-        public IReadOnlyCollection<OvertimeRule> OvertimeRules { get; }
+        public IReadOnlyCollection<OvertimeRule> OvertimeRules { get; init; }
 
         //Deductions
-        public IReadOnlyCollection<DeductionRule> DeductionRules { get; }
+        public IReadOnlyCollection<DeductionRule> DeductionRules { get; init; }
 
         //Productivity
-        public decimal ProductivityMetric { get; }
-        public ProductivityRule? ProductivityRule { get; }
+        public decimal ProductivityMetric { get; init; }
+        public ProductivityRule? ProductivityRule { get; init; }
 
         //Vacation
-        public VacationRule? VacationRule { get; }
-        public EmployeeVacationBalance? VacationBalance { get; }
-        public decimal VacationDaysUsed { get; }
+        public VacationRule? VacationRule { get; init; }
+        public EmployeeVacationBalance? VacationBalance { get; init; }
+        public decimal VacationDaysUsed { get; init; }
 
         //Aguinaldo
-        public AguinaldoRule? AguinaldoRule { get; }
-        public EmployeeAguinaldoBalance AguinaldoBalance { get; }
+        public AguinaldoRule? AguinaldoRule { get; init; }
+        public EmployeeAguinaldoBalance AguinaldoBalance { get; init; }
 
         //Milestones
-        public IReadOnlyCollection<MilestoneRule> MilestoneRules { get; }
-        public IReadOnlyCollection<MilestoneParticipation> MilestoneParticipations { get; }
-        public IReadOnlyCollection<ProjectMilestone> ProjectMilestones { get; }
+        public IReadOnlyCollection<MilestoneRule> MilestoneRules { get; init; }
+        public IReadOnlyCollection<MilestoneParticipation> MilestoneParticipations { get; init; }
+        public IReadOnlyCollection<ProjectMilestone> ProjectMilestones { get; init; }
 
         //Period
-        public DateTime PeriodStart { get; }
-        public DateTime PeriodEnd { get; }
+        public DateTime PeriodStart { get; init; }
+        public DateTime PeriodEnd { get; init; }
 
         public PayrollCalculationContext(
             IReadOnlyCollection<BaseSalaryRule> baseSalaryRules,

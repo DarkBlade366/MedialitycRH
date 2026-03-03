@@ -37,14 +37,13 @@ namespace Infrastructure.Persistence
         public DbSet<AguinaldoPayment> AguinaldoPayments => Set<AguinaldoPayment>();
         public DbSet<MilestoneRule> MilestoneRules => Set<MilestoneRule>();
         public DbSet<MilestonePayment> MilestonePayments => Set<MilestonePayment>();
+        public DbSet<MilestoneParticipation> MilestoneParticipations => Set<MilestoneParticipation>();
         public DbSet<DeductionRule> DeductionRules => Set<DeductionRule>();
         public DbSet<DeductionRule> Deductionpayments => Set<DeductionRule>();
         public DbSet<OvertimeRule> OvertimeRules => Set<OvertimeRule>();
         public DbSet<OvertimePayment> OvertimePayments => Set<OvertimePayment>();
         public DbSet<ProductivityRule> ProductivityRules => Set<ProductivityRule>();
         public DbSet<ProductivityPayment> ProductivityPayments => Set<ProductivityPayment>();
-
-        public object MilestoneParticipations { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -29,15 +29,27 @@ namespace Application.Features.Payrolls.Rules.Deduction.Handlers
                 throw new Exception("Deduction rule not found.");
     
             if (command.IsActive)
+            {
                 if (rule.IsActive)
                     throw new Exception("Deduction rule is already active.");
-                else
-                    rule.Activate();
+
+                var anyOtherActive = (await _repository.GetAllAsync())
+                    .Any(r => r.Id != rule.Id
+                                && r.IsActive
+                                && r.Type == rule.Type
+                                && r.Description == rule.Description);
+                if (anyOtherActive)
+                    throw new Exception(
+                        $"Another active deduction rule with type '{rule.Type}' and description '{rule.Description}' already exists; deactivate it first.");
+
+                rule.Activate();
+            }
             else
+            {
                 if (!rule.IsActive)
                     throw new Exception("Deduction rule is already inactive.");
-                else
-                    rule.Deactivate();
+                rule.Deactivate();
+            }
     
             _repository.Update(rule);
             await _unitOfWork.SaveChangesAsync();

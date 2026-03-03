@@ -16,15 +16,19 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
         private readonly IMilestoneRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProjectRepository _projectRepository;
+        private readonly IProjectMilestoneRepository _projectMilestoneRepository;
+    
     
         public CreateMilestoneRuleHandler(
             IMilestoneRuleRepository repository,
             IUnitOfWork unitOfWork,
-            IProjectRepository projectRepository)
+            IProjectRepository projectRepository,
+            IProjectMilestoneRepository projectMilestoneRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _projectRepository = projectRepository;
+            _projectMilestoneRepository = projectMilestoneRepository;
         }
     
         public async Task<MilestoneRuleResponse> HandleAsync(CreateMilestoneRuleCommand command)
@@ -34,20 +38,43 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
             if (!projectExists)
                 throw new Exception($"Project with Id {command.RedmineProjectId} does not exist.");
 
+            var milestoneExists = await _projectMilestoneRepository
+                .ExistsAsync(command.RedmineProjectId, command.MilestoneName);
+            
+            if (!milestoneExists)
+                throw new Exception($"Milestone '{command.MilestoneName}' does not exist in project {command.RedmineProjectId}.");
+
+            var allRules = (await _repository.GetAllAsync()).ToList();
+        
+            var activeRule = allRules
+                .FirstOrDefault(r => r.IsActive
+                                && r.RedmineProjectId == command.RedmineProjectId
+                                && r.MilestoneName == command.MilestoneName);
+            if (activeRule != null)
+            {
+                if (activeRule.BonusAmount == command.BonusAmount)
+                    throw new Exception(
+                        $"A milestone rule for project {command.RedmineProjectId} and milestone '{command.MilestoneName}' already exists and is active.");
+                else
+                    throw new Exception(
+                        $"There is already an active milestone rule for project {command.RedmineProjectId} and milestone '{command.MilestoneName}' " +
+                        $"with bonus {activeRule.BonusAmount:C}. disable it before creating a different one.");
+            }
+
+            var inactiveRule = allRules
+                .FirstOrDefault(r => !r.IsActive
+                                    && r.RedmineProjectId == command.RedmineProjectId
+                                    && r.MilestoneName == command.MilestoneName);
+            if (inactiveRule != null)
+            {
+                if (inactiveRule.BonusAmount == command.BonusAmount)
+                    throw new Exception($"A milestone rule for project {command.RedmineProjectId} and milestone {command.MilestoneName} with bonus {command.BonusAmount} already exists but is disabled. Enable it instead of creating a new one.");
+            }
+
             var rule = new MilestoneRule(
                 command.RedmineProjectId,
                 command.MilestoneName,
                 command.BonusAmount);
-
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-            var existingInactive = (await _repository.GetAllAsync())
-                .Any(r => !r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("There is already an active milestone rule.");
-            if (existingInactive)
-                throw new Exception("A milestone rule is already disabled; enable it.");
     
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

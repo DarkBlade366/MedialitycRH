@@ -27,23 +27,38 @@ namespace Application.Features.Payrolls.Rules.Productivity.Handlers
         public async Task<ProductivityRuleResponse> HandleAsync(CreateProductivityRuleCommand command)
         {
             var bonusType = Enum.Parse<BonusType>(command.BonusType, true);
-    
+            
+            var all = (await _repository.GetAllAsync()).ToList();
+        
+            if (all.Any(r => r.IsActive))
+                throw new Exception("There is already an active productivity rule; deactivate it first.");
+                
+            var identical = all.FirstOrDefault(r =>
+                r.MinimumTarget == command.MinimumTarget &&
+                r.FullBonusTarget == command.FullBonusTarget &&
+                r.BonusValue == command.BonusValue &&
+                r.BonusType == bonusType &&
+                r.MaxBonusCap == command.MaxBonusCap);
+        
+            if (identical != null)
+            {
+                if (identical.IsActive)
+                    throw new Exception(
+                        $"A productivity rule (min {command.MinimumTarget}, full {command.FullBonusTarget}, " +
+                        $"bonus {command.BonusValue} {command.BonusType}, cap {command.MaxBonusCap}) already exists and is active.");
+                else
+                    throw new Exception(
+                        $"A productivity rule (min {command.MinimumTarget}, full {command.FullBonusTarget}, " +
+                        $"bonus {command.BonusValue} {command.BonusType}, cap {command.MaxBonusCap}) already exists but is disabled. " +
+                        "Enable it instead of creating a new one.");
+            }
+        
             var rule = new ProductivityRule(
                 command.MinimumTarget,
                 command.FullBonusTarget,
                 command.BonusValue,
                 bonusType,
                 command.MaxBonusCap);
-    
-            var existingActive = (await _repository.GetAllAsync())
-                .Any(r => r.IsActive);
-            var existingInactive = (await _repository.GetAllAsync())
-                .Any(r => !r.IsActive);
-        
-            if (existingActive)
-                throw new Exception("There is already an active productivity rule.");
-            if (existingInactive)
-                throw new Exception("A productivity rule is already disabled; enable it.");
             
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();

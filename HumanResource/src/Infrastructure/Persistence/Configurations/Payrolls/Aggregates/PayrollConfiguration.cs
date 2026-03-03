@@ -24,9 +24,9 @@ namespace Infrastructure.Persistence.Configurations.Payrolls.Aggregates
                     .HasForeignKey("PayrollId")
                     .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Ignore(p => p.GrossAmount);
-            builder.Ignore(p => p.TotalDeductions);
-            builder.Ignore(p => p.NetAmount);
+            builder.Property(p => p.GrossAmount).IsRequired();
+            builder.Property(p => p.TotalDeductions).IsRequired();
+            builder.Property(p => p.NetAmount).IsRequired();
         }
     }
 }

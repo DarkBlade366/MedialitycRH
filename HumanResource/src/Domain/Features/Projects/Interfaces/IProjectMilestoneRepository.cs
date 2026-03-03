@@ -13,5 +13,6 @@ namespace Domain.Features.Projects.Interfaces
         Task AddRangeAsync(List<ProjectMilestone> milestones);
         Task<List<ProjectMilestone>> GetCompletedAsync();
         Task<List<ProjectMilestone>> GetAllAsync();
+        Task<bool> ExistsAsync(int redmineProjectId, string milestoneName);
     }
 }

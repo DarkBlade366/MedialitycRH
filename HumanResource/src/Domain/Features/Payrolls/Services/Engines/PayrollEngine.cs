@@ -29,19 +29,35 @@ namespace Domain.Features.Payrolls.Services.Engines
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
+            Console.WriteLine($"[PAYROLL ENGINE] Iniciando cálculo para empleado: {employeeId}");
+            Console.WriteLine($"[PAYROLL ENGINE] Período: {context.PeriodStart} - {context.PeriodEnd}");
+            Console.WriteLine($"[PAYROLL ENGINE] Earnings calculators: {_earningCalculators.Count()}");
+            Console.WriteLine($"[PAYROLL ENGINE] Deduction calculators: {_deductionCalculators.Count()}");
+
             var payroll = new Payroll(employeeId, context.PeriodStart, context.PeriodEnd);
+
+            Console.WriteLine($"[PAYROLL ENGINE] Ejecutando earnings...");
 
             foreach (var earning in _earningCalculators)
             {
+                Console.WriteLine($"[PAYROLL ENGINE] Ejecutando earning: {earning.GetType().Name}");
                 earning.Calculate(payroll, context);
             }
 
+            Console.WriteLine($"[PAYROLL ENGINE] Ejecutando deductions...");
+
             foreach (var deduction in _deductionCalculators)
             {
+                Console.WriteLine($"[PAYROLL ENGINE] Ejecutando deduction: {deduction.GetType().Name}");
                 deduction.Calculate(payroll, context);
             }
 
             payroll.MarkAsCalculated();
+
+            Console.WriteLine($"[PAYROLL ENGINE] Total Earnings: {payroll.GrossAmount}");
+            Console.WriteLine($"[PAYROLL ENGINE] Total Deductions: {payroll.TotalDeductions}");
+            Console.WriteLine($"[PAYROLL ENGINE] Net Amount: {payroll.NetAmount}");
+            Console.WriteLine($"[PAYROLL ENGINE] Cálculo completado");
 
             return payroll;
         }

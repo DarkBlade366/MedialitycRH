@@ -29,15 +29,28 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
                 throw new Exception("Milestone rule not found.");
     
             if (command.IsActive)
+            {
                 if (rule.IsActive)
                     throw new Exception("Milestone rule is already active.");
-                else
-                    rule.Activate();
+
+                var anyOtherActive = (await _repository.GetAllAsync())
+                    .Any(r => r.Id != rule.Id
+                                && r.IsActive
+                                && r.RedmineProjectId == rule.RedmineProjectId
+                                && r.MilestoneName == rule.MilestoneName);
+                if (anyOtherActive)
+                    throw new Exception(
+                        $"Another active milestone rule already exists for project {rule.RedmineProjectId} " +
+                        $"and milestone '{rule.MilestoneName}'. deactivate it first.");
+
+                rule.Activate();
+            }
             else
+            {
                 if (!rule.IsActive)
                     throw new Exception("Milestone rule is already inactive.");
-                else
-                    rule.Deactivate();
+                rule.Deactivate();
+            }
     
             _repository.Update(rule);
     

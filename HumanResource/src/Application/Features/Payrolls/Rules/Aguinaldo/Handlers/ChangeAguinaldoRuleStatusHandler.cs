@@ -29,15 +29,24 @@ namespace Application.Features.Payrolls.Rules.Aguinaldo.Handlers
                 throw new Exception("Aguinaldo rule not found.");
     
             if (command.IsActive)
+            {
                 if (rule.IsActive)
                     throw new Exception("Aguinaldo rule is already active.");
-                else
-                    rule.Activate();
+
+                var anotherActive = (await _repository.GetAllAsync())
+                    .Any(r => r.Id != rule.Id && r.IsActive);
+                if (anotherActive)
+                    throw new Exception("There is already an active aguinaldo rule; deactivate it first.");
+
+                rule.Activate();
+            }
             else
+            {
                 if (!rule.IsActive)
                     throw new Exception("Aguinaldo rule is already inactive.");
-                else
-                    rule.Deactivate();
+
+                rule.Deactivate();
+            }
     
             _repository.Update(rule);
             await _unitOfWork.SaveChangesAsync();

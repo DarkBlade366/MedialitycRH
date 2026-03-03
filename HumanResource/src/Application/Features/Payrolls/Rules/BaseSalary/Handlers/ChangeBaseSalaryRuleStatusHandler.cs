@@ -29,15 +29,26 @@ namespace Application.Features.Payrolls.Rules.BaseSalary.Handlers
                 throw new Exception("Base salary rule not found.");
     
             if (command.IsActive)
+            {
                 if (rule.IsActive)
-                    throw new Exception("BaseSalary rule is already active.");
-                else
-                    rule.Activate();
+                    throw new Exception("Base salary rule is already active.");
+
+                var anotherActive = (await _repository.GetAllAsync())
+                    .Any(r => r.Id != rule.Id
+                                && r.IsActive
+                                && r.Role == rule.Role);
+                if (anotherActive)
+                    throw new Exception(
+                        $"Another active base salary rule for role '{rule.Role}' already exists; deactivate it first.");
+
+                rule.Activate();
+            }
             else
+            {
                 if (!rule.IsActive)
-                    throw new Exception("BaseSalary rule is already inactive.");
-                else
-                    rule.Deactivate();
+                    throw new Exception("Base salary rule is already inactive.");
+                rule.Deactivate();
+            }
     
             _repository.Update(rule);
             await _unitOfWork.SaveChangesAsync();

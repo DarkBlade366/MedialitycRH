@@ -29,15 +29,25 @@ namespace Application.Features.Payrolls.Rules.Vacation.Handlers
                 throw new Exception("Vacation rule not found.");
     
             if (command.IsActive)
+            {
                 if (rule.IsActive)
                     throw new Exception("Vacation rule is already active.");
-                else
+        
+                var anotherActive = (await _repository.GetAllAsync())
+                    .Any(r => r.Id != rule.Id && r.IsActive);
+                if (anotherActive)
+                    throw new Exception(
+                        "There is already an active vacation rule; deactivate it before activating this one.");
+        
                 rule.Activate();
+            }
             else
+            {
                 if (!rule.IsActive)
                     throw new Exception("Vacation rule is already inactive.");
-                else
-                    rule.Deactivate();
+        
+                rule.Deactivate();
+            }
     
             _repository.Update(rule);
             await _unitOfWork.SaveChangesAsync();
