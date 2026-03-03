@@ -10,6 +10,7 @@ namespace Application.Features.Payrolls.Rules.Overtime.DTOs
         public Guid Id { get; set; }
         public int StandardHoursPerPeriod { get; set; }
         public decimal OvertimeMultiplier { get; set; }
+        public decimal HourlyRate { get; set; }
         public bool IsActive { get; set; }
     }
 }

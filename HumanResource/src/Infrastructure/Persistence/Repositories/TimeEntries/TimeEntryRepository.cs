@@ -79,5 +79,20 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
 
             return (items, totalCount);
         }
+
+        public async Task<int> GetWorkedHours(
+            Guid employeeId,
+            DateTime periodStart,
+            DateTime periodEnd)
+        {
+            var total = await _context.TimeEntries
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    x.SpentOn >= periodStart &&
+                    x.SpentOn <= periodEnd)
+                .SumAsync(x => (decimal?)x.Hours);
+        
+            return (int)(total ?? 0m);
+        }
     }
 }

@@ -15,8 +15,6 @@ using Infrastructure.Persistence.Repositories.Projects;
 using Infrastructure.Persistence.Repositories.Payrrolls;
 using Infrastructure.Persistence.Repositories.TimeEntries;
 using Infrastructure.Persistence.Repositories.Employees;
-using Infrastructure.Persistence.Repositories;
-using Application.Features.Payrolls.Payroll.Interfaces;
 using Application.Common.Interfaces;
 using Infrastructure.Interfaces;
 
@@ -57,6 +55,7 @@ namespace Infrastructure
             services.AddScoped<IBaseSalaryRuleRepository, BaseSalaryRuleRepository>();
             services.AddScoped<IAguinaldoRuleRepository, AguinaldoRuleRepository>();
             services.AddScoped<IProjectMilestoneRepository, ProjectMilestoneRepository>();
+            services.AddScoped<IMilestoneParticipationRepository, MilestoneParticipationRepository>();
 
             // Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();

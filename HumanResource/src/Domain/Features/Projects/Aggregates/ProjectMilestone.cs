@@ -15,6 +15,8 @@ namespace Domain.Features.Projects.Aggregates
         public DateTime? CompletedAt { get; private set; }
         public MilestoneStatus Status { get; private set; }
 
+        public ICollection<MilestoneParticipation> Participations { get; private set; } = new List<MilestoneParticipation>();
+
         private ProjectMilestone() { }
 
         public ProjectMilestone(int redmineProjectId, string name)

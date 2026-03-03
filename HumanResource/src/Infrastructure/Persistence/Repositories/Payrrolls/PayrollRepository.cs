@@ -79,5 +79,17 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
         {
             _context.Payrolls.Remove(payroll);
         }
+
+        public async Task<bool> ExistsOverlappingPayroll(
+            Guid employeeId,
+            DateTime periodStart,
+            DateTime periodEnd)
+        {
+            return await _context.Payrolls
+                .AnyAsync(p =>
+                    p.EmployeeId == employeeId &&
+                    periodStart <= p.PeriodEnd &&
+                    periodEnd >= p.PeriodStart);
+        }
     }
 }

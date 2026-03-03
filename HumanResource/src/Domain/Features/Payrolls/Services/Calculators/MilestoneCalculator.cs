@@ -4,7 +4,6 @@ using Domain.Features.Payrolls.Aggregates;
 using Domain.Features.Payrolls.Services.Context;
 using Domain.Features.Payrolls.Services.Interfaces;
 using Domain.Features.Payrolls.Enums;
-using Domain.Features.Projects.Enums;
 using Domain.Features.Payrolls.Entities;
 
 namespace Domain.Features.Payrolls.Services.Calculators
@@ -13,33 +12,50 @@ namespace Domain.Features.Payrolls.Services.Calculators
     {
         public void Calculate(Payroll payroll, PayrollCalculationContext context)
         {
+            // Agrupamos los milestones completados por proyecto y nombre
             var completedMilestones = context.ProjectMilestones
-                .Where(m =>
-                    m.Status == MilestoneStatus.Completed &&
-                    m.CompletedAt.HasValue &&
-                    m.CompletedAt.Value >= context.PeriodStart &&
-                    m.CompletedAt.Value <= context.PeriodEnd)
+                .Where(m => m.CompletedAt.HasValue)
                 .ToList();
 
-            foreach (var rule in context.MilestoneRules.Where(r => r.IsActive))
+            foreach (var milestone in completedMilestones)
             {
-                var match = completedMilestones
-                    .Any(m => m.RedmineProjectId == rule.RedmineProjectId &&
-                            m.Name == rule.MilestoneName);
+                // Obtenemos la regla activa que corresponda
+                var rule = context.MilestoneRules
+                    .FirstOrDefault(r =>
+                        r.IsActive &&
+                        r.RedmineProjectId == milestone.RedmineProjectId &&
+                        r.MilestoneName == milestone.Name);
 
-                if (match)
+                if (rule == null)
+                    continue;
+
+                // Evitamos duplicados en la nómina
+                if (payroll.IsMilestonePaid(rule.Id))
+                    continue;
+
+                var totalParticipants = milestone.Participations.Count;
+
+                if (totalParticipants == 0)
+                    continue;
+
+                var individualAmount = rule.BonusAmount / totalParticipants;
+
+                // Creamos un pago por cada participante
+                foreach (var participant in milestone.Participations)
                 {
-                    if (!payroll.MilestonePayments.Any(p => p.MilestoneRuleId == rule.Id))
-                    {
-                        payroll.AddComponent(new PayrollComponent(
-                            PayrollComponentType.MilestoneBonus,
-                            PayrollComponentCategory.Earning,
-                            $"Milestone Bonus - {rule.MilestoneName}",
-                            rule.BonusAmount,
-                            rule.Id));
+                    if (participant.EmployeeId != payroll.EmployeeId)
+                        continue;
 
-                        payroll.AddMilestonePayment(rule.Id, rule.BonusAmount, DateTime.Now);
-                    }
+                    // Agregamos al payroll como componente
+                    payroll.AddComponent(new PayrollComponent(
+                        PayrollComponentType.MilestoneBonus,
+                        PayrollComponentCategory.Earning,
+                        $"Milestone Bonus - {rule.MilestoneName} (1/{totalParticipants})",
+                        individualAmount,
+                        rule.Id));
+
+                    // Marcamos que ya se aplicó esta regla en la nómina
+                    payroll.AddMilestonePayment(rule.Id, individualAmount, DateTime.UtcNow);
                 }
             }
         }

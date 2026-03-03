@@ -58,5 +58,17 @@ namespace Domain.Features.Employees.Entities
             var now = DateTime.UtcNow;
             return LastAccrualDate.Value.Year == now.Year && LastAccrualDate.Value.Month == now.Month;
         }
+        
+        public void PayUsedDays(decimal daysToPay)
+        {
+            if (daysToPay <= 0)
+                throw new ArgumentException("Days to pay must be greater than zero.");
+
+            if (daysToPay > UsedDays)
+                throw new InvalidOperationException("Cannot pay more days than used.");
+
+            UsedDays -= daysToPay;
+            MarkUpdated();
+        }
     }
 }

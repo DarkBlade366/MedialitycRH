@@ -27,6 +27,7 @@ using Application.Features.Payrolls.Rules.Deduction.Validations;
 using Application.Features.Payrolls.Rules.Vacation.Validations;
 using Application.Features.Payrolls.Rules.Vacation.Handlers;
 using Application.Services;
+using Application.Features.Payrolls.Payroll.Handlers;
 
 namespace Application
 {
@@ -81,10 +82,11 @@ namespace Application
             services.AddScoped<GetVacationRulesPagedHandler>();
             services.AddScoped<GetVacationBalanceHandler>();
             services.AddScoped<UseVacationHandler>();
-
-            // services.AddScoped<GeneratePayrollHandler>();
-            // services.AddScoped<ApprovePayrollHandler>();
-            // services.AddScoped<GetPayrollPdfHandler>();
+            services.AddScoped<CreatePayrollHandler>();
+            services.AddScoped<ChangeMilestoneParticipationStatusHandler>();
+            services.AddScoped<GetMilestoneParticipationByIdHandler>();
+            services.AddScoped<GetMilestoneParticipationsPagedHandler>();
+            services.AddScoped<CreateMilestoneParticipationHandler>();
 
 
             // Register validators
@@ -95,8 +97,6 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeEmployeeStatusValidation>();
             services.AddValidatorsFromAssemblyContaining<ListTimeEntriesQueryValidator>();
             services.AddValidatorsFromAssemblyContaining<ListPagedTimeEntriesValidator>();
-            services.AddValidatorsFromAssemblyContaining<GeneratePayrollValidator>();
-            services.AddValidatorsFromAssemblyContaining<ApprovePayrollValidation>();
             services.AddValidatorsFromAssemblyContaining<GetProjectByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProjectsPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<GetEmployeeByRedmineUserIdValidation>();
@@ -131,6 +131,11 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetVacationRulesPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<GetVacationBalanceQueryValidator>();
             services.AddValidatorsFromAssemblyContaining<UseVacationCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreatePayrollCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateMilestoneParticipationValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeMilestoneParticipationStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetMilestoneParticipationByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetMilestoneParticipationsPagedValidator>();
 
             //other services
             services.AddScoped<VacationAccrualService>();

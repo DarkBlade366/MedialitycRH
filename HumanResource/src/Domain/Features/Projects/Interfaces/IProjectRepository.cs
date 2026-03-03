@@ -13,5 +13,6 @@ namespace Domain.Features.Projects.Interfaces
         Task AddAsync(Project project);
         void Update(Project project);
         void Delete(Project project);
+        Task<bool> ExistsAsync(int redmineProjectId);
     }
 }

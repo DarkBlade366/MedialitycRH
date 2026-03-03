@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Features.Payrolls.Rules.Milestones.Queries
+namespace Application.Features.Projects.Queries
 {
-    public class GetMilestoneRuleByIdQuery
-    {   
+    public class GetMilestoneParticipationByIdQuery
+    {
         public Guid Id { get; set; }
     }
 }

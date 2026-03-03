@@ -29,6 +29,7 @@ namespace Application.Features.Payrolls.Rules.Overtime.Handlers
                 Id = rule.Id,
                 StandardHoursPerPeriod = rule.StandardHoursPerPeriod,
                 OvertimeMultiplier = rule.OvertimeMultiplier,
+                HourlyRate = rule.HourlyRate,
                 IsActive = rule.IsActive
             };
         }

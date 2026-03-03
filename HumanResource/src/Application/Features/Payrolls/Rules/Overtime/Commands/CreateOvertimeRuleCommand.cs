@@ -9,5 +9,6 @@ namespace Application.Features.Payrolls.Rules.Overtime.Commands
     {
         public int StandardHoursPerPeriod { get; set; }
         public decimal OvertimeMultiplier { get; set; }
+        public decimal HourlyRate { get; set; }
     }
 }

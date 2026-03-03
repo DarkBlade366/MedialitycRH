@@ -27,7 +27,8 @@ namespace Application.Features.Payrolls.Rules.Overtime.Handlers
         {
             var rule = new OvertimeRule(
                 command.StandardHoursPerPeriod,
-                command.OvertimeMultiplier);
+                command.OvertimeMultiplier,
+                command.HourlyRate);
 
             var existingActive = (await _repository.GetAllAsync())
                 .Any(r => r.IsActive);
@@ -47,6 +48,7 @@ namespace Application.Features.Payrolls.Rules.Overtime.Handlers
                 Id = rule.Id,
                 StandardHoursPerPeriod = rule.StandardHoursPerPeriod,
                 OvertimeMultiplier = rule.OvertimeMultiplier,
+                HourlyRate = rule.HourlyRate,
                 IsActive = rule.IsActive
             };
         }

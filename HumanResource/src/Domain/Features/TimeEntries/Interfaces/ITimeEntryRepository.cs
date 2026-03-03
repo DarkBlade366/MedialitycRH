@@ -23,5 +23,10 @@ namespace Domain.Features.TimeEntries.Interfaces
             DateTime? to,
             int page,
             int pageSize);
+
+        public Task<int> GetWorkedHours(
+            Guid employeeId,
+            DateTime periodStart,
+            DateTime periodEnd);
     }
 }

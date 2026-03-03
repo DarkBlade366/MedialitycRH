@@ -1,0 +1,208 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Application.Common.Interfaces;
+using Application.Features.Payrolls.Payroll.Commands;
+using Application.Features.Payrolls.Payroll.DTOs;
+using Domain.Features.Employees.Interfaces;
+using Domain.Features.Payrolls.Interfaces;
+using Domain.Features.Payrolls.Services.Context;
+using Domain.Features.Payrolls.Services.Engines;
+using Domain.Features.Projects.Interfaces;
+using Domain.Features.TimeEntries.Interfaces;
+
+namespace Application.Features.Payrolls.Payroll.Handlers
+{
+    public class CreatePayrollHandler
+    {
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IPayrollRepository _payrollRepository;
+        private readonly ITimeEntryRepository _timeEntryRepository;
+        private readonly PayrollEngine _payrollEngine;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IBaseSalaryRuleRepository _baseSalaryRuleRepository;
+        private readonly IOvertimeRuleRepository _overtimeRuleRepository;
+        private readonly IDeductionRuleRepository _deductionRuleRepository;
+        private readonly IProductivityRuleRepository _productivityRuleRepository;
+        private readonly IVacationRuleRepository _vacationRuleRepository;
+        private readonly IAguinaldoRuleRepository _aguinaldoRuleRepository;
+        private readonly IMilestoneRuleRepository _milestoneRuleRepository;
+        private readonly IProjectMilestoneRepository _projectMilestoneRepository;
+        private readonly IMilestoneParticipationRepository _milestoneParticipationRepository;
+
+        public CreatePayrollHandler(
+            IEmployeeRepository employeeRepository,
+            IPayrollRepository payrollRepository,
+            ITimeEntryRepository timeEntryRepository,
+            PayrollEngine payrollEngine,
+            IUnitOfWork unitOfWork,
+            IBaseSalaryRuleRepository baseSalaryRuleRepository,
+            IOvertimeRuleRepository overtimeRuleRepository,
+            IDeductionRuleRepository deductionRuleRepository,
+            IProductivityRuleRepository productivityRuleRepository,
+            IVacationRuleRepository vacationRuleRepository,
+            IAguinaldoRuleRepository aguinaldoRuleRepository,
+            IMilestoneRuleRepository milestoneRuleRepository,
+            IProjectMilestoneRepository projectMilestoneRepository,
+            IMilestoneParticipationRepository milestoneParticipationRepository)
+        {
+            _employeeRepository = employeeRepository;
+            _payrollRepository = payrollRepository;
+            _timeEntryRepository = timeEntryRepository;
+            _payrollEngine = payrollEngine;
+            _unitOfWork = unitOfWork;
+            _baseSalaryRuleRepository = baseSalaryRuleRepository;
+            _overtimeRuleRepository = overtimeRuleRepository;
+            _deductionRuleRepository = deductionRuleRepository;
+            _productivityRuleRepository = productivityRuleRepository;
+            _vacationRuleRepository = vacationRuleRepository;
+            _aguinaldoRuleRepository = aguinaldoRuleRepository;
+            _milestoneRuleRepository = milestoneRuleRepository;
+            _projectMilestoneRepository = projectMilestoneRepository;
+            _milestoneParticipationRepository = milestoneParticipationRepository;
+        }
+
+        public async Task<PayrollResponse> Handle(
+            CreatePayrollCommand command,
+            CancellationToken cancellationToken)
+        {
+            //Periodo invalido
+            if (command.periodStart >= command.periodEnd)
+                throw new Exception("Invalid payroll period.");
+
+            //Solapamiento entre pagos
+            var overlap = await _payrollRepository
+                .ExistsOverlappingPayroll(
+                    command.employeeId, 
+                    command.periodStart, 
+                        command.periodEnd);
+
+            if (overlap)
+                throw new Exception("Payroll period overlaps with existing payroll.");
+            
+            //empleado inexistente
+            var employee = await _employeeRepository.GetByIdAsync(command.employeeId);
+
+            if (employee == null)
+                throw new Exception("Employee not found.");
+
+            //buscando cuantas horas hizo
+            var workedHours = await _timeEntryRepository
+                .GetWorkedHours(
+                    command.employeeId, 
+                    command.periodStart, 
+                    command.periodEnd);
+
+            //Vacaciones usadas
+            var vacationDaysUsed = employee.VacationBalance.UsedDays;
+            
+            // Base Salary
+            var baseSalaryRules = (await _baseSalaryRuleRepository.GetAllAsync())
+                .Where(r => r.Role == employee.Role && r.IsActive)
+                .ToList();
+            
+            // Overtime
+            var overtimeRules = (await _overtimeRuleRepository.GetAllAsync())
+                .Where(r => r.IsActive)
+                .ToList();
+            
+            // Deductions
+            var deductionRules = (await _deductionRuleRepository.GetAllAsync())
+                .Where(r => r.IsActive)
+                .ToList();
+            
+            // Productivity
+            var productivityRule = (await _productivityRuleRepository.GetAllAsync())
+                .FirstOrDefault(r => r.IsActive);
+            
+            // Vacation
+            var vacationRule = (await _vacationRuleRepository.GetAllAsync())
+                .FirstOrDefault(r => r.IsActive);
+            
+            // Aguinaldo
+            var aguinaldoRule = (await _aguinaldoRuleRepository.GetAllAsync())
+                .FirstOrDefault(r => r.IsActive);
+            
+            // Milestone Rules
+            var milestoneRules = (await _milestoneRuleRepository.GetAllAsync())
+                .Where(r => r.IsActive)
+                .ToList();
+
+            //Milestone Pariticipation
+            var participations = await _milestoneParticipationRepository
+                .GetByEmployeeIdAsync(command.employeeId);
+            
+            // Project Milestones
+            var projectMilestones = await _projectMilestoneRepository
+                .GetAllAsync();
+
+            var employeeParticipations = participations
+                .Where(p =>
+                    !p.IsPaid &&
+                    p.ProjectMilestone != null &&
+                    p.ProjectMilestone.CompletedAt.HasValue &&
+                    p.ProjectMilestone.CompletedAt.Value >= command.periodStart &&
+                    p.ProjectMilestone.CompletedAt.Value <= command.periodEnd)
+                .ToList();
+
+            var context = new PayrollCalculationContext(
+                baseSalaryRules,
+                employee.Role,
+
+                workedHours,
+
+                overtimeRules,
+                deductionRules,
+
+                workedHours,
+                productivityRule,
+
+                vacationRule,
+                employee.VacationBalance,
+                vacationDaysUsed,
+
+                aguinaldoRule,
+                employee.AguinaldoBalance,
+
+                milestoneRules,
+                employeeParticipations,
+                projectMilestones,
+
+                command.periodStart,
+                command.periodEnd
+            );
+
+            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
+                command.employeeId,
+                command.periodStart,
+                command.periodEnd);
+
+            _payrollEngine.Calculate(command.employeeId, context);
+
+            await _payrollRepository.AddAsync(payroll);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return new PayrollResponse
+            {
+                Id = payroll.Id,
+                EmployeeId = payroll.EmployeeId,
+                PeriodStart = payroll.PeriodStart,
+                PeriodEnd = payroll.PeriodEnd,
+                GrossAmount = payroll.GrossAmount,
+                TotalDeductions = payroll.TotalDeductions,
+                NetAmount = payroll.NetAmount,
+                Components = payroll.Components
+                    .Select(c => new PayrollComponentResponse
+                    {
+                        Type = c.Type.ToString(),
+                        Category = c.Category.ToString(),
+                        Description = c.Description,
+                        Amount = c.Amount
+                    })
+                    .ToList()
+            };
+        }
+    }
+}

@@ -18,6 +18,11 @@ namespace Domain.Features.Payrolls.Interfaces
                 Guid employeeId,
                 DateTime periodStart,
                 DateTime periodEnd);
+
+        public Task<bool> ExistsOverlappingPayroll(
+            Guid employeeId,
+            DateTime periodStart,
+            DateTime periodEnd);
         Task AddAsync(Payroll payroll);
     
         void Update(Payroll payroll);

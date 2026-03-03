@@ -16,6 +16,9 @@ namespace Application.Features.Payrolls.Rules.Overtime.Validations
 
             RuleFor(x => x.OvertimeMultiplier)
                 .GreaterThan(1).WithMessage("Overtime multiplier must be greater than 1.");
+
+            RuleFor(x => x.HourlyRate)
+                .GreaterThan(0).WithMessage("HourlyRate must be greater than 1.");
         }
     }
 }

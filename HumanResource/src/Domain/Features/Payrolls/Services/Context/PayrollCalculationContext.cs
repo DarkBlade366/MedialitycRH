@@ -13,8 +13,7 @@ namespace Domain.Features.Payrolls.Services.Context
 {
     public class PayrollCalculationContext
     {
-        public int TotalWorkedHours { get; }        
-        public decimal HourlyRate { get; }
+        public int TotalWorkedHours { get; }
 
         //Salary 
         public IReadOnlyCollection<BaseSalaryRule> BaseSalaryRules { get; }
@@ -41,6 +40,7 @@ namespace Domain.Features.Payrolls.Services.Context
 
         //Milestones
         public IReadOnlyCollection<MilestoneRule> MilestoneRules { get; }
+        public IReadOnlyCollection<MilestoneParticipation> MilestoneParticipations { get; }
         public IReadOnlyCollection<ProjectMilestone> ProjectMilestones { get; }
 
         //Period
@@ -51,7 +51,6 @@ namespace Domain.Features.Payrolls.Services.Context
             IReadOnlyCollection<BaseSalaryRule> baseSalaryRules,
             EmployeeRole employeeRole,
 
-            decimal hourlyRate,
             int totalWorkedHours,
 
             IReadOnlyCollection<OvertimeRule> overtimeRules,
@@ -68,6 +67,7 @@ namespace Domain.Features.Payrolls.Services.Context
             EmployeeAguinaldoBalance aguinaldoBalance,
 
             IReadOnlyCollection<MilestoneRule> milestoneRules,
+            IReadOnlyCollection<MilestoneParticipation> milestoneParticipations,
             IReadOnlyCollection<ProjectMilestone> projectMilestones,
 
             DateTime periodStart,
@@ -76,7 +76,6 @@ namespace Domain.Features.Payrolls.Services.Context
             BaseSalaryRules = baseSalaryRules ?? new List<BaseSalaryRule>();
             EmployeeRole = employeeRole;
 
-            HourlyRate = hourlyRate;
             TotalWorkedHours = totalWorkedHours;
 
             OvertimeRules = overtimeRules ?? new List<OvertimeRule>();
@@ -93,6 +92,7 @@ namespace Domain.Features.Payrolls.Services.Context
             AguinaldoBalance = aguinaldoBalance;
 
             MilestoneRules = milestoneRules ?? new List<MilestoneRule>();
+            MilestoneParticipations = milestoneParticipations ?? new List<MilestoneParticipation>();
             ProjectMilestones = projectMilestones ?? new List<ProjectMilestone>();
 
             PeriodStart = periodStart;

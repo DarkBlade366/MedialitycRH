@@ -43,5 +43,11 @@ namespace Infrastructure.Persistence.Repositories.Projects
         {
             _context.Projects.Remove(project);
         }
+
+        public async Task<bool> ExistsAsync(int redmineProjectId)
+        {
+            return await _context.Projects
+                .AnyAsync(p => p.RedmineProjectId == redmineProjectId);
+        }
     }
 }

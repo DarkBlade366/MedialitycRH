@@ -24,7 +24,7 @@ namespace Domain.Features.Payrolls.Services.Calculators
 
             var overtimeHours = context.TotalWorkedHours - rule.StandardHoursPerPeriod;
 
-            var overtimeAmount = overtimeHours * context.HourlyRate * rule.OvertimeMultiplier;
+            var overtimeAmount = overtimeHours * rule.HourlyRate * rule.OvertimeMultiplier;
 
             var component = new PayrollComponent(
                 PayrollComponentType.Overtime,

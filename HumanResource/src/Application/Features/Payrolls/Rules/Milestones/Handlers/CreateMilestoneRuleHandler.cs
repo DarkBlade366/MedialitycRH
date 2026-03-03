@@ -7,6 +7,7 @@ using Application.Features.Payrolls.Rules.Milestones.Commands;
 using Application.Features.Payrolls.Rules.Milestones.DTOs;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
+using Domain.Features.Projects.Interfaces;
 
 namespace Application.Features.Payrolls.Rules.Milestones.Handlers
 {
@@ -14,17 +15,25 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
     {
         private readonly IMilestoneRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IProjectRepository _projectRepository;
     
         public CreateMilestoneRuleHandler(
             IMilestoneRuleRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IProjectRepository projectRepository)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _projectRepository = projectRepository;
         }
     
         public async Task<MilestoneRuleResponse> HandleAsync(CreateMilestoneRuleCommand command)
         {
+            var projectExists = await _projectRepository.ExistsAsync(command.RedmineProjectId);
+            
+            if (!projectExists)
+                throw new Exception($"Project with Id {command.RedmineProjectId} does not exist.");
+
             var rule = new MilestoneRule(
                 command.RedmineProjectId,
                 command.MilestoneName,
