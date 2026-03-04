@@ -31,7 +31,17 @@ builder.Services.AddScoped<IEarningCalculator, VacationCalculator>();
 builder.Services.AddScoped<IDeductionCalculator, DeductionCalculator>();
 
 //Services
+builder.Services.Configure<VacationAccrualScheduleOptions>(
+    builder.Configuration.GetSection("VacationAccrualSchedule"));
 builder.Services.AddHostedService<VacationAccrualBackgroundService>();
+
+builder.Services.Configure<MonthlyPayrollScheduleOptions>(
+    builder.Configuration.GetSection("PayrollSchedule"));
+builder.Services.AddHostedService<MonthlyPayrollBackgroundService>();
+
+builder.Services.Configure<RedmineSyncScheduleOptions>(
+    builder.Configuration.GetSection("RedmineSyncSchedule"));
+builder.Services.AddHostedService<RedmineSyncBackgroundService>();
 
 // Configuración JWT 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

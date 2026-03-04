@@ -173,6 +173,7 @@ namespace Application
 
             //other services
             services.AddScoped<VacationAccrualService>();
+            services.AddScoped<MonthlyPayrollService>();
 
             return services;
         }

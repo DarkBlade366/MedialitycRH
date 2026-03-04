@@ -8,16 +8,16 @@ using Microsoft.Extensions.Options;
 
 namespace Web.API.BackgroundServices
 {
-    public class VacationAccrualBackgroundService : BackgroundService
+    public class MonthlyPayrollBackgroundService : BackgroundService
     {
-        private readonly ILogger<VacationAccrualBackgroundService> _logger;
+        private readonly ILogger<MonthlyPayrollBackgroundService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly IOptions<VacationAccrualScheduleOptions> _options;
+        private readonly IOptions<MonthlyPayrollScheduleOptions> _options;
 
-        public VacationAccrualBackgroundService(
-            ILogger<VacationAccrualBackgroundService> logger,
+        public MonthlyPayrollBackgroundService(
+            ILogger<MonthlyPayrollBackgroundService> logger,
             IServiceScopeFactory scopeFactory,
-            IOptions<VacationAccrualScheduleOptions> options)
+            IOptions<MonthlyPayrollScheduleOptions> options)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;
@@ -26,30 +26,13 @@ namespace Web.API.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-                try
-            {
-                using var startupScope = _scopeFactory.CreateScope();
-                var startupService = startupScope.ServiceProvider
-                    .GetRequiredService<VacationAccrualService>();
-
-                await startupService.AccrueVacationsAsync();
-
-                _logger.LogInformation(
-                    "Startup vacation accrual check executed at {ExecutionTimeUtc}.",
-                    DateTime.UtcNow);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during startup vacation accrual check.");
-            }
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 var options = _options.Value;
 
                 if (!options.Enabled)
                 {
-                    _logger.LogInformation("Vacation accrual scheduler is disabled.");
+                    _logger.LogInformation("Monthly payroll scheduler is disabled.");
                     await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
                     continue;
                 }
@@ -62,32 +45,54 @@ namespace Web.API.BackgroundServices
                     delay = TimeSpan.FromSeconds(1);
 
                 _logger.LogInformation(
-                    "Vacation accrual scheduler waiting until {NextRunUtc}.",
+                    "Monthly payroll scheduler waiting until {NextRunUtc}.",
                     nextRunUtc);
 
                 await Task.Delay(delay, stoppingToken);
 
                 try
                 {
-                    using var scope = _scopeFactory.CreateScope();
-                    var service = scope.ServiceProvider.GetRequiredService<VacationAccrualService>();
+                    var executionTimeUtc = DateTime.UtcNow;
+                    var periodEnd = new DateTime(
+                        executionTimeUtc.Year,
+                        executionTimeUtc.Month,
+                        1,
+                        0, 0, 0,
+                        DateTimeKind.Utc);
+                    var periodStart = periodEnd.AddMonths(-1);
 
-                    await service.AccrueVacationsAsync();
+                    using var scope = _scopeFactory.CreateScope();
+                    var payrollService = scope.ServiceProvider
+                        .GetRequiredService<MonthlyPayrollService>();
+
+                    var result = await payrollService.GenerateForAllActiveEmployeesAsync(
+                        periodStart,
+                        periodEnd,
+                        stoppingToken);
 
                     _logger.LogInformation(
-                        "Vacation accrual executed successfully at {ExecutionTimeUtc}.",
-                        DateTime.UtcNow);
+                        "Monthly payroll executed for period {PeriodStart} - {PeriodEnd}. " +
+                        "TotalEmployees={TotalEmployees}, Created={Created}, Skipped={Skipped}, Failed={Failed}",
+                        periodStart,
+                        periodEnd,
+                        result.TotalEmployees,
+                        result.CreatedPayrolls,
+                        result.SkippedPayrolls,
+                        result.FailedPayrolls);
+
+                    foreach (var error in result.Errors)
+                        _logger.LogWarning("Monthly payroll warning: {Error}", error);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error executing vacation accrual scheduler.");
+                    _logger.LogError(ex, "Error executing monthly payroll scheduler.");
                 }
             }
         }
 
         private static DateTime GetNextRunUtc(
             DateTime nowUtc,
-            VacationAccrualScheduleOptions options)
+            MonthlyPayrollScheduleOptions options)
         {
             var runDay = Math.Clamp(options.RunDayOfMonth, 1, 31);
             var runHour = Math.Clamp(options.RunHourUtc, 0, 23);

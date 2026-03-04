@@ -32,7 +32,7 @@ namespace Application.Services
 
             foreach (var emp in employees)
             {
-                var rule = rules.FirstOrDefault();
+                var rule = rules.FirstOrDefault(r => r.IsActive);
                 if (rule == null)
                     continue;
 
