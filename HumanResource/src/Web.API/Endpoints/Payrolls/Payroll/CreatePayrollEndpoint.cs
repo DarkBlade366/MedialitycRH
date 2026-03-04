@@ -22,7 +22,7 @@ namespace Web.API.Endpoints.Payrolls.Payroll
         public override void Configure()
         {
             Post("/payrolls");
-            Roles("Administrator");
+            Roles("Administrator, HumanResourse");
             Validator<CreatePayrollCommandValidator>();
             Summary(s =>
             {

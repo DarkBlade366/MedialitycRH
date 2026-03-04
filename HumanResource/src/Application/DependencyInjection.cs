@@ -28,6 +28,18 @@ using Application.Features.Payrolls.Rules.Vacation.Validations;
 using Application.Features.Payrolls.Rules.Vacation.Handlers;
 using Application.Services;
 using Application.Features.Payrolls.Payroll.Handlers;
+using Application.Features.Payrolls.Payments.Aguinaldo.Handlers;
+using Application.Features.Payrolls.Payments.Aguinaldo.Validations;
+using Application.Features.Payrolls.Payments.Deduction.Handlers;
+using Application.Features.Payrolls.Payments.Deduction.Validations;
+using Application.Features.Payrolls.Payments.Milestone.Handlers;
+using Application.Features.Payrolls.Payments.Milestone.Validations;
+using Application.Features.Payrolls.Payments.Overtime.Handlers;
+using Application.Features.Payrolls.Payments.Overtime.Validations;
+using Application.Features.Payrolls.Payments.Productivity.Handlers;
+using Application.Features.Payrolls.Payments.Productivity.Validations;
+using Application.Features.Payrolls.Payments.Vacation.Handlers;
+using Application.Features.Payrolls.Payments.Vacation.Validations;
 
 namespace Application
 {
@@ -83,6 +95,18 @@ namespace Application
             services.AddScoped<GetVacationBalanceHandler>();
             services.AddScoped<UseVacationHandler>();
             services.AddScoped<CreatePayrollHandler>();
+            services.AddScoped<ApprovedPayrollHandler>();
+            services.AddScoped<PaidPayrollHandler>();
+            services.AddScoped<GetPayrollByIdHandler>();
+            services.AddScoped<GetPayrollPagedHandler>();
+            services.AddScoped<GetAguinaldoPaymentsPagedHandler>();
+            services.AddScoped<GetDeductionPaymentsPagedHandler>();
+            services.AddScoped<GetMilestonePaymentsPagedHandler>();
+            services.AddScoped<GetOvertimePaymentsPagedHandler>();
+            services.AddScoped<GetProductivityPaymentsPagedHandler>();
+            services.AddScoped<GetVacationPaymentsPagedHandler>();
+            services.AddScoped<GeneratePayrollPdfHandler>();
+            services.AddScoped<GeneratePayrollExcelHandler>();
             services.AddScoped<ChangeMilestoneParticipationStatusHandler>();
             services.AddScoped<GetMilestoneParticipationByIdHandler>();
             services.AddScoped<GetMilestoneParticipationsPagedHandler>();
@@ -132,6 +156,16 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetVacationBalanceQueryValidator>();
             services.AddValidatorsFromAssemblyContaining<UseVacationCommandValidator>();
             services.AddValidatorsFromAssemblyContaining<CreatePayrollCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<ApprovedPayrollCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<PaidPayrollCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetPayrollByIdQueryValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetPayrollPagedQueryValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetAguinaldoPaymentsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetDeductionPaymentsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetMilestonePaymentsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetOvertimePaymentsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProductivityPaymentsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetVacationPaymentsPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateMilestoneParticipationValidator>();
             services.AddValidatorsFromAssemblyContaining<ChangeMilestoneParticipationStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetMilestoneParticipationByIdValidator>();

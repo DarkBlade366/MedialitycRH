@@ -6,6 +6,7 @@ using Application.Common.Interfaces;
 using Application.Features.Payrolls.Payroll.Commands;
 using Application.Features.Payrolls.Payroll.DTOs;
 using Domain.Features.Employees.Interfaces;
+using Domain.Features.Payrolls.Enums;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Services.Context;
 using Domain.Features.Payrolls.Services.Engines;
@@ -193,6 +194,7 @@ namespace Application.Features.Payrolls.Payroll.Handlers
                 GrossAmount = payroll.GrossAmount,
                 TotalDeductions = payroll.TotalDeductions,
                 NetAmount = payroll.NetAmount,
+                Status = payroll.Status.ToString(),
                 Components = payroll.Components
                     .Select(c => new PayrollComponentResponse
                     {

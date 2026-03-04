@@ -91,5 +91,12 @@ namespace Infrastructure.Persistence.Repositories.Payrrolls
                     periodStart <= p.PeriodEnd &&
                     periodEnd >= p.PeriodStart);
         }
+
+        public async Task<List<Payroll>> GetAllAsync()
+        {
+            return await _context.Payrolls
+                .Include(p => p.Components)
+                .ToListAsync();
+        }
     }
 }

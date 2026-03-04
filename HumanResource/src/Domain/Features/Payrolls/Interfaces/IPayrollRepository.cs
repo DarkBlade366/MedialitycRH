@@ -8,6 +8,7 @@ namespace Domain.Features.Payrolls.Interfaces
 {
     public interface IPayrollRepository
     {
+        Task<List<Payroll>> GetAllAsync();
         Task<Payroll?> GetByIdAsync(Guid id);
         Task<Payroll?> GetByEmployeeAndPeriodAsync(
             Guid employeeId,

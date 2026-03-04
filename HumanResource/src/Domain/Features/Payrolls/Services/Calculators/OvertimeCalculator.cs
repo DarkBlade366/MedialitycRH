@@ -49,6 +49,7 @@ namespace Domain.Features.Payrolls.Services.Calculators
                 rule.Id);
 
             payroll.AddComponent(component);
+            payroll.AddOvertimePayment(rule.Id, overtimeAmount, DateTime.UtcNow);
 
             Console.WriteLine($"[OVERTIME] Componente agregado correctamente");
             Console.WriteLine($"[OVERTIME] Finalizó cálculo de horas extra");

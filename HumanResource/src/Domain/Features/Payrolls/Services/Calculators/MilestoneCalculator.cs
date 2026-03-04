@@ -69,6 +69,8 @@ namespace Domain.Features.Payrolls.Services.Calculators
                         $"Milestone Bonus - {rule.MilestoneName} (1/{totalParticipants})",
                         individualAmount,
                         rule.Id));
+                    
+                    participant.MarkAsPaid(); 
 
                     payroll.AddMilestonePayment(rule.Id, individualAmount, DateTime.UtcNow);
 

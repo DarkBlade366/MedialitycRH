@@ -14,6 +14,7 @@ namespace Application.Features.Payrolls.Payroll.DTOs
         public decimal GrossAmount { get; set; }
         public decimal TotalDeductions { get; set; }
         public decimal NetAmount { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         public List<PayrollComponentResponse>? Components { get; set; }
     }

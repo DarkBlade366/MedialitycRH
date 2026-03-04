@@ -103,6 +103,12 @@ namespace Domain.Features.Payrolls.Aggregates
         
         public void Approve()
         {
+            if (Status == PayrollStatus.Approved)
+                throw new InvalidOperationException("Payroll is already approved.");
+
+            if (Status == PayrollStatus.Paid)
+                throw new InvalidOperationException("Payroll is already been paid.");
+                
             if (Status != PayrollStatus.Calculated)
                 throw new InvalidOperationException("Payroll must be calculated before approval.");
 
@@ -112,6 +118,12 @@ namespace Domain.Features.Payrolls.Aggregates
 
         public void MarkAsPaid()
         {
+            if (Status == PayrollStatus.Calculated)
+                throw new InvalidOperationException("Payroll must be approved first.");
+
+            if (Status == PayrollStatus.Paid)
+                throw new InvalidOperationException("Payroll is already been paid.");
+
             if (Status != PayrollStatus.Approved)
                 throw new InvalidOperationException("Payroll must be approved before payment.");
 

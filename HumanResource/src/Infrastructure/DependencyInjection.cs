@@ -5,7 +5,7 @@ using Infrastructure.Persistence;
 using Infrastructure.Security;
 using Application.Common.Security;
 using Infrastructure.Redmine;
-// using Infrastructure.Reports;
+using Infrastructure.Reports;
 using Application.Features.Redmine.Interfaces;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.TimeEntries.Interfaces;
@@ -54,6 +54,12 @@ namespace Infrastructure
             services.AddScoped<IVacationRuleRepository, VacationRuleRepository>();
             services.AddScoped<IBaseSalaryRuleRepository, BaseSalaryRuleRepository>();
             services.AddScoped<IAguinaldoRuleRepository, AguinaldoRuleRepository>();
+            services.AddScoped<IAguinaldoPaymentRepository, AguinaldoPaymentRepository>();
+            services.AddScoped<IDeductionPaymentRepository, DeductionPaymentRepository>();
+            services.AddScoped<IMilestonePaymentRepository, MilestonePaymentRepository>();
+            services.AddScoped<IOvertimePaymentRepository, OvertimePaymentRepository>();
+            services.AddScoped<IProductivityPaymentRepository, ProductivityPaymentRepository>();
+            services.AddScoped<IVacationPaymentRepository, VacationPaymentRepository>();
             services.AddScoped<IProjectMilestoneRepository, ProjectMilestoneRepository>();
             services.AddScoped<IMilestoneParticipationRepository, MilestoneParticipationRepository>();
 
@@ -62,7 +68,8 @@ namespace Infrastructure
 
             //Register other services (e.g., token generator) if needed
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
-            //services.AddScoped<IPayrollPdfGenerator, PayrollPdfGenerator>();
+            services.AddScoped<IPayrollPdfGenerator, PayrollPdfGenerator>();
+            services.AddScoped<IPayrollExcelGenerator, PayrollExcelGenerator>();
 
             return services;
         }
