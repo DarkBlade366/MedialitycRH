@@ -1,14 +1,39 @@
 services:
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: payments_api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DbMedialitycHR: Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Redmine__BaseUrl: ${REDMINE_BASEURL}
+      Redmine__ApiKey: ${REDMINE_APIKEY}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
   postgres:
     image: postgres:18
     container_name: payments_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: paymentsdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: vrdThqZH
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/18/docker
 
