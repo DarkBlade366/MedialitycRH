@@ -15,5 +15,6 @@ namespace Application.Features.Redmine.Interfaces
         Task<List<RedmineTimeEntryDto>> GetTimeEntriesAsync(DateTime from, DateTime to, int? redmineUserId = null);
         Task<List<RedmineProjectDto>> GetAllProjectsAsync();
         Task<List<RedmineMilestoneDto>> GetProjectMilestonesAsync(int projectId);
+        Task<List<RedmineTimeEntryActivityDto>> GetTimeEntryActivitiesAsync();
     }
 }

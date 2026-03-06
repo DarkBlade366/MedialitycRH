@@ -44,6 +44,7 @@ namespace Infrastructure.Persistence
         public DbSet<OvertimePayment> OvertimePayments => Set<OvertimePayment>();
         public DbSet<ProductivityRule> ProductivityRules => Set<ProductivityRule>();
         public DbSet<ProductivityPayment> ProductivityPayments => Set<ProductivityPayment>();
+        public DbSet<ActivityProductivityWeight> ActivityProductivityWeights => Set<ActivityProductivityWeight>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

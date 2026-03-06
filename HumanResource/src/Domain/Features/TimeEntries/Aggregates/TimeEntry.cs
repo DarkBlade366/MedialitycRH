@@ -11,6 +11,8 @@ namespace Domain.Features.TimeEntries.Aggregates
         public Guid Id { get; private set; }
         public int RedmineTimeEntryId { get; private set; }
         public int RedmineProjectId { get; private set; }
+        public int? RedmineActivityId { get; private set; }
+        public string? ActivityName { get; private set; }
         public Guid EmployeeId { get; private set; }
         public decimal Hours { get; private set; }
         public DateTime SpentOn { get; private set; }
@@ -22,7 +24,9 @@ namespace Domain.Features.TimeEntries.Aggregates
             int redmineProjectId,
             Guid employeeId,
             decimal hours,
-            DateTime spentOn)
+            DateTime spentOn,
+            int? redmineActivityId = null,
+            string? activityName = null)
         {
             if (redmineTimeEntryId <= 0)
                 throw new ArgumentException("RedmineTimeEntryId must be greater than zero.");
@@ -39,6 +43,8 @@ namespace Domain.Features.TimeEntries.Aggregates
             EmployeeId = employeeId;
             Hours = hours;
             SpentOn = spentOn;
+            RedmineActivityId = redmineActivityId > 0 ? redmineActivityId : null;
+            ActivityName = !string.IsNullOrWhiteSpace(activityName) ? activityName.Trim() : null;
         }
     }
 }

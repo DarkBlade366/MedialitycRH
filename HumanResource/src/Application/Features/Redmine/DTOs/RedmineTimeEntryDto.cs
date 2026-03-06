@@ -22,6 +22,18 @@ namespace Application.Features.Redmine.DTOs
 
         [JsonPropertyName("project")]
         public RedmineProjectReference Project { get; set; } = new();
+
+        [JsonPropertyName("activity")]
+        public RedmineActivityReference Activity { get; set; } = new();
+    }
+
+    public class RedmineActivityReference
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
     }
 
     public class RedmineUserReference

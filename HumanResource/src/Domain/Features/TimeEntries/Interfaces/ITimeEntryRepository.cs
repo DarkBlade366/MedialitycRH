@@ -24,7 +24,12 @@ namespace Domain.Features.TimeEntries.Interfaces
             int page,
             int pageSize);
 
-        public Task<int> GetWorkedHours(
+        Task<int> GetWorkedHours(
+            Guid employeeId,
+            DateTime periodStart,
+            DateTime periodEnd);
+
+        Task<Dictionary<int, decimal>> GetHoursByActivityAsync(
             Guid employeeId,
             DateTime periodStart,
             DateTime periodEnd);

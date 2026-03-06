@@ -39,10 +39,14 @@ namespace Application.Features.TimeEntries.Handlers
 
             var dtos = items.Select(x => new TimeEntryDto
             {
+                Id = x.Id,
+                RedmineTimeEntryId = x.RedmineTimeEntryId,
+                RedmineProjectId = x.RedmineProjectId,
+                RedmineActivityId = x.RedmineActivityId,
+                ActivityName = x.ActivityName,
                 EmployeeId = x.EmployeeId,
                 Hours = x.Hours,
-                SpentOn = x.SpentOn,
-                ProjectId = x.RedmineProjectId
+                SpentOn = x.SpentOn
             }).ToList();
 
             var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);

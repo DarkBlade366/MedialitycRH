@@ -22,6 +22,8 @@ using Application.Features.Payrolls.Rules.Overtime.Handlers;
 using Application.Features.Payrolls.Rules.Overtime.Validations;
 using Application.Features.Payrolls.Rules.Productivity.Handlers;
 using Application.Features.Payrolls.Rules.Productivity.Validations;
+using Application.Features.Payrolls.Rules.ActivityProductivityWeight.Handlers;
+using Application.Features.Payrolls.Rules.ActivityProductivityWeight.Validations;
 using Application.Features.Payrolls.Rules.Deduction.Handlers;
 using Application.Features.Payrolls.Rules.Deduction.Validations;
 using Application.Features.Payrolls.Rules.Vacation.Validations;
@@ -54,6 +56,7 @@ namespace Application
             services.AddScoped<GetEmployeeByIdHandler>();
             services.AddScoped<ChangeEmployeeStatusHandler>();
             services.AddScoped<SyncRedmineTimeEntriesHandler>();
+            services.AddScoped<GetRedmineTimeEntryActivitiesHandler>();
             services.AddScoped<SyncRedmineUsersHandler>();
             services.AddScoped<SyncRedmineProjectsHandler>();
             services.AddScoped<ListTimeEntriesHandler>();
@@ -84,6 +87,10 @@ namespace Application
             services.AddScoped<ChangeProductivityRuleStatusHandler>();
             services.AddScoped<GetProductivityRuleByIdHandler>();
             services.AddScoped<GetProductivityRulesPagedHandler>();
+            services.AddScoped<CreateActivityProductivityWeightHandler>();
+            services.AddScoped<GetActivityProductivityWeightsPagedHandler>();
+            services.AddScoped<GetActivityProductivityWeightByIdHandler>();
+            services.AddScoped<ChangeActivityProductivityWeightStatusHandler>();
             services.AddScoped<CreateDeductionRuleHandler>();
             services.AddScoped<ChangeDeductionRuleStatusHandler>();
             services.AddScoped<GetDeductionRuleByIdHandler>();
@@ -145,6 +152,9 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeProductivityRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProductivityRuleByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProductivityRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateActivityProductivityWeightValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetActivityProductivityWeightsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetActivityProductivityWeightByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateDeductionRuleValidator>();
             services.AddValidatorsFromAssemblyContaining<ChangeDeductionRuleStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetDeductionRuleByIdValidator>();
@@ -174,6 +184,7 @@ namespace Application
             //other services
             services.AddScoped<VacationAccrualService>();
             services.AddScoped<MonthlyPayrollService>();
+            services.AddScoped<ProductivityService>();
 
             return services;
         }

@@ -32,10 +32,13 @@ namespace Application.Features.TimeEntries.Handlers
                 .Select(e => new TimeEntryDto
                 {
                     Id = e.Id,
+                    RedmineTimeEntryId = e.RedmineTimeEntryId,
+                    RedmineProjectId = e.RedmineProjectId,
+                    RedmineActivityId = e.RedmineActivityId,
+                    ActivityName = e.ActivityName,
                     EmployeeId = e.EmployeeId,
                     Hours = e.Hours,
-                    SpentOn = e.SpentOn,
-                    ProjectId = e.RedmineProjectId
+                    SpentOn = e.SpentOn
                 }).ToList();
         }
     }

@@ -84,5 +84,15 @@ namespace Infrastructure.Redmine
                 })
                 .ToList() ?? new List<RedmineMilestoneDto>();
         }
+
+        public async Task<List<RedmineTimeEntryActivityDto>> GetTimeEntryActivitiesAsync()
+        {
+            var response = await _httpClient.GetAsync("/enumerations/time_entry_activities.json");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<RedmineTimeEntryActivitiesResponse>(content);
+            return result?.TimeEntryActivities ?? new List<RedmineTimeEntryActivityDto>();
+        }
     }
 }

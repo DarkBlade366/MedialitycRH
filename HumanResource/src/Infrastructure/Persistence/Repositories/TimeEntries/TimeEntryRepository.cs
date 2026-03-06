@@ -91,8 +91,27 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
                     x.SpentOn >= periodStart &&
                     x.SpentOn <= periodEnd)
                 .SumAsync(x => (decimal?)x.Hours);
-        
+
             return (int)(total ?? 0m);
+        }
+
+        public async Task<Dictionary<int, decimal>> GetHoursByActivityAsync(
+            Guid employeeId,
+            DateTime periodStart,
+            DateTime periodEnd)
+        {
+            var query = _context.TimeEntries
+                .Where(x =>
+                    x.EmployeeId == employeeId &&
+                    x.SpentOn >= periodStart &&
+                    x.SpentOn <= periodEnd);
+
+            var grouped = await query
+                .GroupBy(x => x.RedmineActivityId ?? 0)
+                .Select(g => new { ActivityId = g.Key, TotalHours = g.Sum(x => x.Hours) })
+                .ToListAsync();
+
+            return grouped.ToDictionary(x => x.ActivityId, x => x.TotalHours);
         }
     }
 }

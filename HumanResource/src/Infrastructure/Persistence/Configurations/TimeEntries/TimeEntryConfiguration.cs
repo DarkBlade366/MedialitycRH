@@ -17,6 +17,8 @@ namespace Infrastructure.Persistence.Configurations.TimeEntries
             builder.Property(t => t.RedmineTimeEntryId).IsRequired();
             builder.HasIndex(t => t.RedmineTimeEntryId).IsUnique();
             builder.Property(t => t.RedmineProjectId).IsRequired();
+            builder.Property(t => t.RedmineActivityId);
+            builder.Property(t => t.ActivityName).HasMaxLength(100);
             builder.Property(t => t.EmployeeId).IsRequired();
             builder.Property(t => t.Hours).IsRequired().HasPrecision(18, 2);
             builder.Property(t => t.SpentOn).IsRequired();

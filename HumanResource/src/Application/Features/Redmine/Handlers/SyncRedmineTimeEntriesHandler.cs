@@ -60,12 +60,17 @@ namespace Application.Features.Redmine.Handlers
                         ? e.SpentOn
                         : DateTime.SpecifyKind(e.SpentOn, DateTimeKind.Utc);
 
+                    var activityId = e.Activity?.Id > 0 ? e.Activity.Id : (int?)null;
+                    var activityName = !string.IsNullOrWhiteSpace(e.Activity?.Name) ? e.Activity.Name : null;
+
                     listToAdd.Add(new TimeEntry(
                         e.Id,
                         e.Project.Id,
                         employee.Id,
                         e.Hours,
-                        spentOnUtc));
+                        spentOnUtc,
+                        activityId,
+                        activityName));
 
                     created++;
                 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Application.Features.Payrolls.Payroll.Commands;
 using Application.Features.Payrolls.Payroll.DTOs;
+using Application.Services;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Payrolls.Enums;
 using Domain.Features.Payrolls.Interfaces;
@@ -31,6 +32,7 @@ namespace Application.Features.Payrolls.Payroll.Handlers
         private readonly IMilestoneRuleRepository _milestoneRuleRepository;
         private readonly IProjectMilestoneRepository _projectMilestoneRepository;
         private readonly IMilestoneParticipationRepository _milestoneParticipationRepository;
+        private readonly ProductivityService _productivityService;
 
         public CreatePayrollHandler(
             IEmployeeRepository employeeRepository,
@@ -46,7 +48,8 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             IAguinaldoRuleRepository aguinaldoRuleRepository,
             IMilestoneRuleRepository milestoneRuleRepository,
             IProjectMilestoneRepository projectMilestoneRepository,
-            IMilestoneParticipationRepository milestoneParticipationRepository)
+            IMilestoneParticipationRepository milestoneParticipationRepository,
+            ProductivityService productivityService)
         {
             _employeeRepository = employeeRepository;
             _payrollRepository = payrollRepository;
@@ -62,6 +65,7 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             _milestoneRuleRepository = milestoneRuleRepository;
             _projectMilestoneRepository = projectMilestoneRepository;
             _milestoneParticipationRepository = milestoneParticipationRepository;
+            _productivityService = productivityService;
         }
 
         public async Task<PayrollResponse> Handle(
@@ -93,9 +97,15 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             //buscando cuantas horas hizo
             var workedHours = await _timeEntryRepository
                 .GetWorkedHours(
-                    command.employeeId, 
-                    command.periodStart, 
+                    command.employeeId,
+                    command.periodStart,
                     command.periodEnd);
+
+            // Métrica de productividad ponderada por tipo de actividad
+            var productivityMetric = await _productivityService.CalculateProductivityMetric(
+                command.employeeId,
+                command.periodStart,
+                command.periodEnd);
 
             //Vacaciones usadas
             var vacationDaysUsed = employee.VacationBalance.UsedDays;
@@ -158,7 +168,7 @@ namespace Application.Features.Payrolls.Payroll.Handlers
                 overtimeRules,
                 deductionRules,
 
-                workedHours,
+                productivityMetric,
                 productivityRule,
 
                 vacationRule,

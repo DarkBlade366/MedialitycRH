@@ -62,6 +62,7 @@ namespace Infrastructure
             services.AddScoped<IVacationPaymentRepository, VacationPaymentRepository>();
             services.AddScoped<IProjectMilestoneRepository, ProjectMilestoneRepository>();
             services.AddScoped<IMilestoneParticipationRepository, MilestoneParticipationRepository>();
+            services.AddScoped<IActivityProductivityWeightRepository, ActivityProductivityWeightRepository>();
 
             // Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
