@@ -80,7 +80,7 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
             return (items, totalCount);
         }
 
-        public async Task<int> GetWorkedHours(
+        public async Task<decimal> GetWorkedHours(
             Guid employeeId,
             DateTime periodStart,
             DateTime periodEnd)
@@ -88,11 +88,13 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
             var total = await _context.TimeEntries
                 .Where(x =>
                     x.EmployeeId == employeeId &&
+                    x.Reviewed &&
+                    x.ApprovedHours.HasValue &&
                     x.SpentOn >= periodStart &&
                     x.SpentOn <= periodEnd)
-                .SumAsync(x => (decimal?)x.Hours);
+                .SumAsync(x => (decimal?)x.ApprovedHours);
 
-            return (int)(total ?? 0m);
+            return total ?? 0m;
         }
 
         public async Task<Dictionary<int, decimal>> GetHoursByActivityAsync(
@@ -103,21 +105,53 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
             var query = _context.TimeEntries
                 .Where(x =>
                     x.EmployeeId == employeeId &&
+                    x.Reviewed &&
+                    x.ApprovedHours.HasValue &&
                     x.SpentOn >= periodStart &&
                     x.SpentOn <= periodEnd);
 
             var grouped = await query
                 .GroupBy(x => x.RedmineActivityId ?? 0)
-                .Select(g => new { ActivityId = g.Key, TotalHours = g.Sum(x => x.Hours) })
+                .Select(g => new
+                {
+                    ActivityId = g.Key,
+                    TotalHours = g.Sum(x => x.ApprovedHours)
+                })
                 .ToListAsync();
 
-            return grouped.ToDictionary(x => x.ActivityId, x => x.TotalHours);
+            return grouped.ToDictionary(x => x.ActivityId, x => x.TotalHours ?? 0m);
         }
 
         public async Task<List<TimeEntry>> GetByRedmineIdsAsync(IEnumerable<int> redmineIds)
         {
             return await _context.TimeEntries
                 .Where(x => redmineIds.Contains(x.RedmineTimeEntryId))
+                .ToListAsync();
+        }
+
+        public async Task<bool> HasPendingEntries(
+            Guid employeeId,
+            DateTime start,
+            DateTime end)
+        {
+            return await _context.TimeEntries
+                .AnyAsync(t =>
+                    t.EmployeeId == employeeId &&
+                    t.SpentOn >= start &&
+                    t.SpentOn <= end &&
+                    !t.Reviewed);
+        }
+
+        public async Task<TimeEntry?> GetByIdAsync(Guid id)
+        {
+            return await _context.TimeEntries
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+        
+        public async Task<List<TimeEntry>> GetByIdsAsync(IEnumerable<Guid> ids)
+        {
+            return await _context.TimeEntries
+                .Where(x => ids.Contains(x.Id))
                 .ToListAsync();
         }
     }

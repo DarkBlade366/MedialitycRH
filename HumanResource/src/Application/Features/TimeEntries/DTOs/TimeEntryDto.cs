@@ -14,6 +14,8 @@ namespace Application.Features.TimeEntries.DTOs
         public string? ActivityName { get; set; }
         public Guid EmployeeId { get; set; }
         public decimal Hours { get; set; }
+        public decimal? ApprovedHours { get; set; }
+        public bool Reviewed { get; set; }
         public DateTime SpentOn { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Domain.Features.Payrolls.Rules
     {
         public int StandardHoursPerPeriod { get; private set; }
         public decimal OvertimeMultiplier { get; private set; }
-        public decimal HourlyRate { get; set; }
+        public decimal HourlyRate { get; private set; }
 
         private OvertimeRule() : base("Overtime Rule") { }
 

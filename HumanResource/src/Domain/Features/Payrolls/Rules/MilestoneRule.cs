@@ -16,6 +16,12 @@ namespace Domain.Features.Payrolls.Rules
         public MilestoneRule(int projectId, string milestoneName, decimal bonusAmount)
             : base("Milestone Rule")
         {
+            if (bonusAmount <= 0)
+                throw new ArgumentException("Bonus must be greater than zero.");
+            
+            if (string.IsNullOrWhiteSpace(milestoneName))
+                throw new ArgumentException("Milestone name required.");
+
             RedmineProjectId = projectId;
             MilestoneName = milestoneName;
             BonusAmount = bonusAmount;

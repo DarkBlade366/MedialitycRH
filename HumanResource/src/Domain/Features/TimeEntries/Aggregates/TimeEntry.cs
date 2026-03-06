@@ -14,7 +14,11 @@ namespace Domain.Features.TimeEntries.Aggregates
         public int? RedmineActivityId { get; private set; }
         public string? ActivityName { get; private set; }
         public Guid EmployeeId { get; private set; }
+
         public decimal Hours { get; private set; }
+        public decimal? ApprovedHours { get; private set; }
+
+        public bool Reviewed { get; private set; }
         public DateTime SpentOn { get; private set; }
 
         protected TimeEntry() { }
@@ -45,6 +49,8 @@ namespace Domain.Features.TimeEntries.Aggregates
             SpentOn = spentOn;
             RedmineActivityId = redmineActivityId > 0 ? redmineActivityId : null;
             ActivityName = !string.IsNullOrWhiteSpace(activityName) ? activityName.Trim() : null;
+            ApprovedHours = null;
+            Reviewed = false;
         }
 
         public void Update(
@@ -53,10 +59,27 @@ namespace Domain.Features.TimeEntries.Aggregates
             int? activityId,
             string? activityName)
         {
+            bool hoursChanged = Hours != hours;
+
             Hours = hours;
             SpentOn = spentOn;
             RedmineActivityId = activityId;
             ActivityName = activityName;
+
+            if (hoursChanged)
+            {
+                Reviewed = false;
+                ApprovedHours = null;
+            }
+        }
+
+        public void Approve(decimal approvedHours)
+        {
+            if (approvedHours < 0 || approvedHours > Hours)
+                throw new ArgumentException("Approved hours must be between 0 and registered hours.");
+
+            ApprovedHours = approvedHours;
+            Reviewed = true;
         }
     }
 }

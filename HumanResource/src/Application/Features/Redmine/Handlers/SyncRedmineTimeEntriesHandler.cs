@@ -81,21 +81,12 @@ namespace Application.Features.Redmine.Handlers
                     }
                     else
                     {
-                        bool hasChanges =
-                            existing.Hours != e.Hours ||
-                            existing.SpentOn != spentOnUtc ||
-                            existing.RedmineActivityId != activityId ||
-                            existing.ActivityName != activityName;
-
-                        if (hasChanges)
-                        {
-                            existing.Update(
-                                e.Hours,
-                                spentOnUtc,
-                                activityId,
-                                activityName
-                            );
-                        }
+                        existing.Update(
+                            e.Hours,
+                            spentOnUtc,
+                            activityId,
+                            activityName
+                        );
                     }
                 }
 

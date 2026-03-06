@@ -88,6 +88,15 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             if (overlap)
                 throw new Exception("Payroll period overlaps with existing payroll.");
             
+            var pendingEntries = await _timeEntryRepository
+                .HasPendingEntries(
+                    command.employeeId,
+                    command.periodStart,
+                    command.periodEnd);
+            
+            if (pendingEntries)
+                throw new Exception("There are time entries pending approval for this period.");
+
             //empleado inexistente
             var employee = await _employeeRepository.GetByIdAsync(command.employeeId);
 

@@ -24,7 +24,7 @@ namespace Domain.Features.TimeEntries.Interfaces
             int page,
             int pageSize);
 
-        Task<int> GetWorkedHours(
+        Task<decimal> GetWorkedHours(
             Guid employeeId,
             DateTime periodStart,
             DateTime periodEnd);
@@ -35,5 +35,8 @@ namespace Domain.Features.TimeEntries.Interfaces
             DateTime periodEnd);
 
         Task<List<TimeEntry>> GetByRedmineIdsAsync(IEnumerable<int> redmineIds);
+        Task<bool> HasPendingEntries(Guid employeeId, DateTime start, DateTime end);
+        Task<TimeEntry?> GetByIdAsync(Guid id);
+        Task<List<TimeEntry>> GetByIdsAsync(IEnumerable<Guid> ids);
     }
 }

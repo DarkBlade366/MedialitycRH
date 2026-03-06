@@ -17,7 +17,9 @@ namespace Domain.Features.Payrolls.Services.Calculators
             Console.WriteLine($"[DEDUCTION] Iniciando cálculo de deducciones");
 
             var basicSalary = payroll.Components
-                .Where(c => c.Type == PayrollComponentType.BaseSalary)
+                .Where(c => 
+                    c.Type == PayrollComponentType.BaseSalary &&
+                    c.Category == PayrollComponentCategory.Earning)
                 .Sum(c => c.Amount);
 
             var totalEarnings = payroll.Components

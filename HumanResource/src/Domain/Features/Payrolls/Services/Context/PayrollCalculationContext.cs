@@ -13,7 +13,7 @@ namespace Domain.Features.Payrolls.Services.Context
 {
     public class PayrollCalculationContext
     {
-        public int TotalWorkedHours { get; init; }
+        public decimal TotalWorkedHours { get; init; }
 
         //Salary 
         public IReadOnlyCollection<BaseSalaryRule> BaseSalaryRules { get; init; }
@@ -51,7 +51,7 @@ namespace Domain.Features.Payrolls.Services.Context
             IReadOnlyCollection<BaseSalaryRule> baseSalaryRules,
             EmployeeRole employeeRole,
 
-            int totalWorkedHours,
+            decimal totalWorkedHours,
 
             IReadOnlyCollection<OvertimeRule> overtimeRules,
             IReadOnlyCollection<DeductionRule> deductionRules,

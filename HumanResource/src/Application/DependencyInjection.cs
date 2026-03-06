@@ -118,6 +118,8 @@ namespace Application
             services.AddScoped<GetMilestoneParticipationByIdHandler>();
             services.AddScoped<GetMilestoneParticipationsPagedHandler>();
             services.AddScoped<CreateMilestoneParticipationHandler>();
+            services.AddScoped<ApproveTimeEntryHandler>();
+            services.AddScoped<ApproveTimeEntriesBatchHandler>();
 
 
             // Register validators
@@ -180,9 +182,11 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<ChangeMilestoneParticipationStatusValidator>();
             services.AddValidatorsFromAssemblyContaining<GetMilestoneParticipationByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetMilestoneParticipationsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<ApproveTimeEntryValidator>();
+            services.AddValidatorsFromAssemblyContaining<ApproveTimeEntriesBatchValidator>();
 
             //other services
-            services.AddScoped<VacationAccrualService>();
+            services.AddScoped<VacationAccrualService>();   
             services.AddScoped<MonthlyPayrollService>();
             services.AddScoped<ProductivityService>();
 
