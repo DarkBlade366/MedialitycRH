@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Infrastructure.Persistence;
+using Polly;
+using Polly.Extensions.Http;
 using Infrastructure.Security;
 using Application.Common.Security;
 using Infrastructure.Redmine;
@@ -40,7 +42,8 @@ namespace Infrastructure
                 client.BaseAddress = new Uri(baseUrl);
 
                 client.DefaultRequestHeaders.Add("X-Redmine-API-Key", apiKey);
-            });
+            })
+            .AddPolicyHandler(GetRedmineRetryPolicy());
 
             // Repositories
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -73,6 +76,20 @@ namespace Infrastructure
             services.AddScoped<IPayrollExcelGenerator, PayrollExcelGenerator>();
 
             return services;
+        }
+
+        private static IAsyncPolicy<HttpResponseMessage> GetRedmineRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                .WaitAndRetryAsync(
+                    retryCount: 3,
+                    sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    onRetry: (outcome, timespan, retryCount, _) =>
+                    {
+                        // Logging se hace en el caller cuando falla definitivamente
+                    });
         }
     }
 }

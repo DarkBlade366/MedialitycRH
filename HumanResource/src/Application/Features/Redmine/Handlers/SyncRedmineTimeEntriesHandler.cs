@@ -46,33 +46,57 @@ namespace Application.Features.Redmine.Handlers
                     continue;
 
                 var redmineIds = entries.Select(x => x.Id).ToList();
-                var existingIds = await _timeRepository.GetExistingRedmineIdsAsync(redmineIds);
-                var existingIdsSet = existingIds.ToHashSet();
+
+                var existingEntries = await _timeRepository.GetByRedmineIdsAsync(redmineIds);
+                var existingDict = existingEntries.ToDictionary(x => x.RedmineTimeEntryId);
 
                 var listToAdd = new List<TimeEntry>();
 
                 foreach (var e in entries)
                 {
-                    if (existingIdsSet.Contains(e.Id))
-                        continue; 
-
                     var spentOnUtc = e.SpentOn.Kind == DateTimeKind.Utc
                         ? e.SpentOn
                         : DateTime.SpecifyKind(e.SpentOn, DateTimeKind.Utc);
 
-                    var activityId = e.Activity?.Id > 0 ? e.Activity.Id : (int?)null;
-                    var activityName = !string.IsNullOrWhiteSpace(e.Activity?.Name) ? e.Activity.Name : null;
+                    var activityId = e.Activity?.Id > 0
+                        ? e.Activity.Id
+                        : (int?)null;
 
-                    listToAdd.Add(new TimeEntry(
-                        e.Id,
-                        e.Project.Id,
-                        employee.Id,
-                        e.Hours,
-                        spentOnUtc,
-                        activityId,
-                        activityName));
+                    var activityName = !string.IsNullOrWhiteSpace(e.Activity?.Name)
+                        ? e.Activity.Name
+                        : null;
 
-                    created++;
+                    if (!existingDict.TryGetValue(e.Id, out var existing))
+                    {
+                        listToAdd.Add(new TimeEntry(
+                            e.Id,
+                            e.Project.Id,
+                            employee.Id,
+                            e.Hours,
+                            spentOnUtc,
+                            activityId,
+                            activityName));
+
+                        created++;
+                    }
+                    else
+                    {
+                        bool hasChanges =
+                            existing.Hours != e.Hours ||
+                            existing.SpentOn != spentOnUtc ||
+                            existing.RedmineActivityId != activityId ||
+                            existing.ActivityName != activityName;
+
+                        if (hasChanges)
+                        {
+                            existing.Update(
+                                e.Hours,
+                                spentOnUtc,
+                                activityId,
+                                activityName
+                            );
+                        }
+                    }
                 }
 
                 if (listToAdd.Count > 0)

@@ -8,7 +8,7 @@ using FluentValidation;
 namespace Application.Features.Payrolls.Rules.Aguinaldo.Validations
 {
     public class GetAguinaldoRulesPagedValidator : AbstractValidator<GetAguinaldoRulesPagedQuery>
-    {
+    {   
         public GetAguinaldoRulesPagedValidator()
         {
             RuleFor(x => x.Page)

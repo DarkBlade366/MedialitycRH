@@ -113,5 +113,12 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
 
             return grouped.ToDictionary(x => x.ActivityId, x => x.TotalHours);
         }
+
+        public async Task<List<TimeEntry>> GetByRedmineIdsAsync(IEnumerable<int> redmineIds)
+        {
+            return await _context.TimeEntries
+                .Where(x => redmineIds.Contains(x.RedmineTimeEntryId))
+                .ToListAsync();
+        }
     }
 }

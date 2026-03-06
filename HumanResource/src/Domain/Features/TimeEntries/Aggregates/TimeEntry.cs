@@ -46,5 +46,17 @@ namespace Domain.Features.TimeEntries.Aggregates
             RedmineActivityId = redmineActivityId > 0 ? redmineActivityId : null;
             ActivityName = !string.IsNullOrWhiteSpace(activityName) ? activityName.Trim() : null;
         }
+
+        public void Update(
+            decimal hours,
+            DateTime spentOn,
+            int? activityId,
+            string? activityName)
+        {
+            Hours = hours;
+            SpentOn = spentOn;
+            RedmineActivityId = activityId;
+            ActivityName = activityName;
+        }
     }
 }

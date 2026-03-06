@@ -6,9 +6,12 @@ namespace Web.API.BackgroundServices
 {
     public class RedmineSyncBackgroundService : BackgroundService
     {
+        private const int ConsecutiveFailureAlertThreshold = 3;
+
         private readonly ILogger<RedmineSyncBackgroundService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IOptions<RedmineSyncScheduleOptions> _options;
+        private int _consecutiveFailures;
 
         public RedmineSyncBackgroundService(
             ILogger<RedmineSyncBackgroundService> logger,
@@ -39,25 +42,44 @@ namespace Web.API.BackgroundServices
                     "Redmine sync cycle starting at {UtcNow}.",
                     DateTime.UtcNow);
 
+                var cycleFailed = false;
+
                 try
                 {
                     using var scope = _scopeFactory.CreateScope();
 
-                    await SyncProjectsAsync(scope, stoppingToken);
+                    var projectsOk = await SyncProjectsAsync(scope, stoppingToken);
+                    var usersOk = await SyncUsersAsync(scope, stoppingToken);
+                    var milestonesOk = await SyncMilestonesAsync(scope, stoppingToken);
+                    var timeEntriesOk = await SyncTimeEntriesAsync(scope, options, stoppingToken);
 
-                    await SyncUsersAsync(scope, stoppingToken);
+                    cycleFailed = !projectsOk || !usersOk || !milestonesOk || !timeEntriesOk;
 
-                    await SyncMilestonesAsync(scope, stoppingToken);
-
-                    await SyncTimeEntriesAsync(scope, options, stoppingToken);
-
-                    _logger.LogInformation(
-                        "Redmine sync cycle completed successfully at {UtcNow}.",
-                        DateTime.UtcNow);
+                    if (!cycleFailed)
+                    {
+                        _consecutiveFailures = 0;
+                        _logger.LogInformation(
+                            "Redmine sync cycle completed successfully at {UtcNow}.",
+                            DateTime.UtcNow);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error during Redmine sync cycle.");
+                    cycleFailed = true;
+                    _logger.LogError(ex,
+                        "Error during Redmine sync cycle. ExceptionType={ExceptionType}, Message={Message}",
+                        ex.GetType().Name, ex.Message);
+                }
+
+                if (cycleFailed)
+                {
+                    _consecutiveFailures++;
+                    if (_consecutiveFailures == ConsecutiveFailureAlertThreshold)
+                    {
+                        _logger.LogCritical(
+                            "ALERTA: Redmine ha fallado {Count} veces consecutivas. Revisar conectividad y configuración de la API.",
+                            _consecutiveFailures);
+                    }
                 }
 
                 var interval = TimeSpan.FromHours(
@@ -71,7 +93,7 @@ namespace Web.API.BackgroundServices
             }
         }
 
-        private async Task SyncProjectsAsync(IServiceScope scope, CancellationToken ct)
+        private async Task<bool> SyncProjectsAsync(IServiceScope scope, CancellationToken ct)
         {
             try
             {
@@ -82,14 +104,18 @@ namespace Web.API.BackgroundServices
 
                 _logger.LogInformation(
                     "Redmine projects synced. Created: {Created}.", created);
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to sync Redmine projects.");
+                _logger.LogError(ex,
+                    "Failed to sync Redmine projects. ExceptionType={ExceptionType}, Message={Message}",
+                    ex.GetType().Name, ex.Message);
+                return false;
             }
         }
 
-        private async Task SyncUsersAsync(IServiceScope scope, CancellationToken ct)
+        private async Task<bool> SyncUsersAsync(IServiceScope scope, CancellationToken ct)
         {
             try
             {
@@ -100,14 +126,18 @@ namespace Web.API.BackgroundServices
 
                 _logger.LogInformation(
                     "Redmine users synced. Created: {Created}.", created);
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to sync Redmine users.");
+                _logger.LogError(ex,
+                    "Failed to sync Redmine users. ExceptionType={ExceptionType}, Message={Message}",
+                    ex.GetType().Name, ex.Message);
+                return false;
             }
         }
 
-        private async Task SyncMilestonesAsync(IServiceScope scope, CancellationToken ct)
+        private async Task<bool> SyncMilestonesAsync(IServiceScope scope, CancellationToken ct)
         {
             try
             {
@@ -118,35 +148,43 @@ namespace Web.API.BackgroundServices
 
                 _logger.LogInformation(
                     "Redmine milestones synced. Created: {Created}.", created);
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to sync Redmine milestones.");
+                _logger.LogError(ex,
+                    "Failed to sync Redmine milestones. ExceptionType={ExceptionType}, Message={Message}",
+                    ex.GetType().Name, ex.Message);
+                return false;
             }
         }
 
-        private async Task SyncTimeEntriesAsync(
+        private async Task<bool> SyncTimeEntriesAsync(
             IServiceScope scope,
             RedmineSyncScheduleOptions options,
             CancellationToken ct)
         {
+            var from = DateTime.UtcNow.AddDays(-options.TimeEntryLookBackDays);
+            var to = DateTime.UtcNow;
+
             try
             {
                 var handler = scope.ServiceProvider
                     .GetRequiredService<SyncRedmineTimeEntriesHandler>();
-
-                var from = DateTime.UtcNow.AddDays(-options.TimeEntryLookBackDays);
-                var to = DateTime.UtcNow;
 
                 var created = await handler.Handle(from, to, ct);
 
                 _logger.LogInformation(
                     "Redmine time entries synced ({From} to {To}). Created: {Created}.",
                     from, to, created);
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to sync Redmine time entries.");
+                _logger.LogError(ex,
+                    "Failed to sync Redmine time entries (From={From}, To={To}). ExceptionType={ExceptionType}, Message={Message}",
+                    from, to, ex.GetType().Name, ex.Message);
+                return false;
             }
         }
     }

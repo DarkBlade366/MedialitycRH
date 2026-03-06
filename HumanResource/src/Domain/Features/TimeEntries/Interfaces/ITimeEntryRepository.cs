@@ -33,5 +33,7 @@ namespace Domain.Features.TimeEntries.Interfaces
             Guid employeeId,
             DateTime periodStart,
             DateTime periodEnd);
+
+        Task<List<TimeEntry>> GetByRedmineIdsAsync(IEnumerable<int> redmineIds);
     }
 }
