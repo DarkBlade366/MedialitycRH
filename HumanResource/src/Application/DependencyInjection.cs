@@ -46,6 +46,8 @@ using Application.Features.Payrolls.Rules.Project.Handlers;
 using Application.Features.Payrolls.Rules.Project.Validations;
 using Application.Features.Payrolls.Payments.Project.Handlers;
 using Application.Features.Payrolls.Payments.Project.Validations;
+using Application.Features.Analytics.Handlers;
+using Application.Features.Analytics.Validations;
 
 namespace Application
 {
@@ -129,6 +131,9 @@ namespace Application
             services.AddScoped<GetProjectRuleByIdHandler>();
             services.AddScoped<GetProjectRulesPagedHandler>();
             services.AddScoped<GetProjectPaymentsPagedHandler>();
+            services.AddScoped<GetProjectCostsHandler>();
+            services.AddScoped<GetHoursComparisonHandler>();
+            services.AddScoped<GetProductivityTrendHandler>();
 
 
             // Register validators
@@ -198,6 +203,9 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetProjectRuleByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProjectRulesPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProjectPaymentsPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetHoursComparisonValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProjectCostsValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProductivityTrendValidator>();
 
             //other services
             services.AddScoped<VacationAccrualService>();   
