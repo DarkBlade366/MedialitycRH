@@ -37,19 +37,16 @@ namespace Domain.Features.Payrolls.Entities
                 throw new ArgumentException("Weight must be between 0 and 1.");
 
             Weight = weight;
-            MarkUpdated();
         }
 
         public void Deactivate()
         {
             IsActive = false;
-            MarkUpdated();
         }
 
         public void Activate()
         {
             IsActive = true;
-            MarkUpdated();
         }
     }
 }

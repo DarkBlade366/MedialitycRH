@@ -60,7 +60,6 @@ namespace Domain.Features.Employees.Aggregates
                 return;
 
             IsActive = isActive;
-            MarkUpdated();
         }
 
         public void Update(string fullName, string email, EmployeeRole role)
@@ -74,39 +73,32 @@ namespace Domain.Features.Employees.Aggregates
             FullName = fullName.Trim();
             Email = email.Trim().ToLowerInvariant();
             Role = role;
-
-            MarkUpdated();
         }
 
         public void SetRedmineUserId(int redmineUserId)
         {
             RedmineUserId = redmineUserId;
-            MarkUpdated();
         }
 
         public void AccrueAguinaldo(decimal amount)
         {
             _aguinaldoBalance.Accrue(amount);
-            MarkUpdated();
         }
 
         public decimal PayAguinaldo()
         {
             var paid = _aguinaldoBalance.Pay();
-            MarkUpdated();
             return paid;
         }
 
         public void AccrueVacationDays(decimal days)
         {
             _vacationBalance.Accrue(days);
-            MarkUpdated();
         }
 
         public void UseVacationDays(decimal days)
         {
             _vacationBalance.Use(days);
-            MarkUpdated();
         }
     }
 }

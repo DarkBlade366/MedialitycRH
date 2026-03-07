@@ -30,7 +30,6 @@ namespace Domain.Features.Payrolls.Rules
                 throw new ArgumentException("BonusAmount cannot be negative.");
 
             BonusAmount = bonusAmount;
-            MarkUpdated();
         }
     }
 }

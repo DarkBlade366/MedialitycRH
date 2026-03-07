@@ -30,7 +30,6 @@ namespace Domain.Features.Employees.Entities
                 throw new ArgumentException("Amount must be positive.");
 
             AccruedAmount += amount;
-            MarkUpdated();
         }
 
         internal decimal Pay()
@@ -42,7 +41,6 @@ namespace Domain.Features.Employees.Entities
             PaidAmount += total;
             AccruedAmount = 0;
 
-            MarkUpdated();
             return total;
         }
     }

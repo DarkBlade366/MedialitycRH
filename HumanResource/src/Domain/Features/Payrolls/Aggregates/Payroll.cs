@@ -79,7 +79,6 @@ namespace Domain.Features.Payrolls.Aggregates
             }
             
             _components.Add(component);
-            MarkUpdated();
         }
 
         public void MarkAsCalculated()
@@ -100,8 +99,6 @@ namespace Domain.Features.Payrolls.Aggregates
 
             NetAmount = GrossAmount - TotalDeductions;
             Status = PayrollStatus.Calculated;
-
-            MarkUpdated();
         }
         
         public void Approve()
@@ -116,7 +113,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("Payroll must be calculated before approval.");
 
             Status = PayrollStatus.Approved;
-            MarkUpdated();
         }
 
         public void MarkAsPaid()
@@ -131,7 +127,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("Payroll must be approved before payment.");
 
             Status = PayrollStatus.Paid;
-            MarkUpdated();
         }
 
         public void AddMilestonePayment(Guid milestoneRuleId, decimal amount, DateTime paidAt)
@@ -143,7 +138,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This milestone rule was already applied to this payroll.");
 
             _milestonePayments.Add(new MilestonePayment(this.Id, milestoneRuleId, amount, paidAt));
-            MarkUpdated();
         }
 
         public bool IsMilestonePaid(Guid milestoneRuleId)
@@ -160,7 +154,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This aguinaldo rule was already applied to this payroll.");
 
             _aguinaldoPayments.Add(new AguinaldoPayment(this.Id, ruleId, amount, paidAt));
-            MarkUpdated();
         }
 
         public void AddVacationPayment(Guid ruleId, decimal amount, DateTime paidAt)
@@ -172,7 +165,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This vacation rule was already applied to this payroll.");
 
             _vacationPayments.Add(new VacationPayment(this.Id, ruleId, amount, paidAt));
-            MarkUpdated();
         }
 
         public void AddProductivityPayment(Guid ruleId, decimal amount, DateTime paidAt)
@@ -184,7 +176,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This productivity rule was already applied to this payroll.");
 
             _productivityPayments.Add(new ProductivityPayment(this.Id, ruleId, amount, paidAt));
-            MarkUpdated();
         }
 
         public void AddOvertimePayment(Guid ruleId, decimal amount, DateTime paidAt)
@@ -196,7 +187,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This overtime rule was already applied to this payroll.");
 
             _overtimePayments.Add(new OvertimePayment(this.Id, ruleId, amount, paidAt));
-            MarkUpdated();
         }
 
         public void AddDeductionPayment(Guid deductionRuleId, decimal amount, DateTime appliedAt)
@@ -208,7 +198,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This deduction rule was already applied to this payroll.");
 
             _deductionPayments.Add(new DeductionPayment(this.Id, deductionRuleId, amount, appliedAt));
-            MarkUpdated();
         }
 
         public void AddProjectPayment(int redmineProjectId, decimal amount, DateTime paidAt)
@@ -220,7 +209,6 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This project was already paid in this payroll.");
 
             _projectPayments.Add(new ProjectPayment(this.Id, redmineProjectId, amount, paidAt));
-            MarkUpdated();
         }
     }
 }

@@ -16,9 +16,10 @@ using Domain.Features.Projects.Interfaces;
 using Infrastructure.Persistence.Repositories.Projects;
 using Infrastructure.Persistence.Repositories.Payrrolls;
 using Infrastructure.Persistence.Repositories.TimeEntries;
-using Infrastructure.Persistence.Repositories.Employees;
+using Infrastructure.Persistence.Repositories.Employees;    
 using Application.Common.Interfaces;
 using Infrastructure.Interfaces;
+using Infrastructure.Services;
 
 namespace Infrastructure
 {
@@ -27,8 +28,12 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             // DbContext
-            services.AddDbContext<ApiDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("DbMedialitycHR")));
+            services.AddDbContext<ApiDbContext>((serviceProvider, options) =>
+            {
+                var interceptor = serviceProvider.GetRequiredService<AuditInterceptor>();
+                options.UseNpgsql(configuration.GetConnectionString("DbMedialitycHR"))
+                        .AddInterceptors(interceptor);
+            });
 
             //Redmine
             services.AddHttpClient<IRedmineService, RedmineClient>(client =>
@@ -76,6 +81,10 @@ namespace Infrastructure
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IPayrollPdfGenerator, PayrollPdfGenerator>();
             services.AddScoped<IPayrollExcelGenerator, PayrollExcelGenerator>();
+
+            //Audi
+            services.AddScoped<AuditInterceptor>();
+
 
             return services;
         }

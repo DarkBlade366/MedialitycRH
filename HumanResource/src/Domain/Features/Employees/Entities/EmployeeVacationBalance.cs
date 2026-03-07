@@ -35,7 +35,6 @@ namespace Domain.Features.Employees.Entities
 
             AccruedDays += days;
             LastAccrualDate = DateTime.UtcNow;
-            MarkUpdated();
         }
 
         internal void Use(decimal days)
@@ -47,7 +46,6 @@ namespace Domain.Features.Employees.Entities
                 throw new InvalidOperationException("Not enough vacation balance.");
 
             UsedDays += days;
-            MarkUpdated();
         }
 
         public bool HasAccruedThisMonth()
@@ -68,7 +66,6 @@ namespace Domain.Features.Employees.Entities
                 throw new InvalidOperationException("Cannot pay more days than used.");
 
             UsedDays -= daysToPay;
-            MarkUpdated();
         }
     }
 }

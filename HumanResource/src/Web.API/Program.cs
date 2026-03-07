@@ -13,11 +13,15 @@ using Domain.Features.Payrolls.Services.Engines;
 using Domain.Features.Payrolls.Services.Interfaces;
 using Domain.Features.Payrolls.Services.Calculators;
 using Web.API.BackgroundServices;
+using Application.Common.Interfaces;
+using Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Conexion con Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 //Conexion con Application
 builder.Services.AddApplication();
 //Conexion con Domain

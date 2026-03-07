@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Common.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -24,7 +25,15 @@ namespace Infrastructure.Persistence
             optionsBuilder.UseNpgsql(
                 configuration.GetConnectionString("DbMedialitycHR"));
 
-            return new ApiDbContext(optionsBuilder.Options);
+            ICurrentUserService currentUser = new DesignTimeCurrentUserService();
+
+            return new ApiDbContext(optionsBuilder.Options, currentUser);
+        }
+
+        // Clase dummy que implementa ICurrentUserService solo para migraciones
+        public class DesignTimeCurrentUserService : ICurrentUserService
+        {
+            public string UserName => "SYSTEM";
         }
     }
 }

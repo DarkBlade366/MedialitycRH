@@ -12,13 +12,17 @@ using Domain.Features.TimeEntries.Aggregates;
 using Domain.Features.Projects.Aggregates;
 using Domain.Features.Payrolls.Entities;
 using Domain.Features.Employees.Entities;
+using Application.Common.Interfaces;
 namespace Infrastructure.Persistence
 {
     public class ApiDbContext : DbContext
     {
-        public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
+        private readonly ICurrentUserService _currentUser;
+        public ApiDbContext(DbContextOptions<ApiDbContext> options,
+                            ICurrentUserService currentUser) 
+                            : base(options)
         {
-
+            _currentUser = currentUser;
         }
 
         //DbSets
@@ -47,6 +51,9 @@ namespace Infrastructure.Persistence
         public DbSet<ProductivityRule> ProductivityRules => Set<ProductivityRule>();
         public DbSet<ProductivityPayment> ProductivityPayments => Set<ProductivityPayment>();
         public DbSet<ActivityProductivityWeight> ActivityProductivityWeights => Set<ActivityProductivityWeight>();
+        
+
+        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,17 +62,25 @@ namespace Infrastructure.Persistence
 
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            var entries = ChangeTracker.Entries<BaseEntity>();
+
+            foreach (var entry in entries)
             {
-                if (entry.State == EntityState.Modified)
+                switch (entry.State)
                 {
-                    entry.Entity.MarkUpdated();
+                    case EntityState.Added:
+                        entry.Entity.MarkCreated(_currentUser.UserName);
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.MarkUpdated(_currentUser.UserName);
+                        break;
                 }
             }
 
-            return base.SaveChangesAsync(cancellationToken);
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
     }

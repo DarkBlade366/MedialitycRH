@@ -36,19 +36,16 @@ namespace Domain.Features.Projects.Aggregates
         public void MarkAsPaid()
         {
             IsPaid = true;
-            MarkUpdated();
         }
 
         public void Deactivate()
         {
             IsActive = false;
-            MarkUpdated();
         }
 
         public void Activate()
         {
             IsActive = true;
-            MarkUpdated();
         }
     }
 }

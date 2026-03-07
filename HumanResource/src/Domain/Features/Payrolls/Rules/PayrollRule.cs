@@ -25,13 +25,11 @@ namespace Domain.Features.Payrolls.Rules
         public void Deactivate()
         {
             IsActive = false;
-            MarkUpdated();
         }
 
         public void Activate()
         {
             IsActive = true;
-            MarkUpdated();
         }
     }
 }

@@ -34,13 +34,11 @@ namespace Domain.Features.Projects.Aggregates
         {
             CompletedAt = completedAt.ToUniversalTime();
             Status = MilestoneStatus.Completed;
-            MarkUpdated();
         }
 
         public void MarkAsCancelled()
         {
             Status = MilestoneStatus.Cancelled;
-            MarkUpdated();
         }
 
         public bool IsPending() => Status == MilestoneStatus.Pending;
@@ -51,7 +49,6 @@ namespace Domain.Features.Projects.Aggregates
         {
             Status = MilestoneStatus.Pending;
             CompletedAt = null;
-            MarkUpdated();
         }
     }
 }
