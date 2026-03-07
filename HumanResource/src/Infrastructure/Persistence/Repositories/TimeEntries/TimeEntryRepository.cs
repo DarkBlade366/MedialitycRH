@@ -154,5 +154,16 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
                 .Where(x => ids.Contains(x.Id))
                 .ToListAsync();
         }
+
+        public async Task<List<TimeEntry>> GetByPeriodAsync(
+            DateTime periodStart,
+            DateTime periodEnd)
+        {
+            return await _context.TimeEntries
+                .Where(t =>
+                    t.SpentOn >= periodStart &&
+                    t.SpentOn <= periodEnd)
+                .ToListAsync();
+        }
     }
 }

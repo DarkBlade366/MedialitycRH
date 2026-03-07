@@ -11,6 +11,7 @@ using Domain.Features.Payrolls.Enums;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Services.Context;
 using Domain.Features.Payrolls.Services.Engines;
+using Domain.Features.Projects.Enums;
 using Domain.Features.Projects.Interfaces;
 using Domain.Features.TimeEntries.Interfaces;
 
@@ -33,6 +34,8 @@ namespace Application.Features.Payrolls.Payroll.Handlers
         private readonly IProjectMilestoneRepository _projectMilestoneRepository;
         private readonly IMilestoneParticipationRepository _milestoneParticipationRepository;
         private readonly ProductivityService _productivityService;
+        private readonly IProjectRuleRepository _projectRuleRepository;
+        private readonly IProjectRepository _projectRepository;
 
         public CreatePayrollHandler(
             IEmployeeRepository employeeRepository,
@@ -49,7 +52,9 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             IMilestoneRuleRepository milestoneRuleRepository,
             IProjectMilestoneRepository projectMilestoneRepository,
             IMilestoneParticipationRepository milestoneParticipationRepository,
-            ProductivityService productivityService)
+            ProductivityService productivityService,
+            IProjectRuleRepository projectRuleRepository,
+            IProjectRepository projectRepository)
         {
             _employeeRepository = employeeRepository;
             _payrollRepository = payrollRepository;
@@ -66,6 +71,8 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             _projectMilestoneRepository = projectMilestoneRepository;
             _milestoneParticipationRepository = milestoneParticipationRepository;
             _productivityService = productivityService;
+            _projectRepository = projectRepository;
+            _projectRuleRepository = projectRuleRepository;
         }
 
         public async Task<PayrollResponse> Handle(
@@ -123,6 +130,25 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             var baseSalaryRules = (await _baseSalaryRuleRepository.GetAllAsync())
                 .Where(r => r.Role == employee.Role && r.IsActive)
                 .ToList();
+
+            // Project
+            var projectRules = (await _projectRuleRepository.GetAllAsync())
+                .Where(r => r.IsActive)
+                .ToList();
+
+            var completedProjects = (await _projectRepository.GetAllAsync())
+                .Where(p =>
+                    p.Status == ProjectStatus.Completed &&
+                    p.CompletedAt.HasValue &&
+                    p.CompletedAt.Value >= command.periodStart &&
+                    p.CompletedAt.Value <= command.periodEnd)
+                .ToList();
+
+            //Time Entry
+            var timeEntries = await _timeEntryRepository
+                .GetByPeriodAsync(
+                    command.periodStart,
+                    command.periodEnd);
             
             // Overtime
             var overtimeRules = (await _overtimeRuleRepository.GetAllAsync())
@@ -190,6 +216,10 @@ namespace Application.Features.Payrolls.Payroll.Handlers
                 milestoneRules,
                 employeeParticipations,
                 projectMilestones,
+
+                projectRules,
+                completedProjects,
+                timeEntries,
 
                 command.periodStart,
                 command.periodEnd

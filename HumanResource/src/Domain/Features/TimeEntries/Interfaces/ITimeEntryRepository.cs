@@ -38,5 +38,8 @@ namespace Domain.Features.TimeEntries.Interfaces
         Task<bool> HasPendingEntries(Guid employeeId, DateTime start, DateTime end);
         Task<TimeEntry?> GetByIdAsync(Guid id);
         Task<List<TimeEntry>> GetByIdsAsync(IEnumerable<Guid> ids);
+        Task<List<TimeEntry>> GetByPeriodAsync(
+            DateTime periodStart,
+            DateTime periodEnd);
     }
 }

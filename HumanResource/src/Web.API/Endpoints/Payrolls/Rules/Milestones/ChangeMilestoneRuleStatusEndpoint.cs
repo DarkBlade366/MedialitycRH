@@ -38,7 +38,7 @@ namespace Web.API.Endpoints.Payrolls.Rules.Milestones
 
         public override async Task HandleAsync(ChangeMilestoneRuleStatusCommand req, CancellationToken ct)
         {
-            var id = Route<Guid>("id");
+            req.Id = Route<Guid>("id");
 
             await _handler.HandleAsync(req);
             await Send.NoContentAsync();

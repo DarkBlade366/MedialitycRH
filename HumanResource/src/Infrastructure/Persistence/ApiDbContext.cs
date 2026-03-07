@@ -28,6 +28,8 @@ namespace Infrastructure.Persistence
         public DbSet<TimeEntry> TimeEntries => Set<TimeEntry>();
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<ProjectMilestone> ProjectMilestones { get; set; }
+        public DbSet<ProjectRule> ProjectRules => Set<ProjectRule>();
+        public DbSet<ProjectPayment> ProjectPayments => Set<ProjectPayment>();
         public DbSet<Payroll> Payrolls => Set<Payroll>();
         public DbSet<PayrollComponent> PayrollComponents => Set<PayrollComponent>();
         public DbSet<BaseSalaryRule> BaseSalaryRules => Set<BaseSalaryRule>();

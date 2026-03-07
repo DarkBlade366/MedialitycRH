@@ -37,6 +37,72 @@ namespace Infrastructure.Redmine
 
         public async Task<List<RedmineProjectDto>> GetProjectsAsync()
         {
+            var allProjects = new List<RedmineProjectDto>();
+            
+            try
+            {
+                // 1. Obtener proyectos activos (status=1)
+                const string activeEndpoint = "/projects.json?status=1";
+                var activeResponse = await _httpClient.GetAsync(activeEndpoint);
+                await EnsureSuccessAndLogAsync(activeResponse, activeEndpoint, null);
+                
+                var activeContent = await activeResponse.Content.ReadAsStringAsync();
+                var activeResult = JsonSerializer.Deserialize<RedmineProjectsResponse>(activeContent);
+                var activeProjects = activeResult?.Projects ?? new List<RedmineProjectDto>();
+                
+                Console.WriteLine($"[REDMINE] Found {activeProjects.Count} active projects");
+                allProjects.AddRange(activeProjects);
+                
+                // 2. Obtener proyectos cerrados (status=5)
+                const string closedEndpoint = "/projects.json?status=5";
+                var closedResponse = await _httpClient.GetAsync(closedEndpoint);
+                await EnsureSuccessAndLogAsync(closedResponse, closedEndpoint, null);
+                
+                var closedContent = await closedResponse.Content.ReadAsStringAsync();
+                var closedResult = JsonSerializer.Deserialize<RedmineProjectsResponse>(closedContent);
+                var closedProjects = closedResult?.Projects ?? new List<RedmineProjectDto>();
+                
+                Console.WriteLine($"[REDMINE] Found {closedProjects.Count} closed projects");
+                allProjects.AddRange(closedProjects);
+                
+                // 3. Obtener proyectos archivados (status=9)
+                const string archivedEndpoint = "/projects.json?status=9";
+                var archivedResponse = await _httpClient.GetAsync(archivedEndpoint);
+                await EnsureSuccessAndLogAsync(archivedResponse, archivedEndpoint, null);
+                
+                var archivedContent = await archivedResponse.Content.ReadAsStringAsync();
+                var archivedResult = JsonSerializer.Deserialize<RedmineProjectsResponse>(archivedContent);
+                var archivedProjects = archivedResult?.Projects ?? new List<RedmineProjectDto>();
+                
+                Console.WriteLine($"[REDMINE] Found {archivedProjects.Count} archived projects");
+                allProjects.AddRange(archivedProjects);
+                
+                // Eliminar duplicados por ID
+                var uniqueProjects = allProjects
+                    .GroupBy(p => p.Id)
+                    .Select(g => g.First())
+                    .ToList();
+                
+                Console.WriteLine($"[REDMINE] Total unique projects: {uniqueProjects.Count}");
+                
+                return uniqueProjects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[REDMINE] Error getting all projects: {ex.Message}");
+                // Fallback: intentar el método original
+                const string fallbackEndpoint = "/projects.json";
+                var fallbackResponse = await _httpClient.GetAsync(fallbackEndpoint);
+                await EnsureSuccessAndLogAsync(fallbackResponse, fallbackEndpoint, null);
+
+                var fallbackContent = await fallbackResponse.Content.ReadAsStringAsync();
+                var fallbackResult = JsonSerializer.Deserialize<RedmineProjectsResponse>(fallbackContent);
+                return fallbackResult?.Projects ?? new List<RedmineProjectDto>();
+            }
+        }
+
+        public async Task<List<RedmineProjectDto>> GetAllProjectsAsync()
+        {
             const string endpoint = "/projects.json";
             var response = await _httpClient.GetAsync(endpoint);
             await EnsureSuccessAndLogAsync(response, endpoint, null);
@@ -58,17 +124,6 @@ namespace Infrastructure.Redmine
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<RedmineTimeEntriesResponse>(content);
             return result?.TimeEntries ?? new();
-        }
-
-        public async Task<List<RedmineProjectDto>> GetAllProjectsAsync()
-        {
-            const string endpoint = "/projects.json";
-            var response = await _httpClient.GetAsync(endpoint);
-            await EnsureSuccessAndLogAsync(response, endpoint, null);
-
-            var content = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<RedmineProjectsResponse>(content);
-            return result?.Projects ?? new();
         }
 
         public async Task<List<RedmineMilestoneDto>> GetProjectMilestonesAsync(int projectId)

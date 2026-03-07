@@ -8,6 +8,7 @@ namespace Domain.Features.Payrolls.Enums
         MilestoneBonus = 4,
         VacationPay = 5,
         Aguinaldo = 6,
-        LegalDeduction = 7
+        LegalDeduction = 7,
+        ProjectBonus = 8
     }
 }

@@ -8,6 +8,7 @@ using Domain.Features.Employees.Enums;
 using Domain.Features.Payrolls.Aggregates;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Projects.Aggregates;
+using Domain.Features.TimeEntries.Aggregates;
 
 namespace Domain.Features.Payrolls.Services.Context
 {
@@ -43,6 +44,11 @@ namespace Domain.Features.Payrolls.Services.Context
         public IReadOnlyCollection<MilestoneParticipation> MilestoneParticipations { get; init; }
         public IReadOnlyCollection<ProjectMilestone> ProjectMilestones { get; init; }
 
+        //Project Payments
+        public IReadOnlyCollection<ProjectRule> ProjectRules { get; init; }
+        public IReadOnlyCollection<Project> CompletedProjects { get; init; }
+        public IReadOnlyCollection<TimeEntry> TimeEntries { get; init; }
+
         //Period
         public DateTime PeriodStart { get; init; }
         public DateTime PeriodEnd { get; init; }
@@ -70,6 +76,10 @@ namespace Domain.Features.Payrolls.Services.Context
             IReadOnlyCollection<MilestoneParticipation> milestoneParticipations,
             IReadOnlyCollection<ProjectMilestone> projectMilestones,
 
+            IReadOnlyCollection<ProjectRule> projectRules,
+            IReadOnlyCollection<Project> completedProjects,
+            IReadOnlyCollection<TimeEntry> timeEntries,
+
             DateTime periodStart,
             DateTime periodEnd)
         {            
@@ -94,6 +104,10 @@ namespace Domain.Features.Payrolls.Services.Context
             MilestoneRules = milestoneRules ?? new List<MilestoneRule>();
             MilestoneParticipations = milestoneParticipations ?? new List<MilestoneParticipation>();
             ProjectMilestones = projectMilestones ?? new List<ProjectMilestone>();
+
+            ProjectRules = projectRules ?? new List<ProjectRule>();
+            CompletedProjects = completedProjects ?? new List<Project>();
+            TimeEntries = timeEntries ?? new List<TimeEntry>();
 
             PeriodStart = periodStart;
             PeriodEnd = periodEnd;

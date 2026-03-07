@@ -29,6 +29,7 @@ builder.Services.AddScoped<IEarningCalculator, MilestoneCalculator>();
 builder.Services.AddScoped<IEarningCalculator, AguinaldoCalculator>();
 builder.Services.AddScoped<IEarningCalculator, VacationCalculator>();
 builder.Services.AddScoped<IDeductionCalculator, DeductionCalculator>();
+builder.Services.AddScoped<IEarningCalculator, ProjectCalculator>();
 
 //Services
 builder.Services.Configure<VacationAccrualScheduleOptions>(

@@ -6,6 +6,7 @@ using Application.Features.Redmine.Interfaces;
 using Domain.Features.Projects.Interfaces;
 using Domain.Features.Projects.Aggregates;
 using Application.Common.Interfaces;
+using Domain.Features.Projects.Enums;
 
 namespace Application.Features.Redmine.Handlers
 {
@@ -28,17 +29,22 @@ namespace Application.Features.Redmine.Handlers
         public async Task<int> Handle(CancellationToken ct)
         {
             var redmineProjects = await _redmineService.GetProjectsAsync();
-            int created = 0;
-
             var localProjects = await _projectRepository.GetAllAsync();
+
+            int created = 0;
 
             foreach (var rp in redmineProjects)
             {
+                Console.WriteLine($"Redmine Project received: Id={rp.Id}, Name={rp.Name}, Status={rp.Status}");
+
                 var existing = localProjects.FirstOrDefault(p => p.RedmineProjectId == rp.Id);
+                var status = MapStatus(rp.Status);
+
+                Console.WriteLine($"Mapped status for project {rp.Name} = {status}");
 
                 if (existing == null)
                 {
-                    var project = new Project(rp.Id, rp.Name);
+                    var project = new Project(rp.Id, rp.Name, status);
                     await _projectRepository.AddAsync(project);
                     created++;
                 }
@@ -49,20 +55,40 @@ namespace Application.Features.Redmine.Handlers
                         existing.UpdateName(rp.Name);
                         _projectRepository.Update(existing);
                     }
+                    if (existing.Status != status)
+                    {
+                        existing.UpdateStatus(status);
+                        _projectRepository.Update(existing);
+                    }
                 }
             }
 
             var redmineIds = redmineProjects.Select(r => r.Id).ToHashSet();
-            var toDelete = localProjects.Where(p => !redmineIds.Contains(p.RedmineProjectId)).ToList();
-
-            foreach (var del in toDelete)
+            foreach (var del in localProjects.Where(p => !redmineIds.Contains(p.RedmineProjectId)))
             {
-                _projectRepository.Delete(del);
+                Console.WriteLine($"Project not found in Redmine: Id={del.RedmineProjectId}, Name={del.Name}, CurrentStatus={del.Status}");
+                if (del.Status != ProjectStatus.Completed)
+                {
+                    del.UpdateStatus(ProjectStatus.Cancelled);
+                    _projectRepository.Update(del);
+                    Console.WriteLine($"Project {del.Name} marked as Cancelled");
+                }
             }
 
             await _unitOfWork.SaveChangesAsync(ct);
 
             return created;
+        }
+
+        private ProjectStatus MapStatus(int status)
+        {
+            return status switch
+            {
+                1 => ProjectStatus.Active,      // Active projects
+                5 => ProjectStatus.Completed,   // Closed projects
+                9 => ProjectStatus.Cancelled,  // Archived projects
+                _ => ProjectStatus.Active      // Default to Active for unknown statuses
+            };
         }
     }
 }

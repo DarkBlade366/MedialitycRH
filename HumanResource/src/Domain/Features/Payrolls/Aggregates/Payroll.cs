@@ -37,6 +37,9 @@ namespace Domain.Features.Payrolls.Aggregates
         private readonly List<DeductionPayment> _deductionPayments = new();
         public IReadOnlyCollection<DeductionPayment> DeductionPayments => _deductionPayments.AsReadOnly();
 
+        private readonly List<ProjectPayment> _projectPayments = new();
+        public IReadOnlyCollection<ProjectPayment> ProjectPayments => _projectPayments.AsReadOnly();
+
 
         public decimal GrossAmount { get; private set; }
         public decimal TotalDeductions { get; private set; }
@@ -205,6 +208,18 @@ namespace Domain.Features.Payrolls.Aggregates
                 throw new InvalidOperationException("This deduction rule was already applied to this payroll.");
 
             _deductionPayments.Add(new DeductionPayment(this.Id, deductionRuleId, amount, appliedAt));
+            MarkUpdated();
+        }
+
+        public void AddProjectPayment(int redmineProjectId, decimal amount, DateTime paidAt)
+        {
+            if (Status != PayrollStatus.Draft && Status != PayrollStatus.Calculated)
+                throw new InvalidOperationException("Cannot add project payment unless payroll is Draft or Calculated.");
+
+            if (_projectPayments.Any(p => p.RedmineProjectId == redmineProjectId))
+                throw new InvalidOperationException("This project was already paid in this payroll.");
+
+            _projectPayments.Add(new ProjectPayment(this.Id, redmineProjectId, amount, paidAt));
             MarkUpdated();
         }
     }

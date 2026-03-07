@@ -42,6 +42,10 @@ using Application.Features.Payrolls.Payments.Productivity.Handlers;
 using Application.Features.Payrolls.Payments.Productivity.Validations;
 using Application.Features.Payrolls.Payments.Vacation.Handlers;
 using Application.Features.Payrolls.Payments.Vacation.Validations;
+using Application.Features.Payrolls.Rules.Project.Handlers;
+using Application.Features.Payrolls.Rules.Project.Validations;
+using Application.Features.Payrolls.Payments.Project.Handlers;
+using Application.Features.Payrolls.Payments.Project.Validations;
 
 namespace Application
 {
@@ -120,6 +124,11 @@ namespace Application
             services.AddScoped<CreateMilestoneParticipationHandler>();
             services.AddScoped<ApproveTimeEntryHandler>();
             services.AddScoped<ApproveTimeEntriesBatchHandler>();
+            services.AddScoped<CreateProjectRuleHandler>();
+            services.AddScoped<ChangeProjectRuleStatusHandler>();
+            services.AddScoped<GetProjectRuleByIdHandler>();
+            services.AddScoped<GetProjectRulesPagedHandler>();
+            services.AddScoped<GetProjectPaymentsPagedHandler>();
 
 
             // Register validators
@@ -184,6 +193,11 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetMilestoneParticipationsPagedValidator>();
             services.AddValidatorsFromAssemblyContaining<ApproveTimeEntryValidator>();
             services.AddValidatorsFromAssemblyContaining<ApproveTimeEntriesBatchValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateProjectRuleValidator>();
+            services.AddValidatorsFromAssemblyContaining<ChangeProjectRuleStatusValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProjectRuleByIdValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProjectRulesPagedValidator>();
+            services.AddValidatorsFromAssemblyContaining<GetProjectPaymentsPagedValidator>();
 
             //other services
             services.AddScoped<VacationAccrualService>();   
