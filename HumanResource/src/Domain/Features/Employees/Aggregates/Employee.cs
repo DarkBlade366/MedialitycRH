@@ -73,6 +73,7 @@ namespace Domain.Features.Employees.Aggregates
             FullName = fullName.Trim();
             Email = email.Trim().ToLowerInvariant();
             Role = role;
+            MarkUpdated("System");
         }
 
         public void SetRedmineUserId(int redmineUserId)
