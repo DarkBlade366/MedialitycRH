@@ -56,5 +56,10 @@ namespace Infrastructure.Persistence.Repositories.Projects
                 .AnyAsync(m => m.RedmineProjectId == redmineProjectId && 
                                 m.Name == milestoneName);
         }
+
+        public void Update(ProjectMilestone milestone)
+        {
+            _context.ProjectMilestones.Update(milestone);
+        }
     }
 }

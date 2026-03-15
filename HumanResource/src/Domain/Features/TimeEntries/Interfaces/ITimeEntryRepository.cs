@@ -41,5 +41,6 @@ namespace Domain.Features.TimeEntries.Interfaces
         Task<List<TimeEntry>> GetByPeriodAsync(
             DateTime periodStart,
             DateTime periodEnd);
+        void Update(TimeEntry entry);
     }
 }

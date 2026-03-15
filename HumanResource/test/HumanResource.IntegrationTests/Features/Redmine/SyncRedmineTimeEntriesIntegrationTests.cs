@@ -70,7 +70,6 @@ public class SyncRedmineTimeEntriesIntegrationTests : IntegrationTestBase
         await dbContext.SaveChangesAsync();
 
         var existing = new TimeEntry(1001, 1, employee.Id, 7, new DateTime(2024, 1, 15, 0, 0, 0, DateTimeKind.Utc), 10, "Development");
-        existing.Update(8.5m, new DateTime(2024, 1, 15, 0, 0, 0, DateTimeKind.Utc), 10, "Development");
         dbContext.TimeEntries.Add(existing);
         await dbContext.SaveChangesAsync();
 
@@ -95,7 +94,8 @@ public class SyncRedmineTimeEntriesIntegrationTests : IntegrationTestBase
 
         // Assert
         created.Should().Be(0);
-        var updated = await dbContext.TimeEntries.FirstAsync(e => e.RedmineTimeEntryId == 1001);
+        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
+        var updated = await handlerDbContext.TimeEntries.FirstAsync(e => e.RedmineTimeEntryId == 1001);
         updated.Hours.Should().Be(8.5m);
     }
 }

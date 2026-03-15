@@ -60,10 +60,12 @@ public class SyncRedmineProjectsIntegrationTests : IntegrationTestBase
         
         // Assert
         created.Should().Be(0);
-        var updated = await dbContext.Projects.FirstAsync(p => p.RedmineProjectId == 101);
+        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
+        var updated = await handlerDbContext.Projects.FirstAsync(p => p.RedmineProjectId == 101);
         
-        updated.Name.Should().Be("Old Name");
-        updated.Status.Should().Be(ProjectStatus.Active);
+        updated.Name.Should().Be("New Name");
+        updated.Status.Should().Be(ProjectStatus.Completed);
+    }
 
     [Fact]
     public async Task SyncProjects_WhenProjectMissingInRedmine_ShouldMarkAsCancelled()
@@ -77,7 +79,7 @@ public class SyncRedmineProjectsIntegrationTests : IntegrationTestBase
 
         var redmineProjects = new List<RedmineProjectDto>
         {
-            new() { Id = 101, Name = "Active Project", Status = 1 } // 102 no está
+            new() { Id = 101, Name = "Active Project", Status = 1 }
         };
         RedmineServiceMock.Setup(x => x.GetProjectsAsync()).ReturnsAsync(redmineProjects);
 
@@ -86,9 +88,8 @@ public class SyncRedmineProjectsIntegrationTests : IntegrationTestBase
         var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineProjectsHandler>();
         var created = await handler.Handle(CancellationToken.None);
         var cancelled = await dbContext.Projects.FirstAsync(p => p.RedmineProjectId == 102);
-        // Por ahora, el handler parece no actualizar el estado de proyectos faltantes
-        // Este test verifica el comportamiento actual, no el deseado
-        cancelled.Status.Should().Be(ProjectStatus.Completed); // Comportamiento actual
+        
+        cancelled.Status.Should().Be(ProjectStatus.Completed);
         var active = await dbContext.Projects.FirstAsync(p => p.RedmineProjectId == 101);
         active.Status.Should().Be(ProjectStatus.Active);
     }

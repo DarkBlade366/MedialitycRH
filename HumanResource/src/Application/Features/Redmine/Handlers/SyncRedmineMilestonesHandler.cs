@@ -49,12 +49,27 @@ namespace Application.Features.Redmine.Handlers
 
                     if (existingDict.TryGetValue(m.Name, out var local))
                     {
+                        bool needsUpdate = false;
                         if (status == MilestoneStatus.Completed && !local.IsCompleted())
+                        {
                             local.MarkAsCompleted(m.CompletedAt?.ToUniversalTime() ?? DateTime.Now);
+                            needsUpdate = true;
+                        }
                         else if (status == MilestoneStatus.Cancelled && !local.IsCancelled())
+                        {
                             local.MarkAsCancelled();
+                            needsUpdate = true;
+                        }
                         else if (status == MilestoneStatus.Pending && (local.IsCompleted() || local.IsCancelled()))
+                        {
                             local.Reopen();
+                            needsUpdate = true;
+                        }
+                        
+                        if (needsUpdate)
+                        {
+                            _repository.Update(local);
+                        }
                     }
                     else
                     {

@@ -87,6 +87,7 @@ namespace Application.Features.Redmine.Handlers
                             activityId,
                             activityName
                         );
+                        _timeRepository.Update(existing);
                     }
                 }
 

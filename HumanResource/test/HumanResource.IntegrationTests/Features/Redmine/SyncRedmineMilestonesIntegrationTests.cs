@@ -76,8 +76,10 @@ public class SyncRedmineMilestonesIntegrationTests : IntegrationTestBase
 
         // Assert
         created.Should().Be(0);
-        var updated = await dbContext.ProjectMilestones.FirstAsync(m => m.Name == "Phase 1");
+        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
+        var updated = await handlerDbContext.ProjectMilestones.FirstAsync(m => m.Name == "Phase 1");
 
-        updated.Status.Should().Be(MilestoneStatus.Pending);
+        updated.Status.Should().Be(MilestoneStatus.Completed);
+        updated.CompletedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
     }
 }

@@ -165,5 +165,10 @@ namespace Infrastructure.Persistence.Repositories.TimeEntries
                     t.SpentOn <= periodEnd)
                 .ToListAsync();
         }
+
+        public void Update(TimeEntry entry)
+        {
+            _context.TimeEntries.Update(entry);
+        }
     }
 }

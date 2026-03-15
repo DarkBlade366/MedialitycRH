@@ -50,15 +50,31 @@ namespace Application.Features.Redmine.Handlers
                 }
                 else
                 {
+                    Console.WriteLine($"Found existing project: Id={existing.RedmineProjectId}, Name={existing.Name}, Status={existing.Status}");
+                    
+                    bool needsUpdate = false;
                     if (existing.Name != rp.Name)
                     {
+                        Console.WriteLine($"Updating project name from '{existing.Name}' to '{rp.Name}'");
                         existing.UpdateName(rp.Name);
-                        _projectRepository.Update(existing);
+                        needsUpdate = true;
                     }
                     if (existing.Status != status)
                     {
+                        Console.WriteLine($"Updating project status from '{existing.Status}' to '{status}'");
                         existing.UpdateStatus(status);
+                        needsUpdate = true;
+                    }
+                    
+                    if (needsUpdate)
+                    {
+                        Console.WriteLine($"Calling Update for project {existing.RedmineProjectId}");
                         _projectRepository.Update(existing);
+                        Console.WriteLine($"Update called for project {existing.RedmineProjectId}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"No updates needed for project {existing.RedmineProjectId}");
                     }
                 }
             }

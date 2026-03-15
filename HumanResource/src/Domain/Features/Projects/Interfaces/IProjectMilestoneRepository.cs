@@ -14,5 +14,6 @@ namespace Domain.Features.Projects.Interfaces
         Task<List<ProjectMilestone>> GetCompletedAsync();
         Task<List<ProjectMilestone>> GetAllAsync();
         Task<bool> ExistsAsync(int redmineProjectId, string milestoneName);
+        void Update(ProjectMilestone milestone);
     }
 }

@@ -44,7 +44,7 @@ public class SyncRedmineUsersIntegrationTests : IntegrationTestBase
         // Arrange
         await ResetDatabaseAsync();
         var redmineUsers = new List<RedmineUserDto>
-        {
+        {   
             new() { Id = 1, FirstName = "John", LastName = "Updated", Email = "john.updated@example.com" },
             new() { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "jane@example.com" }
         };
@@ -64,6 +64,7 @@ public class SyncRedmineUsersIntegrationTests : IntegrationTestBase
         var updated = await handlerDbContext.Employees.FirstAsync(e => e.RedmineUserId == 1);
         updated.FullName.Should().Be("John Updated"); 
         updated.Email.Should().Be("john.updated@example.com"); 
+    }
 
     [Fact]
     public async Task SyncUsers_WhenUserMissingInRedmine_ShouldDeactivateNonAdmin()
@@ -83,12 +84,56 @@ public class SyncRedmineUsersIntegrationTests : IntegrationTestBase
         
         using var scope = Factory.Services.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineUsersHandler>();
-        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
         var created = await handler.Handle(CancellationToken.None);
         
+        // Assert
+        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
         var allEmployees = await handlerDbContext.Employees.ToListAsync();
-        var adminEmployee = allEmployees.FirstOrDefault(e => e.RedmineUserId == 2);
         
+        var adminEmployee = allEmployees.FirstOrDefault(e => e.RedmineUserId == 2);
+        adminEmployee.Should().NotBeNull();
+        adminEmployee!.Role.Should().Be(EmployeeRole.Administrator);
+        adminEmployee.IsActive.Should().BeTrue(); 
+        
+        var activeEmployee = allEmployees.FirstOrDefault(e => e.RedmineUserId == 1);
+        activeEmployee.Should().NotBeNull();
+        activeEmployee!.IsActive.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task SyncUsers_WhenNonAdminMissingInRedmine_ShouldDeactivate()
+    {
+        // Arrange
+        await ResetDatabaseAsync();
+        var redmineUsers = new List<RedmineUserDto>
+        {
+            new() { Id = 1, FirstName = "Active", LastName = "User", Email = "active@example.com" }
+        };
+        RedmineServiceMock.Setup(x => x.GetUsersAsync()).ReturnsAsync(redmineUsers);
+
+        var dbContext = await GetDbContextAsync();
+        dbContext.Employees.Add(new Employee("Active User", "active@example.com", EmployeeRole.Employee, "hash", 1));
+        dbContext.Employees.Add(new Employee("Inactive User", "inactive@example.com", EmployeeRole.Employee, "hash", 2));
+        dbContext.Employees.Add(new Employee("Admin User", "admin@example.com", EmployeeRole.Administrator, "hash", 3));
+        await dbContext.SaveChangesAsync();
+        
+        using var scope = Factory.Services.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineUsersHandler>();
+        var created = await handler.Handle(CancellationToken.None);
+        
+        // Assert
+        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
+        var allEmployees = await handlerDbContext.Employees.ToListAsync();
+        
+        var activeEmployee = allEmployees.FirstOrDefault(e => e.RedmineUserId == 1);
+        activeEmployee.Should().NotBeNull();
+        activeEmployee!.IsActive.Should().BeTrue();
+        
+        var inactiveEmployee = allEmployees.FirstOrDefault(e => e.RedmineUserId == 2);
+        inactiveEmployee.Should().NotBeNull();
+        inactiveEmployee!.IsActive.Should().BeFalse();
+        
+        var adminEmployee = allEmployees.FirstOrDefault(e => e.RedmineUserId == 3);
         adminEmployee.Should().NotBeNull();
         adminEmployee!.Role.Should().Be(EmployeeRole.Administrator);
         adminEmployee.IsActive.Should().BeTrue(); 

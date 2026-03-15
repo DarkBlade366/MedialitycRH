@@ -67,13 +67,18 @@ public class RedmineSyncBackgroundServiceIntegrationTests : IntegrationTestBase
         var assertDbContext = await GetDbContextAsync();
         var employees = await assertDbContext.Employees.ToListAsync();
         employees.Should().NotBeEmpty();
+        employees.Should().Contain(e => e.RedmineUserId == 1 && e.FullName == "John Doe" && e.Email == "john@ex.com");
 
         var projects = await assertDbContext.Projects.ToListAsync();
         projects.Should().NotBeEmpty();
+        projects.Should().Contain(p => p.RedmineProjectId == 101 && p.Name == "Project" && p.Status == Domain.Features.Projects.Enums.ProjectStatus.Active);
 
         var milestones = await assertDbContext.ProjectMilestones.ToListAsync();
+        milestones.Should().NotBeEmpty();
+        milestones.Should().Contain(m => m.RedmineProjectId == 101 && m.Name == "M1" && m.Status == Domain.Features.Projects.Enums.MilestoneStatus.Completed);
         
         var entries = await assertDbContext.TimeEntries.ToListAsync();
         entries.Should().NotBeEmpty();
+        entries.Should().Contain(e => e.RedmineTimeEntryId == 1001 && e.Hours == 8 && e.RedmineProjectId == 101 && e.ActivityName == "Dev");
     }
 }
