@@ -37,7 +37,7 @@ namespace Web.API.Endpoints.Projects
         public override async Task HandleAsync(ChangeMilestoneParticipationStatusCommand req, CancellationToken ct)
         {
             await _handler.HandleAsync(req);
-            await Send.OkAsync(ct);
+            await Send.OkAsync();
         }
     }
 }

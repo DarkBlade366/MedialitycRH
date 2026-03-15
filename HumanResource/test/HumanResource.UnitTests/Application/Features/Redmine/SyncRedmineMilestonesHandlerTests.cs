@@ -14,7 +14,7 @@ using Domain.Features.Projects.Aggregates;
 using Domain.Features.Projects.Enums;
 using Application.Common.Interfaces;
 
-namespace Application.Features.Redmine
+namespace HumanResource.UnitTests.Application.Features.Redmine
 {
     public class SyncRedmineMilestonesHandlerTests
     {
@@ -140,18 +140,18 @@ namespace Application.Features.Redmine
 
             var milestones = new List<RedmineMilestoneDto>
             {
-                new RedmineMilestoneDto { ProjectId = 1, Name = "Milestone 1", Status = "closed", CompletedAt = DateTime.Now }, // Should be marked as completed
-                new RedmineMilestoneDto { ProjectId = 1, Name = "Milestone 2", Status = "locked" }, // Should be marked as cancelled
-                new RedmineMilestoneDto { ProjectId = 1, Name = "Milestone 3", Status = "open" } // Should be reopened if was completed/cancelled
+                new RedmineMilestoneDto { ProjectId = 1, Name = "Milestone 1", Status = "closed", CompletedAt = DateTime.Now },
+                new RedmineMilestoneDto { ProjectId = 1, Name = "Milestone 2", Status = "locked" },
+                new RedmineMilestoneDto { ProjectId = 1, Name = "Milestone 3", Status = "open" }
             };
 
             var existingMilestones = new List<ProjectMilestone>
             {
-                new ProjectMilestone(1, "Milestone 1"), // Pending
-                new ProjectMilestone(1, "Milestone 2"), // Pending
-                new ProjectMilestone(1, "Milestone 3") // Will be marked as completed
+                new ProjectMilestone(1, "Milestone 1"), 
+                new ProjectMilestone(1, "Milestone 2"), 
+                new ProjectMilestone(1, "Milestone 3") 
             };
-            // Mark the third milestone as completed
+
             existingMilestones[2].MarkAsCompleted(DateTime.Now.AddDays(-1));
 
             _redmineServiceMock
@@ -173,10 +173,9 @@ namespace Application.Features.Redmine
             result.Should().Be(0);
             _repositoryMock.Verify(x => x.AddRangeAsync(It.IsAny<List<ProjectMilestone>>()), Times.Never);
             
-            // Verify status updates
             existingMilestones.First(m => m.Name == "Milestone 1").IsCompleted().Should().BeTrue();
             existingMilestones.First(m => m.Name == "Milestone 2").IsCancelled().Should().BeTrue();
-            existingMilestones.First(m => m.Name == "Milestone 3").IsPending().Should().BeTrue(); // Reopened
+            existingMilestones.First(m => m.Name == "Milestone 3").IsPending().Should().BeTrue();
             
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -192,13 +191,13 @@ namespace Application.Features.Redmine
 
             var milestones = new List<RedmineMilestoneDto>
             {
-                new RedmineMilestoneDto { ProjectId = 1, Name = "Existing Milestone", Status = "closed", CompletedAt = DateTime.Now }, // Existing
-                new RedmineMilestoneDto { ProjectId = 1, Name = "New Milestone", Status = "open" } // New
+                new RedmineMilestoneDto { ProjectId = 1, Name = "Existing Milestone", Status = "closed", CompletedAt = DateTime.Now },
+                new RedmineMilestoneDto { ProjectId = 1, Name = "New Milestone", Status = "open" }
             };
 
             var existingMilestones = new List<ProjectMilestone>
             {
-                new ProjectMilestone(1, "Existing Milestone") // Pending
+                new ProjectMilestone(1, "Existing Milestone")
             };
 
             _redmineServiceMock
@@ -222,7 +221,6 @@ namespace Application.Features.Redmine
                 ms.Count == 1 &&
                 ms.Any(m => m.Name == "New Milestone" && m.RedmineProjectId == 1 && m.IsPending()))), Times.Once);
             
-            // Verify existing milestone was updated
             existingMilestones.First(m => m.Name == "Existing Milestone").IsCompleted().Should().BeTrue();
             
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -232,11 +230,11 @@ namespace Application.Features.Redmine
         [InlineData("open", MilestoneStatus.Pending)]
         [InlineData("closed", MilestoneStatus.Completed)]
         [InlineData("locked", MilestoneStatus.Cancelled)]
-        [InlineData("OPEN", MilestoneStatus.Pending)] // Case insensitive
+        [InlineData("OPEN", MilestoneStatus.Pending)] 
         [InlineData("CLOSED", MilestoneStatus.Completed)]
         [InlineData("LOCKED", MilestoneStatus.Cancelled)]
-        [InlineData("", MilestoneStatus.Pending)] // Empty string
-        [InlineData("unknown", MilestoneStatus.Pending)] // Unknown status
+        [InlineData("", MilestoneStatus.Pending)]
+        [InlineData("unknown", MilestoneStatus.Pending)]
         public async Task Handle_WithDifferentStatuses_ShouldMapCorrectly(string redmineStatus, MilestoneStatus expectedStatus)
         {
             // Arrange
@@ -320,7 +318,7 @@ namespace Application.Features.Redmine
             var result = await _handler.Handle(CancellationToken.None);
 
             // Assert
-            result.Should().Be(3); // 1 from project 1 + 2 from project 2
+            result.Should().Be(3); 
             _repositoryMock.Verify(x => x.AddRangeAsync(It.Is<List<ProjectMilestone>>(ms => ms.Count == 1 &&
                 ms.Any(m => m.Name == "Milestone A1" && m.RedmineProjectId == 1))), Times.Once);
             _repositoryMock.Verify(x => x.AddRangeAsync(It.Is<List<ProjectMilestone>>(ms => ms.Count == 2 &&

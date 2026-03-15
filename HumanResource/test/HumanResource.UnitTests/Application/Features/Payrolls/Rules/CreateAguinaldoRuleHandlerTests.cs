@@ -12,7 +12,7 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class CreateAguinaldoRuleHandlerTests
     {

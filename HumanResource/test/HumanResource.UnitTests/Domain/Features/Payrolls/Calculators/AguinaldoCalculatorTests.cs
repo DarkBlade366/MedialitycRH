@@ -15,7 +15,7 @@ using Domain.Features.TimeEntries.Aggregates;
 using Xunit;
 using FluentAssertions;
 
-namespace Domain.Features.Payrolls.Calculators
+namespace HumanResource.UnitTests.Domain.Features.Payrolls.Calculators
 {
     public class AguinaldoCalculatorTests
     {
@@ -83,7 +83,7 @@ namespace Domain.Features.Payrolls.Calculators
             calculator.Calculate(payroll, context);
 
             // Assert
-            payroll.Components.Should().HaveCount(1); // Solo el base salary
+            payroll.Components.Should().HaveCount(1); 
             payroll.AguinaldoPayments.Should().BeEmpty();
 
             context.AguinaldoBalance.AccruedAmount.Should().Be(0m);

@@ -97,9 +97,9 @@ test/
 ```
 ## Total de Archivos de Tests
 
-- **Unit Tests**: ~55 archivos
+- **Unit Tests**: ~56 archivos
 - **Integration Tests**: ~20 archivos
-- **Total**: ~75 archivos de tests
+- **Total**: ~76 archivos de tests
 
 ## Tecnologías
 

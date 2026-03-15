@@ -13,7 +13,7 @@ using Domain.Features.TimeEntries.Interfaces;
 using Domain.Features.TimeEntries.Aggregates;
 using Application.Common.Interfaces;
 
-namespace Application.Features.TimeEntries
+namespace HumanResource.UnitTests.Application.Features.TimeEntries
 {
     public class ApproveTimeEntryHandlerTests
     {
@@ -42,13 +42,13 @@ namespace Application.Features.TimeEntries
             };
 
             var timeEntry = new TimeEntry(
-                123, // RedmineTimeEntryId
-                456, // RedmineProjectId
-                Guid.NewGuid(), // EmployeeId
-                10.0m, // Hours
-                DateTime.Now.AddDays(-1), // SpentOn
-                10, // RedmineActivityId
-                "Development" // ActivityName
+                123, 
+                456, 
+                Guid.NewGuid(), 
+                10.0m,
+                DateTime.Now.AddDays(-1), 
+                10, 
+                "Development" 
             );
 
             _repositoryMock
@@ -108,17 +108,16 @@ namespace Application.Features.TimeEntries
             };
 
             var timeEntry = new TimeEntry(
-                123, // RedmineTimeEntryId
-                456, // RedmineProjectId
-                Guid.NewGuid(), // EmployeeId
-                10.0m, // Hours
-                DateTime.Now.AddDays(-1), // SpentOn
-                10, // RedmineActivityId
-                "Development" // ActivityName
+                123, 
+                456, 
+                Guid.NewGuid(),
+                10.0m,
+                DateTime.Now.AddDays(-1), 
+                10,
+                "Development" 
             );
             
-            // Mark as already reviewed
-            timeEntry.Approve(7.5m); // This sets Reviewed = true
+            timeEntry.Approve(7.5m); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(timeEntryId))
@@ -146,13 +145,13 @@ namespace Application.Features.TimeEntries
             };
 
             var timeEntry = new TimeEntry(
-                123, // RedmineTimeEntryId
-                456, // RedmineProjectId
-                Guid.NewGuid(), // EmployeeId
-                10.0m, // Hours
-                DateTime.Now.AddDays(-1), // SpentOn
-                10, // RedmineActivityId
-                "Development" // ActivityName
+                123, 
+                456, 
+                Guid.NewGuid(), 
+                10.0m, 
+                DateTime.Now.AddDays(-1),
+                10, 
+                "Development" 
             );
 
             _repositoryMock
@@ -179,17 +178,17 @@ namespace Application.Features.TimeEntries
             var command = new ApproveTimeEntryCommand
             {
                 TimeEntryId = timeEntryId,
-                ApprovedHours = 10.0m // Same as original hours
+                ApprovedHours = 10.0m 
             };
 
             var timeEntry = new TimeEntry(
-                123, // RedmineTimeEntryId
-                456, // RedmineProjectId
-                Guid.NewGuid(), // EmployeeId
-                10.0m, // Hours
-                DateTime.Now.AddDays(-1), // SpentOn
-                10, // RedmineActivityId
-                "Development" // ActivityName
+                123, 
+                456, 
+                Guid.NewGuid(),
+                10.0m, 
+                DateTime.Now.AddDays(-1), 
+                10, 
+                "Development" 
             );
 
             _repositoryMock
@@ -244,13 +243,13 @@ namespace Application.Features.TimeEntries
             };
 
             var timeEntry = new TimeEntry(
-                123, // RedmineTimeEntryId
-                456, // RedmineProjectId
-                Guid.NewGuid(), // EmployeeId
-                10.0m, // Hours
-                DateTime.Now.AddDays(-1), // SpentOn
-                10, // RedmineActivityId
-                "Development" // ActivityName
+                123, 
+                456,
+                Guid.NewGuid(), 
+                10.0m,
+                DateTime.Now.AddDays(-1),
+                10, 
+                "Development"
             );
 
             _repositoryMock

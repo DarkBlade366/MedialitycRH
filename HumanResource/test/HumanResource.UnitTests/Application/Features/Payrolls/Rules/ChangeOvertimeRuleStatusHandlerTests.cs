@@ -12,7 +12,7 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeOvertimeRuleStatusHandlerTests
     {
@@ -39,7 +39,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new OvertimeRule(160, 1.5m, 25m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -70,7 +70,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new OvertimeRule(160, 1.5m, 25m); // Already active
+            var rule = new OvertimeRule(160, 1.5m, 25m);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -101,7 +101,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new OvertimeRule(160, 1.5m, 25m); // Active
+            var rule = new OvertimeRule(160, 1.5m, 25m); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -133,7 +133,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new OvertimeRule(160, 1.5m, 25m);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -166,7 +166,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((OvertimeRule)null);
+                .ReturnsAsync((OvertimeRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -193,8 +193,8 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new OvertimeRule(standardHours, multiplierInt / 10m, (decimal)hourlyRate);
-            rule.Deactivate(); // Start as inactive
-
+            rule.Deactivate(); 
+            
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
                 .ReturnsAsync(rule);
@@ -225,7 +225,7 @@ namespace Application.Features.Payrolls.Rules
             var rule = new OvertimeRule(160, 1.5m, 25m);
             rule.Deactivate();
 
-            var anotherActiveRule = new OvertimeRule(140, 2.0m, 30m); // otra regla activa
+            var anotherActiveRule = new OvertimeRule(140, 2.0m, 30m);
 
             _repositoryMock.Setup(x => x.GetByIdAsync(ruleId)).ReturnsAsync(rule);
             _repositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<OvertimeRule> { anotherActiveRule });

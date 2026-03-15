@@ -13,7 +13,7 @@ using Domain.Features.TimeEntries.Interfaces;
 using Domain.Features.TimeEntries.Aggregates;
 using Application.Common.Interfaces;
 
-namespace Application.Features.TimeEntries
+namespace HumanResource.UnitTests.Application.Features.TimeEntries
 {
     public class ApproveTimeEntriesBatchHandlerTests
     {
@@ -237,7 +237,7 @@ namespace Application.Features.TimeEntries
                 11,
                 "Testing"
             );
-            timeEntry2.Approve(5.0m); // Already reviewed
+            timeEntry2.Approve(5.0m);
 
             var timeEntryId1 = timeEntry1.Id;
             var timeEntryId2 = timeEntry2.Id;
@@ -307,7 +307,7 @@ namespace Application.Features.TimeEntries
                 12,
                 "Documentation"
             );
-            timeEntry3.Approve(5.0m); // Already reviewed
+            timeEntry3.Approve(5.0m);
 
             var timeEntry4 = new TimeEntry(
                 126,
@@ -320,7 +320,7 @@ namespace Application.Features.TimeEntries
             );
 
             var timeEntryId1 = timeEntry1.Id;
-            var timeEntryId2 = Guid.NewGuid(); // No existente
+            var timeEntryId2 = Guid.NewGuid(); 
             var timeEntryId3 = timeEntry3.Id;
             var timeEntryId4 = timeEntry4.Id;
 

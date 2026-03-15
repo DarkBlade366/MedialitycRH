@@ -15,19 +15,22 @@ using Domain.Features.Payrolls.Services.Calculators;
 using Domain.Features.Payrolls.Services.Engines;
 using Domain.Features.Payrolls.Services.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
-using Domain.Features.Payrolls.Aggregates;
 using Domain.Features.Payrolls.Enums;
 using Domain.Features.Payrolls.Entities;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 using Domain.Features.TimeEntries.Interfaces;
 using Domain.Features.Projects.Interfaces;
 using Domain.Features.Projects.Enums;
 using Domain.Features.Projects.Aggregates;
 
-namespace Application.Features.Payrolls.Payroll
+// Alias para evitar conflicto de namespaces
+using PayrollAggregate = global::Domain.Features.Payrolls.Aggregates.Payroll;
+
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Payroll
 {
     public class CreatePayrollHandlerTests
     {
@@ -174,8 +177,8 @@ namespace Application.Features.Payrolls.Payroll
             SetupMockRepositories();
 
             _payrollRepositoryMock
-                .Setup(x => x.AddAsync(It.IsAny<Domain.Features.Payrolls.Aggregates.Payroll>()))
-                .Callback<Domain.Features.Payrolls.Aggregates.Payroll>(p => { });
+                .Setup(x => x.AddAsync(It.IsAny<PayrollAggregate>()))
+                .Callback<PayrollAggregate>(p => { });
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
@@ -189,7 +192,7 @@ namespace Application.Features.Payrolls.Payroll
             result.GrossAmount.Should().BeGreaterThan(0);
             result.NetAmount.Should().BeGreaterThan(0);
 
-            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Domain.Features.Payrolls.Aggregates.Payroll>()), Times.Once);
+            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<PayrollAggregate>()), Times.Once);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -212,7 +215,7 @@ namespace Application.Features.Payrolls.Payroll
                 () => _handler.Handle(command, CancellationToken.None));
 
             exception.Message.Should().Be("Invalid payroll period.");
-            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Domain.Features.Payrolls.Aggregates.Payroll>()), Times.Never);
+            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<PayrollAggregate>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
 
@@ -250,7 +253,7 @@ namespace Application.Features.Payrolls.Payroll
                 () => _handler.Handle(command, CancellationToken.None));
 
             exception.Message.Should().Be("Payroll period overlaps with existing payroll.");
-            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Domain.Features.Payrolls.Aggregates.Payroll>()), Times.Never);
+            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<PayrollAggregate>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
 
@@ -292,7 +295,7 @@ namespace Application.Features.Payrolls.Payroll
                 () => _handler.Handle(command, CancellationToken.None));
 
             exception.Message.Should().Be("There are time entries pending approval for this period.");
-            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Domain.Features.Payrolls.Aggregates.Payroll>()), Times.Never);
+            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<PayrollAggregate>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
 
@@ -319,7 +322,7 @@ namespace Application.Features.Payrolls.Payroll
                 () => _handler.Handle(command, CancellationToken.None));
 
             exception.Message.Should().Be("Employee not found.");
-            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Domain.Features.Payrolls.Aggregates.Payroll>()), Times.Never);
+            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<PayrollAggregate>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
 
@@ -360,7 +363,6 @@ namespace Application.Features.Payrolls.Payroll
                 .Setup(x => x.GetWorkedHours(employeeId, periodStart, periodEnd))
                 .ReturnsAsync(160m);
 
-            // No configurar reglas activas (dejar listas vacías)
             _baseSalaryRuleRepositoryMock
                 .Setup(x => x.GetAllAsync())
                 .ReturnsAsync(new List<BaseSalaryRule>());
@@ -394,7 +396,7 @@ namespace Application.Features.Payrolls.Payroll
                 () => _handler.Handle(command, CancellationToken.None));
 
             exception.Message.Should().Be("Payroll must contain at least one earning.");
-            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Domain.Features.Payrolls.Aggregates.Payroll>()), Times.Never);
+            _payrollRepositoryMock.Verify(x => x.AddAsync(It.IsAny<PayrollAggregate>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
 

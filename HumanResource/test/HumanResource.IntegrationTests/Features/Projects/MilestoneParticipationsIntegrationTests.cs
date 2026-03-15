@@ -1,46 +1,111 @@
 using System;
-using System.Threading;
+using System.Net;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Xunit;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.Testing;
+using Application.Features.Projects.Commands;
+using Application.Features.Projects.Queries;
+using Domain.Features.Employees.Aggregates;
+using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
+using Domain.Features.Projects.Aggregates;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Testcontainers.PostgreSql;
+using Xunit;
 
-namespace HumanResource.IntegrationTests.Features.Projects
+namespace HumanResource.IntegrationTests.Features.Projects;
+
+public class MilestoneParticipationsIntegrationTests : IntegrationTestBase
 {
-    public class MilestoneParticipationsIntegrationTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+    [Fact]
+    public async Task CreateParticipation_WhenValid_ShouldAddParticipation()
     {
-        private readonly WebApplicationFactory<Program> _factory;
-        private readonly PostgreSqlContainer _postgresContainer;
+        // Arrange
+        var dbContext = await GetDbContextAsync();
+        var employee = new Employee("John", "john@ex.com", EmployeeRole.Employee, "hash", 1);
+        dbContext.Employees.Add(employee);
+        var milestone = new ProjectMilestone(101, "Milestone 1");
+        dbContext.ProjectMilestones.Add(milestone);
+        await dbContext.SaveChangesAsync();
 
-        public MilestoneParticipationsIntegrationTests(WebApplicationFactory<Program> factory)
+        var command = new CreateMilestoneParticipationCommand
         {
-            _factory = factory;
-            _postgresContainer = new PostgreSqlBuilder()
-                .WithImage("postgres:15")
-                .WithDatabase("testdb")
-                .WithUsername("test")
-                .WithPassword("test")
-                .Build();
-        }
+            ProjectMilestoneId = milestone.Id,
+            EmployeeId = employee.Id
+        };
 
-        public async Task InitializeAsync()
+        // Act
+        var response = await Client.PostAsJsonAsync("/milestone-participations", command);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var participationResponse = await response.Content.ReadFromJsonAsync<Application.Features.Projects.DTOs.MilestoneParticipationResponse>();
+        participationResponse.Should().NotBeNull();
+        participationResponse!.ProjectMilestoneId.Should().Be(milestone.Id);
+        participationResponse.EmployeeId.Should().Be(employee.Id);
+        participationResponse.IsPaid.Should().BeFalse();
+        participationResponse.IsActive.Should().BeTrue();
+
+        var participationInDb = await dbContext.Set<MilestoneParticipation>().FirstOrDefaultAsync(p => p.ProjectMilestoneId == milestone.Id && p.EmployeeId == employee.Id);
+        participationInDb.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetParticipationsPaged_ShouldReturnFilteredList()
+    {
+        // Arrange
+        var dbContext = await GetDbContextAsync();
+        var employee = new Employee("John", "john@ex.com", EmployeeRole.Employee, "hash", 1);
+        dbContext.Employees.Add(employee);
+        var milestone = new ProjectMilestone(101, "Milestone 1");
+        dbContext.ProjectMilestones.Add(milestone);
+        var participation = new MilestoneParticipation(milestone.Id, employee.Id, milestone);
+        dbContext.Set<MilestoneParticipation>().Add(participation);
+        await dbContext.SaveChangesAsync();
+
+        var query = new GetMilestoneParticipationsPagedQuery
         {
-            await _postgresContainer.StartAsync();
-        }
+            Page = 1,
+            PageSize = 10,
+            ProjectMilestoneId = milestone.Id
+        };
 
-        public async Task DisposeAsync()
+        // Act
+        var response = await Client.GetAsync($"/milestone-participations?page=1&pageSize=10&ProjectMilestoneId={milestone.Id}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var paged = await response.Content.ReadFromJsonAsync<Application.Common.PagedResponse<Application.Features.Projects.DTOs.MilestoneParticipationResponse>>();
+        paged!.Items.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task ChangeParticipationStatus_WhenNotPaid_ShouldToggleActive()
+    {
+        // Arrange
+        var dbContext = await GetDbContextAsync();
+        var employee = new Employee("John", "john@ex.com", EmployeeRole.Employee, "hash", 1);
+        dbContext.Employees.Add(employee);
+        var milestone = new ProjectMilestone(101, "Milestone 1");
+        dbContext.ProjectMilestones.Add(milestone);
+        await dbContext.SaveChangesAsync();
+
+        var participation = new MilestoneParticipation(milestone.Id, employee.Id, milestone);
+        dbContext.Set<MilestoneParticipation>().Add(participation);
+        await dbContext.SaveChangesAsync();
+
+        var command = new ChangeMilestoneParticipationStatusCommand
         {
-            await _postgresContainer.StopAsync();
-        }
+            Id = participation.Id,
+            IsActive = false
+        };
 
-        // TODO: Implementar tests de integración para MilestoneParticipations
-        // - Asignación y pago de participaciones
-        // - Validación de relaciones
-        // - Manejo de límites de participación
-        // - Impacto en cálculos de payroll
-        // - Consistencia de datos
-        // - Transacciones atómicas
+        // Act
+        var response = await Client.PutAsJsonAsync("/milestone-participations/status", command);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var freshDbContext = await GetDbContextAsync();
+        var updated = await freshDbContext.Set<MilestoneParticipation>().FindAsync(participation.Id);
+        updated!.IsActive.Should().BeFalse();
     }
 }

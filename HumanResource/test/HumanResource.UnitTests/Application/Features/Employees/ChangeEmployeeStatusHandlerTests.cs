@@ -10,8 +10,9 @@ using Application.Common.Interfaces;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 
-namespace Application.Features.Employees
+namespace HumanResource.UnitTests.Application.Features.Employees
 {
     public class ChangeEmployeeStatusHandlerTests
     {
@@ -109,8 +110,7 @@ namespace Application.Features.Employees
                 EmployeeRole.ProjectManager,
                 "hashedPassword",
                 123);
-            
-            // Initially deactivate the employee
+    
             employee.ChangeStatus(false);
             employee.IsActive.Should().BeFalse();
             
@@ -140,7 +140,7 @@ namespace Application.Features.Employees
                 "hashedPassword",
                 123);
             
-            employee.IsActive.Should().BeTrue(); // Verify initial state
+            employee.IsActive.Should().BeTrue();
             
             _employeeRepositoryMock
                 .Setup(x => x.GetByIdAsync(employeeId))

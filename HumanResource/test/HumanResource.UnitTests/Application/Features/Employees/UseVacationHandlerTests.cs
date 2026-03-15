@@ -10,8 +10,9 @@ using Application.Common.Interfaces;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 
-namespace Application.Features.Employees
+namespace HumanResource.UnitTests.Application.Features.Employees
 {
     public class UseVacationHandlerTests
     {
@@ -40,7 +41,6 @@ namespace Application.Features.Employees
                 "hashedPassword",
                 123);
             
-            // Accrue some vacation days first
             employee.AccrueVacationDays(10m);
             employee.VacationBalance.AvailableDays.Should().Be(10m);
             
@@ -90,7 +90,6 @@ namespace Application.Features.Employees
                 "hashedPassword",
                 123);
             
-            // Only accrue 3 days, but try to use 10
             employee.AccrueVacationDays(3m);
             employee.VacationBalance.AvailableDays.Should().Be(3m);
             
@@ -176,7 +175,6 @@ namespace Application.Features.Employees
                 "hashedPassword",
                 123);
             
-            // Accrue exactly the amount to be used
             employee.AccrueVacationDays(7.5m);
             employee.VacationBalance.AvailableDays.Should().Be(7.5m);
             
@@ -206,7 +204,6 @@ namespace Application.Features.Employees
                 "hashedPassword",
                 123);
             
-            // Accrue 10 days initially
             employee.AccrueVacationDays(10m);
             employee.VacationBalance.AvailableDays.Should().Be(10m);
             
@@ -214,7 +211,7 @@ namespace Application.Features.Employees
                 .Setup(x => x.GetByIdAsync(employeeId))
                 .ReturnsAsync(employee);
 
-            // Act - Use vacation days in multiple calls
+            // Act
             var command1 = new UseVacationCommand { EmployeeId = employeeId, Days = 3m };
             var command2 = new UseVacationCommand { EmployeeId = employeeId, Days = 2.5m };
             var command3 = new UseVacationCommand { EmployeeId = employeeId, Days = 4m };
@@ -224,8 +221,8 @@ namespace Application.Features.Employees
             await _handler.Handle(command3, CancellationToken.None);
 
             // Assert
-            employee.VacationBalance.UsedDays.Should().Be(9.5m); // 3 + 2.5 + 4
-            employee.VacationBalance.AvailableDays.Should().Be(0.5m); // 10 - 9.5
+            employee.VacationBalance.UsedDays.Should().Be(9.5m); 
+            employee.VacationBalance.AvailableDays.Should().Be(0.5m);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Exactly(3));
         }
 
@@ -255,7 +252,7 @@ namespace Application.Features.Employees
 
             // Assert
             employee.VacationBalance.UsedDays.Should().Be(1.5m);
-            employee.VacationBalance.AvailableDays.Should().Be(1m); // 2.5 - 1.5
+            employee.VacationBalance.AvailableDays.Should().Be(1m); 
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
     }

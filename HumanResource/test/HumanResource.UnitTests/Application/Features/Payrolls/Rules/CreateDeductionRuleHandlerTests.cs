@@ -14,7 +14,7 @@ using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Payrolls.Enums;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class CreateDeductionRuleHandlerTests
     {
@@ -176,9 +176,9 @@ namespace Application.Features.Payrolls.Rules
         }
 
         [Theory]
-        [InlineData("BasicSalary", 10, 15)]
-        [InlineData("TotalEarnings", 5, 8)]
-        public async Task HandleAsync_WithDifferentTypes_ShouldCreateRuleSuccessfully(string type, int percentage, int fullPercentage)
+        [InlineData("BasicSalary", 10)]
+        [InlineData("TotalEarnings", 5)]
+        public async Task HandleAsync_WithDifferentTypes_ShouldCreateRuleSuccessfully(string type, int percentage)
         {
             // Arrange
             var command = new CreateDeductionRuleCommand

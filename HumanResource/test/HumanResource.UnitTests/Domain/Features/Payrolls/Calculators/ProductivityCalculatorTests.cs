@@ -15,7 +15,7 @@ using Domain.Features.TimeEntries.Aggregates;
 using Xunit;
 using FluentAssertions;
 
-namespace Domain.Features.Payrolls.Calculators
+namespace HumanResource.UnitTests.Domain.Features.Payrolls.Calculators
 {
     public class ProductivityCalculatorTests
     {

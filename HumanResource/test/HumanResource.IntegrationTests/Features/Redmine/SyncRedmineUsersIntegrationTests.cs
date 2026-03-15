@@ -1,49 +1,96 @@
-using System;
-using System.Threading;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
-using Xunit;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.Testing;
+using Application.Features.Redmine.DTOs;
+using Domain.Features.Employees.Aggregates;
+using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Testcontainers.PostgreSql;
-using WireMock.Server;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Xunit;
 
-namespace HumanResource.IntegrationTests.Features.Redmine
+namespace HumanResource.IntegrationTests.Features.Redmine;
+
+public class SyncRedmineUsersIntegrationTests : IntegrationTestBase
 {
-    public class SyncRedmineUsersIntegrationTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+    [Fact]
+    public async Task SyncUsers_WhenNewUsers_ShouldCreateEmployees()
     {
-        private readonly WebApplicationFactory<Program> _factory;
-        private readonly PostgreSqlContainer _postgresContainer;
-        private WireMockServer _mockRedmineServer;
-
-        public SyncRedmineUsersIntegrationTests(WebApplicationFactory<Program> factory)
+        // Arrange
+        await ResetDatabaseAsync();
+        var redmineUsers = new List<RedmineUserDto>
         {
-            _factory = factory;
-            _postgresContainer = new PostgreSqlBuilder()
-                .WithImage("postgres:15")
-                .WithDatabase("testdb")
-                .WithUsername("test")
-                .WithPassword("test")
-                .Build();
-        }
+            new() { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com" },
+            new() { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "jane@example.com" }
+        };
+        RedmineServiceMock.Setup(x => x.GetUsersAsync()).ReturnsAsync(redmineUsers);
 
-        public async Task InitializeAsync()
+        // Act
+        using var scope = Factory.Services.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineUsersHandler>();
+        var created = await handler.Handle(CancellationToken.None);
+        var dbContext = await GetDbContextAsync();
+        var employees = await dbContext.Employees.ToListAsync();
+        employees.Should().HaveCount(2);
+        employees.Should().Contain(e => e.FullName == "John Doe" && e.Email == "john@example.com" && e.RedmineUserId == 1);
+        employees.Should().Contain(e => e.FullName == "Jane Smith" && e.Email == "jane@example.com" && e.RedmineUserId == 2);
+    }
+
+    [Fact]
+    public async Task SyncUsers_WhenExistingUser_ShouldUpdateNameAndEmail()
+    {
+        // Arrange
+        await ResetDatabaseAsync();
+        var redmineUsers = new List<RedmineUserDto>
         {
-            await _postgresContainer.StartAsync();
-            _mockRedmineServer = WireMockServer.Start();
-        }
+            new() { Id = 1, FirstName = "John", LastName = "Updated", Email = "john.updated@example.com" },
+            new() { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "jane@example.com" }
+        };
+        RedmineServiceMock.Setup(x => x.GetUsersAsync()).ReturnsAsync(redmineUsers);
 
-        public async Task DisposeAsync()
+        var dbContext = await GetDbContextAsync();
+        
+        dbContext.Employees.Add(new Employee("Old Name", "old@example.com", EmployeeRole.Employee, "hash", 1));
+        await dbContext.SaveChangesAsync();
+        
+        using var scope = Factory.Services.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineUsersHandler>();
+        var created = await handler.Handle(CancellationToken.None);
+        
+        // Assert
+        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
+        var updated = await handlerDbContext.Employees.FirstAsync(e => e.RedmineUserId == 1);
+        updated.FullName.Should().Be("John Updated"); 
+        updated.Email.Should().Be("john.updated@example.com"); 
+
+    [Fact]
+    public async Task SyncUsers_WhenUserMissingInRedmine_ShouldDeactivateNonAdmin()
+    {
+        // Arrange
+        await ResetDatabaseAsync();
+        var redmineUsers = new List<RedmineUserDto>
         {
-            _mockRedmineServer?.Stop();
-            await _postgresContainer.StopAsync();
-        }
+            new() { Id = 1, FirstName = "Active", LastName = "User", Email = "active@example.com" }
+        };
+        RedmineServiceMock.Setup(x => x.GetUsersAsync()).ReturnsAsync(redmineUsers);
 
-        // TODO: Implementar tests de integración para SyncRedmineUsers
-        // - Sincronización con base de datos PostgreSQL
-        // - Manejo de usuarios duplicados
-        // - Validación de relaciones con proyectos
-        // - Simulación de timeouts de API
-        // - Consistencia de datos
+        var dbContext = await GetDbContextAsync();
+        dbContext.Employees.Add(new Employee("Active User", "active@example.com", EmployeeRole.Employee, "hash", 1));
+        dbContext.Employees.Add(new Employee("Admin User", "admin@example.com", EmployeeRole.Administrator, "hash", 2));
+        await dbContext.SaveChangesAsync();
+        
+        using var scope = Factory.Services.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineUsersHandler>();
+        var handlerDbContext = scope.ServiceProvider.GetRequiredService<Infrastructure.Persistence.ApiDbContext>();
+        var created = await handler.Handle(CancellationToken.None);
+        
+        var allEmployees = await handlerDbContext.Employees.ToListAsync();
+        var adminEmployee = allEmployees.FirstOrDefault(e => e.RedmineUserId == 2);
+        
+        adminEmployee.Should().NotBeNull();
+        adminEmployee!.Role.Should().Be(EmployeeRole.Administrator);
+        adminEmployee.IsActive.Should().BeTrue(); 
     }
 }

@@ -12,8 +12,9 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeVacationRuleStatusHandlerTests
     {
@@ -40,7 +41,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new VacationRule(1.25m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -71,7 +72,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new VacationRule(1.25m); // Already active
+            var rule = new VacationRule(1.25m); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -102,7 +103,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new VacationRule(1.25m); // Active
+            var rule = new VacationRule(1.25m);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -134,7 +135,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new VacationRule(1.25m);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -167,7 +168,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((VacationRule)null);
+                .ReturnsAsync((VacationRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -194,7 +195,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new VacationRule(accrualRateInt / 100m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -231,7 +232,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new VacationRule(accrualRateInt / 100m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -261,8 +262,8 @@ namespace Application.Features.Payrolls.Rules
             var rule = new VacationRule(1.25m);
             rule.Deactivate();
 
-            var anotherActiveRule = new VacationRule(1.5m); // otra regla activa
-
+            var anotherActiveRule = new VacationRule(1.5m);
+            
             _repositoryMock.Setup(x => x.GetByIdAsync(ruleId)).ReturnsAsync(rule);
             _repositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<VacationRule> { anotherActiveRule });
 

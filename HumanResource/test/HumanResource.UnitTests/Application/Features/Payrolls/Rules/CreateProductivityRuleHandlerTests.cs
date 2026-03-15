@@ -14,7 +14,7 @@ using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Payrolls.Enums;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class CreateProductivityRuleHandlerTests
     {

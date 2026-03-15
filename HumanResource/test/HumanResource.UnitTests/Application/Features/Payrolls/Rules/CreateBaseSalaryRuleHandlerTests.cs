@@ -13,8 +13,9 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class CreateBaseSalaryRuleHandlerTests
     {

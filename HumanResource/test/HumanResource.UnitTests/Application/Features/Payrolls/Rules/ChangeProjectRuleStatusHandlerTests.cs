@@ -12,7 +12,7 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeProjectRuleStatusHandlerTests
     {
@@ -39,7 +39,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new ProjectRule(123, 3000m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -69,7 +69,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new ProjectRule(123, 3000m); // Already active
+            var rule = new ProjectRule(123, 3000m);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -100,7 +100,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new ProjectRule(123, 3000m); // Active
+            var rule = new ProjectRule(123, 3000m);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -131,7 +131,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new ProjectRule(123, 3000m);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -164,7 +164,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((ProjectRule)null);
+                .ReturnsAsync((ProjectRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -191,7 +191,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new ProjectRule(projectId, (decimal)bonusAmount);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -222,7 +222,7 @@ namespace Application.Features.Payrolls.Rules
             var rule = new ProjectRule(123, 3000m);
             rule.Deactivate();
 
-            var anotherActiveRule = new ProjectRule(123, 5000m); // mismo proyecto, activa
+            var anotherActiveRule = new ProjectRule(123, 5000m); 
 
             _repositoryMock.Setup(x => x.GetByIdAsync(ruleId)).ReturnsAsync(rule);
             _repositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<ProjectRule> { anotherActiveRule });

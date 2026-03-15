@@ -14,7 +14,7 @@ using Domain.Features.Projects.Aggregates;
 using Domain.Features.Projects.Enums;
 using Application.Common.Interfaces;
 
-namespace Application.Features.Redmine
+namespace HumanResource.UnitTests.Application.Features.Redmine
 {
     public class SyncRedmineProjectsHandlerTests
     {
@@ -98,8 +98,8 @@ namespace Application.Features.Redmine
             // Arrange
             var redmineProjects = new List<RedmineProjectDto>
             {
-                new RedmineProjectDto { Id = 1, Name = "Updated Project A", Status = 5 }, // Name and status changed
-                new RedmineProjectDto { Id = 2, Name = "Project B", Status = 1 } // No changes
+                new RedmineProjectDto { Id = 1, Name = "Updated Project A", Status = 5 }, 
+                new RedmineProjectDto { Id = 2, Name = "Project B", Status = 1 }
             };
 
             var localProjects = new List<Project>
@@ -123,7 +123,7 @@ namespace Application.Features.Redmine
             result.Should().Be(0);
             _projectRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Project>()), Times.Never);
             _projectRepositoryMock.Verify(x => x.Update(It.Is<Project>(p =>
-                p.RedmineProjectId == 1 && p.Name == "Updated Project A" && p.Status == ProjectStatus.Completed)), Times.Exactly(2)); // Once for name, once for status
+                p.RedmineProjectId == 1 && p.Name == "Updated Project A" && p.Status == ProjectStatus.Completed)), Times.Exactly(2));
             _projectRepositoryMock.Verify(x => x.Update(It.Is<Project>(p => p.RedmineProjectId == 2)), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -134,8 +134,8 @@ namespace Application.Features.Redmine
             // Arrange
             var redmineProjects = new List<RedmineProjectDto>
             {
-                new RedmineProjectDto { Id = 1, Name = "Project A", Status = 1 }, // Existing
-                new RedmineProjectDto { Id = 3, Name = "New Project C", Status = 9 } // New
+                new RedmineProjectDto { Id = 1, Name = "Project A", Status = 1 }, 
+                new RedmineProjectDto { Id = 3, Name = "New Project C", Status = 9 } 
             };
 
             var localProjects = new List<Project>
@@ -173,9 +173,9 @@ namespace Application.Features.Redmine
 
             var localProjects = new List<Project>
             {
-                new Project(1, "Project A", ProjectStatus.Active), // Should NOT be cancelled
-                new Project(2, "Project B", ProjectStatus.Active), // Should be cancelled
-                new Project(3, "Project C", ProjectStatus.Completed) // Should NOT be cancelled
+                new Project(1, "Project A", ProjectStatus.Active), 
+                new Project(2, "Project B", ProjectStatus.Active), 
+                new Project(3, "Project C", ProjectStatus.Completed) 
             };
 
             _redmineServiceMock
@@ -203,7 +203,7 @@ namespace Application.Features.Redmine
         [InlineData(1, ProjectStatus.Active)]
         [InlineData(5, ProjectStatus.Completed)]
         [InlineData(9, ProjectStatus.Cancelled)]
-        [InlineData(99, ProjectStatus.Active)] // Unknown status defaults to Active
+        [InlineData(99, ProjectStatus.Active)]
         public async Task Handle_WithDifferentStatuses_ShouldMapCorrectly(int redmineStatus, ProjectStatus expectedStatus)
         {
             // Arrange

@@ -13,6 +13,7 @@ using Domain.Features.Projects.Aggregates;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 
 namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
 {
@@ -283,7 +284,6 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             _unitOfWorkMock.InSequence(sequence)
                 .Setup(x => x.SaveChangesAsync(CancellationToken.None));
 
-            // Verify the sequence was followed
             _milestoneParticipationRepositoryMock.Verify(x => x.GetMilestoneAsync(milestoneId), Times.Once);
             _employeeRepositoryMock.Verify(x => x.GetByIdAsync(employeeId), Times.Once);
             _milestoneParticipationRepositoryMock.Verify(x => x.GetByMilestoneAndEmployeeAsync(milestoneId, employeeId), Times.Once);

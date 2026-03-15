@@ -34,7 +34,7 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             
             var milestone = new ProjectMilestone(123, "Test Milestone");
             var participation = new MilestoneParticipation(Guid.NewGuid(), Guid.NewGuid(), milestone);
-            participation.Deactivate(); // Start as inactive
+            participation.Deactivate();
             
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(participationId))
@@ -58,7 +58,6 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             
             var milestone = new ProjectMilestone(123, "Test Milestone");
             var participation = new MilestoneParticipation(Guid.NewGuid(), Guid.NewGuid(), milestone);
-            // Start as active by default
             
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(participationId))
@@ -102,7 +101,7 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             
             var milestone = new ProjectMilestone(123, "Test Milestone");
             var participation = new MilestoneParticipation(Guid.NewGuid(), Guid.NewGuid(), milestone);
-            participation.MarkAsPaid(); // Mark as paid
+            participation.MarkAsPaid();
             
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(participationId))
@@ -126,7 +125,6 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             
             var milestone = new ProjectMilestone(123, "Test Milestone");
             var participation = new MilestoneParticipation(Guid.NewGuid(), Guid.NewGuid(), milestone);
-            // Start as active by default
             
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(participationId))
@@ -150,7 +148,7 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             
             var milestone = new ProjectMilestone(123, "Test Milestone");
             var participation = new MilestoneParticipation(Guid.NewGuid(), Guid.NewGuid(), milestone);
-            participation.Deactivate(); // Start as inactive
+            participation.Deactivate(); 
             
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(participationId))
@@ -174,7 +172,7 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             
             var milestone = new ProjectMilestone(123, "Test Milestone");
             var participation = new MilestoneParticipation(Guid.NewGuid(), Guid.NewGuid(), milestone);
-            participation.Deactivate(); // Start as inactive
+            participation.Deactivate();
             
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(participationId))

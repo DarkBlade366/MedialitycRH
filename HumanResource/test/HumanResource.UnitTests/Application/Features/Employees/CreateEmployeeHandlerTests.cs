@@ -10,9 +10,10 @@ using Application.Common.Interfaces;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 using Domain.Common.Security;
-
-namespace Application.Features.Employees
+    
+namespace HumanResource.UnitTests.Application.Features.Employees
 {
     public class CreateEmployeeHandlerTests
     {
@@ -126,7 +127,7 @@ namespace Application.Features.Employees
             var command = new CreateEmployeeCommand
             {
                 FullName = "John Doe",
-                Email = "JOHN@EXAMPLE.COM", // Uppercase email
+                Email = "JOHN@EXAMPLE.COM",
                 Password = "SecurePassword123!",
                 RedmineUserId = 123,
                 Role = EmployeeRole.Employee
@@ -137,7 +138,7 @@ namespace Application.Features.Employees
                 .ReturnsAsync(false);
 
             _employeeRepositoryMock
-                .Setup(x => x.ExistsByEmailAsync("john@example.com")) // Normalized email
+                .Setup(x => x.ExistsByEmailAsync("john@example.com"))
                 .ReturnsAsync(false);
 
             // Act
@@ -146,7 +147,7 @@ namespace Application.Features.Employees
             // Assert
             result.Should().NotBeEmpty();
             _employeeRepositoryMock.Verify(x => x.AddAsync(It.Is<Employee>(e => 
-                e.Email == "john@example.com")), Times.Once); // Should be normalized
+                e.Email == "john@example.com")), Times.Once); 
         }
 
         [Fact]

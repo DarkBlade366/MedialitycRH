@@ -11,11 +11,12 @@ using Application.Features.Redmine.Interfaces;
 using Application.Features.Redmine.DTOs;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Employees.Aggregates;
+using Domain.Features.Employees.Enums;
 using Domain.Features.TimeEntries.Aggregates;
 using Domain.Features.TimeEntries.Interfaces;
 using Application.Common.Interfaces;
 
-namespace Application.Features.Redmine
+namespace HumanResource.UnitTests.Application.Features.Redmine
 {
     public class SyncRedmineTimeEntriesHandlerTests
     {
@@ -70,9 +71,9 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1),
-                new Employee("Jane Smith", "jane@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 0), // No RedmineUserId
-                new Employee("Bob Wilson", "bob@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", -1) // Invalid RedmineUserId
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1),
+                new Employee("Jane Smith", "jane@example.com", EmployeeRole.Employee, "hashed", 0),
+                new Employee("Bob Wilson", "bob@example.com", EmployeeRole.Employee, "hashed", -1) 
             };
             var pagedResult = (employees, 3);
 
@@ -103,7 +104,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -133,7 +134,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -191,7 +192,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -200,7 +201,7 @@ namespace Application.Features.Redmine
                 new RedmineTimeEntryDto
                 {
                     Id = 1,
-                    Hours = 10.0m, // Updated hours
+                    Hours = 10.0m,
                     SpentOn = DateTime.Now.AddDays(-1),
                     Project = new RedmineProjectReference { Id = 123 },
                     Activity = new RedmineActivityReference { Id = 10, Name = "Development" }
@@ -231,7 +232,6 @@ namespace Application.Features.Redmine
             result.Should().Be(0);
             _timeRepositoryMock.Verify(x => x.AddRangeAsync(It.IsAny<List<TimeEntry>>()), Times.Never);
             
-            // Verify the existing entry was updated
             var updatedEntry = existingEntries.First();
             updatedEntry.Hours.Should().Be(10.0m);
             
@@ -246,7 +246,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -259,7 +259,7 @@ namespace Application.Features.Redmine
                     SpentOn = DateTime.Now.AddDays(-1),
                     Project = new RedmineProjectReference { Id = 123 },
                     Activity = new RedmineActivityReference { Id = 10, Name = "Development" }
-                }, // Existing
+                },
                 new RedmineTimeEntryDto
                 {
                     Id = 3,
@@ -267,7 +267,7 @@ namespace Application.Features.Redmine
                     SpentOn = DateTime.Now.AddDays(-2),
                     Project = new RedmineProjectReference { Id = 123 },
                     Activity = new RedmineActivityReference { Id = 11, Name = "Testing" }
-                } // New
+                }
             };
 
             var existingEntries = new List<TimeEntry>
@@ -306,8 +306,8 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1),
-                new Employee("Jane Smith", "jane@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 2)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1),
+                new Employee("Jane Smith", "jane@example.com", EmployeeRole.Employee, "hashed", 2)
             };
             var pagedResult = (employees, 2);
 
@@ -367,7 +367,7 @@ namespace Application.Features.Redmine
             var result = await _handler.Handle(from, to, CancellationToken.None);
 
             // Assert
-            result.Should().Be(3); // 1 from employee 1 + 2 from employee 2
+            result.Should().Be(3); 
             _timeRepositoryMock.Verify(x => x.AddRangeAsync(It.Is<List<TimeEntry>>(entries =>
                 entries.Count == 1 &&
                 entries.Any(e => e.RedmineTimeEntryId == 1 && e.RedmineProjectId == 123 && e.EmployeeId == employees[0].Id && e.RedmineActivityId == 10))), Times.Once);
@@ -386,7 +386,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -398,7 +398,7 @@ namespace Application.Features.Redmine
                     Hours = 8.5m,
                     SpentOn = DateTime.Now.AddDays(-1),
                     Project = new RedmineProjectReference { Id = 123 },
-                    Activity = null // No activity
+                    Activity = (RedmineActivityReference?)null 
                 }
             };
 
@@ -435,7 +435,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -447,7 +447,7 @@ namespace Application.Features.Redmine
                     Hours = 8.5m,
                     SpentOn = DateTime.Now.AddDays(-1),
                     Project = new RedmineProjectReference { Id = 123 },
-                    Activity = new RedmineActivityReference { Id = 10, Name = "" } // Empty name
+                    Activity = new RedmineActivityReference { Id = 10, Name = "" }
                 }
             };
 
@@ -484,7 +484,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -534,7 +534,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 
@@ -578,7 +578,7 @@ namespace Application.Features.Redmine
             var to = DateTime.Now;
             var employees = new List<Employee>
             {
-                new Employee("John Doe", "john@example.com", Domain.Features.Employees.Enums.EmployeeRole.Employee, "hashed", 1)
+                new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1)
             };
             var pagedResult = (employees, 1);
 

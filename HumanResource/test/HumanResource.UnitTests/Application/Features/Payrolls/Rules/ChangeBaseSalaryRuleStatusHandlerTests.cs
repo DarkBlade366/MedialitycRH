@@ -12,8 +12,9 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeBaseSalaryRuleStatusHandlerTests
     {
@@ -40,7 +41,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new BaseSalaryRule(EmployeeRole.Employee, 5000m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -70,7 +71,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new BaseSalaryRule(EmployeeRole.Employee, 5000m); // Already active
+            var rule = new BaseSalaryRule(EmployeeRole.Employee, 5000m);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -101,7 +102,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new BaseSalaryRule(EmployeeRole.Employee, 5000m); // Active
+            var rule = new BaseSalaryRule(EmployeeRole.Employee, 5000m);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -132,7 +133,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new BaseSalaryRule(EmployeeRole.Employee, 5000m);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -165,7 +166,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((BaseSalaryRule)null);
+                .ReturnsAsync((BaseSalaryRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -192,7 +193,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new BaseSalaryRule(role, 5000m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -221,7 +222,7 @@ namespace Application.Features.Payrolls.Rules
             var rule = new BaseSalaryRule(EmployeeRole.Employee, 5000m);
             rule.Deactivate();
 
-            var anotherActiveRule = new BaseSalaryRule(EmployeeRole.Employee, 6000m); // Mismo rol, activa por defecto
+            var anotherActiveRule = new BaseSalaryRule(EmployeeRole.Employee, 6000m);
 
             _repositoryMock.Setup(x => x.GetByIdAsync(ruleId)).ReturnsAsync(rule);
             _repositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<BaseSalaryRule> { anotherActiveRule });

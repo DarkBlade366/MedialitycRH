@@ -12,7 +12,10 @@ using Domain.Features.Employees.Aggregates;
 using Domain.Features.Payrolls.Rules;
 using Application.Common.Interfaces;
 
-namespace Application.Services
+// Alias para evitar conflicto de namespaces
+using EmployeeRoleAlias = global::Domain.Features.Employees.Enums.EmployeeRole;
+
+namespace HumanResource.UnitTests.Application.Services
 {
     public class VacationAccrualServiceTests
     {
@@ -120,7 +123,6 @@ namespace Application.Services
                 new VacationRule(1.5m)
             };
 
-            // Deactivate the first rule
             rules[0].Deactivate();
 
             _employeeRepoMock
@@ -135,7 +137,7 @@ namespace Application.Services
             await _service.AccrueVacationsAsync();
 
             // Assert
-            employees[0].VacationBalance.AccruedDays.Should().Be(1.5m); // Should use active rule
+            employees[0].VacationBalance.AccruedDays.Should().Be(1.5m);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -175,7 +177,7 @@ namespace Application.Services
         {
             // Arrange
             var employee = CreateTestEmployee(Guid.NewGuid(), "John", "Doe");
-            employee.AccrueVacationDays(1.5m); // ya acumuló este mes
+            employee.AccrueVacationDays(1.5m); 
             var employees = new List<Employee> { employee };
             var rule = new VacationRule(1.5m);
 
@@ -191,7 +193,7 @@ namespace Application.Services
             await _service.AccrueVacationsAsync();
 
             // Assert
-            employee.VacationBalance.AccruedDays.Should().Be(1.5m); // sin cambios
+            employee.VacationBalance.AccruedDays.Should().Be(1.5m); 
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -228,7 +230,7 @@ namespace Application.Services
             return new Employee(
                 $"{firstName} {lastName}",
                 "test@example.com",
-                Domain.Features.Employees.Enums.EmployeeRole.Employee,
+                EmployeeRoleAlias.Employee,
                 "hashedpassword",
                 123);
         }

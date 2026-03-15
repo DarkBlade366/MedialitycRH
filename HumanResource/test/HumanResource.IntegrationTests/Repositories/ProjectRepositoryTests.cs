@@ -1,52 +1,68 @@
-using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Testcontainers.PostgreSql;
-using Domain.Features.Projects.Interfaces;
 using Domain.Features.Projects.Aggregates;
+using Domain.Features.Projects.Enums;
+using FluentAssertions;
+using Infrastructure.Persistence.Repositories.Projects;
+using Microsoft.EntityFrameworkCore;
+using Xunit;
 
-namespace HumanResource.IntegrationTests.Repositories
+namespace HumanResource.IntegrationTests.Repositories;
+
+public class ProjectRepositoryTests : IntegrationTestBase
 {
-    public class ProjectRepositoryTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+    [Fact]
+    public async Task AddAsync_ShouldPersistProject()
     {
-        private readonly WebApplicationFactory<Program> _factory;
-        private readonly PostgreSqlContainer _postgresContainer;
-        private IProjectRepository _repository;
+        // Arrange
+        var dbContext = await GetDbContextAsync();
+        var repo = new ProjectRepository(dbContext);
+        var project = new Project(101, "Test Project", ProjectStatus.Active);
 
-        public ProjectRepositoryTests(WebApplicationFactory<Program> factory)
-        {
-            _factory = factory;
-            _postgresContainer = new PostgreSqlBuilder()
-                .WithImage("postgres:15")
-                .WithDatabase("testdb")
-                .WithUsername("test")
-                .WithPassword("test")
-                .Build();
-        }
+        // Act
+        await repo.AddAsync(project);
+        await dbContext.SaveChangesAsync();
 
-        public async Task InitializeAsync()
-        {
-            await _postgresContainer.StartAsync();
-            
-            var scope = _factory.Services.CreateScope();
-            _repository = scope.ServiceProvider.GetRequiredService<IProjectRepository>();
-        }
+        // Assert
+        var fromDb = await dbContext.Projects.FirstOrDefaultAsync(p => p.RedmineProjectId == 101);
+        fromDb.Should().NotBeNull();
+        fromDb!.Name.Should().Be("Test Project");
+    }
 
-        public async Task DisposeAsync()
-        {
-            await _postgresContainer.StopAsync();
-        }
+    [Fact]
+    public async Task GetByRedmineIdAsync_ShouldReturnProject()
+    {
+        // Arrange
+        var dbContext = await GetDbContextAsync();
+        var repo = new ProjectRepository(dbContext);
+        var project = new Project(101, "Test Project", ProjectStatus.Active);
+        dbContext.Projects.Add(project);
+        await dbContext.SaveChangesAsync();
 
-        // TODO: Implementar tests de integración para ProjectRepository
-        // - CRUD con base de datos real
-        // - Queries por estado y filtros
-        // - Manejo de relaciones con milestones
-        // - Performance con grandes volúmenes
-        // - Validación de estados
-        // - Concurrencia y locking
+        // Act
+        var result = await repo.GetByRedmineIdAsync(101);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(project.Id);
+    }
+
+    [Fact]
+    public async Task Update_ShouldModifyProject()
+    {
+        // Arrange
+        var dbContext = await GetDbContextAsync();
+        var repo = new ProjectRepository(dbContext);
+        var project = new Project(101, "Old Name", ProjectStatus.Active);
+        dbContext.Projects.Add(project);
+        await dbContext.SaveChangesAsync();
+
+        // Act
+        project.UpdateName("New Name");
+        repo.Update(project);
+        await dbContext.SaveChangesAsync();
+
+        // Assert
+        var updated = await dbContext.Projects.FirstAsync(p => p.RedmineProjectId == 101);
+        updated.Name.Should().Be("New Name");
     }
 }

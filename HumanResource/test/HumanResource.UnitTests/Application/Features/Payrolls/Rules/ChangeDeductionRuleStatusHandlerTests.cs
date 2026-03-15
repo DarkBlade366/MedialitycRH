@@ -13,7 +13,7 @@ using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Payrolls.Enums;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeDeductionRuleStatusHandlerTests
     {
@@ -40,7 +40,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new DeductionRule(0.15m, "Tax", DeductionType.BasicSalary);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -70,7 +70,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new DeductionRule(0.15m, "Tax", DeductionType.BasicSalary); // Already active
+            var rule = new DeductionRule(0.15m, "Tax", DeductionType.BasicSalary);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -101,7 +101,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new DeductionRule(0.15m, "Tax", DeductionType.BasicSalary); // Active
+            var rule = new DeductionRule(0.15m, "Tax", DeductionType.BasicSalary);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -132,7 +132,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new DeductionRule(0.15m, "Tax", DeductionType.BasicSalary);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -165,7 +165,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((DeductionRule)null);
+                .ReturnsAsync((DeductionRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -178,10 +178,10 @@ namespace Application.Features.Payrolls.Rules
         }
 
         [Theory]
-        [InlineData(DeductionType.BasicSalary, 15, "Tax")]
-        [InlineData(DeductionType.TotalEarnings, 8, "Social Security")]
-        [InlineData(DeductionType.BasicSalary, 10, "Health Insurance")]
-        public async Task HandleAsync_WithDifferentTypes_ShouldChangeStatusSuccessfully(DeductionType type, int percentageInt, string description)
+        [InlineData(DeductionType.BasicSalary, 15)]
+        [InlineData(DeductionType.TotalEarnings, 8)]
+        [InlineData(DeductionType.BasicSalary, 10)]
+        public async Task HandleAsync_WithDifferentTypes_ShouldChangeStatusSuccessfully(DeductionType type, int percentageInt)
         {
             // Arrange
             var ruleId = Guid.NewGuid();
@@ -192,8 +192,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new DeductionRule(percentageInt / 100m, "Test", type);
-            rule.Deactivate(); // Start as inactive
-
+            rule.Deactivate();
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
                 .ReturnsAsync(rule);
@@ -229,7 +228,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new DeductionRule(0.15m, description, DeductionType.BasicSalary);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -259,7 +258,7 @@ namespace Application.Features.Payrolls.Rules
             var rule = new DeductionRule(0.15m, "Tax", DeductionType.BasicSalary);
             rule.Deactivate();
 
-            var anotherActiveRule = new DeductionRule(0.10m, "Tax", DeductionType.BasicSalary); // mismo tipo y descripción, activa
+            var anotherActiveRule = new DeductionRule(0.10m, "Tax", DeductionType.BasicSalary);
 
             _repositoryMock.Setup(x => x.GetByIdAsync(ruleId)).ReturnsAsync(rule);
             _repositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<DeductionRule> { anotherActiveRule });

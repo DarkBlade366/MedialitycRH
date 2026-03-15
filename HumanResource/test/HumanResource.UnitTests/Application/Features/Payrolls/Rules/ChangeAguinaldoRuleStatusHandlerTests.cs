@@ -12,7 +12,7 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeAguinaldoRuleStatusHandlerTests
     {
@@ -39,7 +39,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new AguinaldoRule(8.33m, 12);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -71,7 +71,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new AguinaldoRule(8.33m, 12); // Already active
+            var rule = new AguinaldoRule(8.33m, 12); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -133,7 +133,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new AguinaldoRule(8.33m, 12); // Active
+            var rule = new AguinaldoRule(8.33m, 12);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -161,7 +161,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new AguinaldoRule(8.33m, 12);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -190,7 +190,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((AguinaldoRule)null);
+                .ReturnsAsync((AguinaldoRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(

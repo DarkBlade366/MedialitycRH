@@ -16,7 +16,7 @@ using Domain.Features.TimeEntries.Aggregates;
 using Xunit;
 using FluentAssertions;
 
-namespace Domain.Features.Payrolls.Calculators
+namespace HumanResource.UnitTests.Domain.Features.Payrolls.Calculators
 {
     public class MilestoneCalculatorTests
     {
@@ -106,8 +106,8 @@ namespace Domain.Features.Payrolls.Calculators
             calculator.Calculate(payroll, context);
 
             // Assert
-            payroll.Components.Should().HaveCount(1); // Solo base salary
-            payroll.MilestonePayments.Should().HaveCount(1); // El pago existente se mantiene, no se añade otro
+            payroll.Components.Should().HaveCount(1); 
+            payroll.MilestonePayments.Should().HaveCount(1); 
         }
 
         [Fact]
@@ -139,10 +139,10 @@ namespace Domain.Features.Payrolls.Calculators
             calculator.Calculate(payroll, context);
 
             // Assert
-            payroll.Components.Should().HaveCount(2); // base salary + milestone bonus
+            payroll.Components.Should().HaveCount(2);
             var bonusComponent = payroll.Components.Last(c => c.Type == PayrollComponentType.MilestoneBonus);
-            bonusComponent.Amount.Should().Be(1000m); // 2000 / 2 = 1000m
-
+            bonusComponent.Amount.Should().Be(1000m); 
+            
             payroll.MilestonePayments.Should().HaveCount(1);
             var payment = payroll.MilestonePayments.First();
             payment.Amount.Should().Be(1000m);

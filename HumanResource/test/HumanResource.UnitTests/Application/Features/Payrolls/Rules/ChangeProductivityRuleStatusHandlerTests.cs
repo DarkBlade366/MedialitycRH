@@ -13,7 +13,7 @@ using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 using Domain.Features.Payrolls.Enums;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeProductivityRuleStatusHandlerTests
     {
@@ -40,7 +40,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new ProductivityRule(50m, 100m, 500m, BonusType.FixedAmount);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -70,7 +70,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new ProductivityRule(50m, 100m, 500m, BonusType.FixedAmount); // Already active
+            var rule = new ProductivityRule(50m, 100m, 500m, BonusType.FixedAmount);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -101,7 +101,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new ProductivityRule(50m, 100m, 500m, BonusType.FixedAmount); // Active
+            var rule = new ProductivityRule(50m, 100m, 500m, BonusType.FixedAmount);
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -132,7 +132,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new ProductivityRule(50m, 100m, 500m, BonusType.FixedAmount);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -165,7 +165,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((ProductivityRule)null);
+                .ReturnsAsync((ProductivityRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -191,7 +191,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new ProductivityRule(minimum, full, bonus, type);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -224,7 +224,7 @@ namespace Application.Features.Payrolls.Rules
             var rule = new ProductivityRule(50m, 100m, 500m, BonusType.FixedAmount);
             rule.Deactivate();
 
-            var anotherActiveRule = new ProductivityRule(30m, 80m, 200m, BonusType.Percentage); // otra regla activa
+            var anotherActiveRule = new ProductivityRule(30m, 80m, 200m, BonusType.Percentage);
 
             _repositoryMock.Setup(x => x.GetByIdAsync(ruleId)).ReturnsAsync(rule);
             _repositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<ProductivityRule> { anotherActiveRule });

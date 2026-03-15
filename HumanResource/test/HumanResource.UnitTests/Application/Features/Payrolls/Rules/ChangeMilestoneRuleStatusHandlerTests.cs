@@ -12,7 +12,7 @@ using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Rules;
 
-namespace Application.Features.Payrolls.Rules
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
 {
     public class ChangeMilestoneRuleStatusHandlerTests
     {
@@ -39,7 +39,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new MilestoneRule(123, "Phase 1", 2000m);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -69,7 +69,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = true
             };
 
-            var rule = new MilestoneRule(123, "Phase 1", 2000m); // Already active
+            var rule = new MilestoneRule(123, "Phase 1", 2000m); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -100,7 +100,7 @@ namespace Application.Features.Payrolls.Rules
                 IsActive = false
             };
 
-            var rule = new MilestoneRule(123, "Phase 1", 2000m); // Active
+            var rule = new MilestoneRule(123, "Phase 1", 2000m); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -131,7 +131,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new MilestoneRule(123, "Phase 1", 2000m);
-            rule.Deactivate(); // Already inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -164,7 +164,7 @@ namespace Application.Features.Payrolls.Rules
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
-                .ReturnsAsync((MilestoneRule)null);
+                .ReturnsAsync((MilestoneRule?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -191,7 +191,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new MilestoneRule(projectId, milestoneName, (decimal)bonusAmount);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate(); 
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -229,7 +229,7 @@ namespace Application.Features.Payrolls.Rules
             };
 
             var rule = new MilestoneRule(123, "Phase 1", (decimal)bonusAmount);
-            rule.Deactivate(); // Start as inactive
+            rule.Deactivate();
 
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(ruleId))
@@ -259,7 +259,7 @@ namespace Application.Features.Payrolls.Rules
             var rule = new MilestoneRule(123, "Phase 1", 2000m);
             rule.Deactivate();
 
-            var anotherActiveRule = new MilestoneRule(123, "Phase 1", 1500m); // mismo proyecto y nombre, activa
+            var anotherActiveRule = new MilestoneRule(123, "Phase 1", 1500m);
 
             _repositoryMock.Setup(x => x.GetByIdAsync(ruleId)).ReturnsAsync(rule);
             _repositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<MilestoneRule> { anotherActiveRule });

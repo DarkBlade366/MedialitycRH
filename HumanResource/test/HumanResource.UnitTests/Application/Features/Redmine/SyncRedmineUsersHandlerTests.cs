@@ -12,10 +12,11 @@ using Application.Features.Redmine.DTOs;
 using Domain.Features.Employees.Interfaces;
 using Domain.Features.Employees.Aggregates;
 using Domain.Features.Employees.Enums;
+using Domain.Features.Employees.Entities;
 using Application.Common.Interfaces;
 using Domain.Common.Security;
 
-namespace Application.Features.Redmine
+namespace HumanResource.UnitTests.Application.Features.Redmine
 {
     public class SyncRedmineUsersHandlerTests
     {
@@ -92,7 +93,7 @@ namespace Application.Features.Redmine
             var redmineUsers = new List<RedmineUserDto>
             {
                 new RedmineUserDto { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com" },
-                new RedmineUserDto { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com" } // Email changed
+                new RedmineUserDto { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com" } 
             };
 
             var existingEmployees = new List<Employee>
@@ -124,8 +125,8 @@ namespace Application.Features.Redmine
             // Arrange
             var redmineUsers = new List<RedmineUserDto>
             {
-                new RedmineUserDto { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com" }, // Existing
-                new RedmineUserDto { Id = 3, FirstName = "Bob", LastName = "Wilson", Email = "bob@example.com" } // New
+                new RedmineUserDto { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com" },
+                new RedmineUserDto { Id = 3, FirstName = "Bob", LastName = "Wilson", Email = "bob@example.com" } 
             };
 
             var existingEmployees = new List<Employee>
@@ -159,8 +160,8 @@ namespace Application.Features.Redmine
             var redmineUsers = new List<RedmineUserDto>
             {
                 new RedmineUserDto { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com" },
-                new RedmineUserDto { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "" }, // Empty email
-                new RedmineUserDto { Id = 3, FirstName = "Bob", LastName = "Wilson", Email = null }, // Null email
+                new RedmineUserDto { Id = 2, FirstName = "Jane", LastName = "Smith", Email = "" },
+                new RedmineUserDto { Id = 3, FirstName = "Bob", LastName = "Wilson", Email = (string?)null }, 
                 new RedmineUserDto { Id = 4, FirstName = "Alice", LastName = "Brown", Email = "alice@example.com" }
             };
 
@@ -178,7 +179,7 @@ namespace Application.Features.Redmine
             var result = await _handler.Handle(CancellationToken.None);
 
             // Assert
-            result.Should().Be(2); // Only John and Alice should be created
+            result.Should().Be(2); 
             _employeeRepositoryMock.Verify(x => x.AddRangeAsync(It.Is<List<Employee>>(employees =>
                 employees.Count == 2 &&
                 employees.Any(e => e.FullName == "John Doe" && e.RedmineUserId == 1) &&
@@ -200,8 +201,8 @@ namespace Application.Features.Redmine
             var existingEmployees = new List<Employee>
             {
                 new Employee("John Doe", "john@example.com", EmployeeRole.Employee, "hashed", 1),
-                new Employee("Jane Smith", "jane@example.com", EmployeeRole.Employee, "hashed", 2), // Should be deactivated
-                new Employee("Admin User", "admin@example.com", EmployeeRole.Administrator, "hashed", 3) // Should NOT be deactivated
+                new Employee("Jane Smith", "jane@example.com", EmployeeRole.Employee, "hashed", 2),
+                new Employee("Admin User", "admin@example.com", EmployeeRole.Administrator, "hashed", 3) 
             };
 
             _redmineServiceMock
@@ -218,7 +219,6 @@ namespace Application.Features.Redmine
             // Assert
             result.Should().Be(0);
             
-            // Verify Jane Smith was deactivated but Admin User was not
             var deactivatedEmployees = existingEmployees.Where(e => !e.IsActive).ToList();
             deactivatedEmployees.Should().ContainSingle(e => e.FullName == "Jane Smith");
             deactivatedEmployees.Should().NotContain(e => e.FullName == "Admin User");

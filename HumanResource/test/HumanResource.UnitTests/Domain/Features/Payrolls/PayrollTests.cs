@@ -9,7 +9,7 @@ using Domain.Features.Payrolls.Aggregates.Payments;
 using Xunit;
 using FluentAssertions;
 
-namespace Domain.Features.Payrolls
+namespace HumanResource.UnitTests.Domain.Features.Payrolls
 {
     public class PayrollTests
     {

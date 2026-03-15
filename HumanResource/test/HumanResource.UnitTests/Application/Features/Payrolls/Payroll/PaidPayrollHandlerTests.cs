@@ -9,11 +9,13 @@ using Application.Features.Payrolls.Payroll.Commands;
 using Application.Features.Payrolls.Payroll.DTOs;
 using Application.Common.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
-using Domain.Features.Payrolls.Aggregates;
 using Domain.Features.Payrolls.Enums;
 using Domain.Features.Payrolls.Entities;
 
-namespace Application.Features.Payrolls.Payroll
+// Alias para evitar conflicto de namespaces
+using PayrollAggregate = global::Domain.Features.Payrolls.Aggregates.Payroll;
+
+namespace HumanResource.UnitTests.Application.Features.Payrolls.Payroll
 {
     public class PaidPayrollHandlerTests
     {
@@ -35,7 +37,7 @@ namespace Application.Features.Payrolls.Payroll
             var payrollId = Guid.NewGuid();
             var command = new PaidPayrollCommand { Id = payrollId };
             
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
+            var payroll = new PayrollAggregate(
                 Guid.NewGuid(),
                 DateTime.Now.AddDays(-30),
                 DateTime.Now.AddDays(-1));
@@ -77,7 +79,7 @@ namespace Application.Features.Payrolls.Payroll
             
             _repositoryMock
                 .Setup(x => x.GetByIdAsync(payrollId))
-                .ReturnsAsync((Domain.Features.Payrolls.Aggregates.Payroll?)null);
+                .ReturnsAsync((PayrollAggregate?)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(
@@ -94,7 +96,7 @@ namespace Application.Features.Payrolls.Payroll
             var payrollId = Guid.NewGuid();
             var command = new PaidPayrollCommand { Id = payrollId };
             
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
+            var payroll = new PayrollAggregate(
                 Guid.NewGuid(),
                 DateTime.Now.AddDays(-30),
                 DateTime.Now.AddDays(-1));
@@ -125,7 +127,7 @@ namespace Application.Features.Payrolls.Payroll
             var payrollId = Guid.NewGuid();
             var command = new PaidPayrollCommand { Id = payrollId };
             
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
+            var payroll = new PayrollAggregate(
                 Guid.NewGuid(),
                 DateTime.Now.AddDays(-30),
                 DateTime.Now.AddDays(-1));
@@ -160,7 +162,7 @@ namespace Application.Features.Payrolls.Payroll
             var payrollId = Guid.NewGuid();
             var command = new PaidPayrollCommand { Id = payrollId };
             
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
+            var payroll = new PayrollAggregate(
                 Guid.NewGuid(),
                 DateTime.Now.AddDays(-30),
                 DateTime.Now.AddDays(-1));
@@ -193,7 +195,7 @@ namespace Application.Features.Payrolls.Payroll
             var payrollId = Guid.NewGuid();
             var command = new PaidPayrollCommand { Id = payrollId };
             
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
+            var payroll = new PayrollAggregate(
                 Guid.NewGuid(),
                 DateTime.Now.AddDays(-30),
                 DateTime.Now.AddDays(-1));
@@ -252,7 +254,7 @@ namespace Application.Features.Payrolls.Payroll
             var payrollId = Guid.NewGuid();
             var command = new PaidPayrollCommand { Id = payrollId };
             
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(
+            var payroll = new PayrollAggregate(
                 Guid.NewGuid(),
                 DateTime.Now.AddDays(-30),
                 DateTime.Now.AddDays(-1));
@@ -290,7 +292,7 @@ namespace Application.Features.Payrolls.Payroll
             var periodStart = DateTime.Now.AddDays(-30);
             var periodEnd = DateTime.Now.AddDays(-1);
             
-            var payroll = new Domain.Features.Payrolls.Aggregates.Payroll(employeeId, periodStart, periodEnd);
+            var payroll = new PayrollAggregate(employeeId, periodStart, periodEnd);
                 
             var component = new PayrollComponent(
                 PayrollComponentType.BaseSalary,

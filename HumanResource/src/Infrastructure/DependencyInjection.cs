@@ -20,6 +20,7 @@ using Infrastructure.Persistence.Repositories.Employees;
 using Application.Common.Interfaces;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
+using Infrastructure.BackgroundJobs;
 
 namespace Infrastructure
 {
@@ -81,6 +82,7 @@ namespace Infrastructure
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IPayrollPdfGenerator, PayrollPdfGenerator>();
             services.AddScoped<IPayrollExcelGenerator, PayrollExcelGenerator>();
+            services.AddScoped<IRedmineSyncJob, RedmineSyncJob>();
 
             //Audi
             services.AddScoped<AuditInterceptor>();

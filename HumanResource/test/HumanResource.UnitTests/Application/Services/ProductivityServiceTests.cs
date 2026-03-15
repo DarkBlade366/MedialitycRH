@@ -10,7 +10,7 @@ using Domain.Features.TimeEntries.Interfaces;
 using Domain.Features.Payrolls.Interfaces;
 using Domain.Features.Payrolls.Entities;
 
-namespace Application.Services
+namespace HumanResource.UnitTests.Application.Services
 {
     public class ProductivityServiceTests
     {
@@ -74,7 +74,7 @@ namespace Application.Services
             var result = await _service.CalculateProductivityMetric(employeeId, periodStart, periodEnd);
 
             // Assert
-            result.Should().Be(76.0m); // (40.5 + 20.0 + 15.5) * 1.0
+            result.Should().Be(76.0m); 
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace Application.Services
             {
                 new ActivityProductivityWeight(10, "Development", 0.8m),
                 new ActivityProductivityWeight(11, "Testing", 0.6m),
-                new ActivityProductivityWeight(13, "Documentation", 0.7m) // Not used
+                new ActivityProductivityWeight(13, "Documentation", 0.7m)
             };
 
             _timeEntryRepositoryMock
@@ -111,7 +111,7 @@ namespace Application.Services
             var result = await _service.CalculateProductivityMetric(employeeId, periodStart, periodEnd);
 
             // Assert
-            result.Should().Be(59.9m); // (40.5 * 0.8) + (20.0 * 0.6) + (15.5 * 1.0) = 32.4 + 12.0 + 15.5 = 59.9
+            result.Should().Be(59.9m);
         }
 
         [Fact]
@@ -134,7 +134,6 @@ namespace Application.Services
                 new ActivityProductivityWeight(11, "Testing", 0.6m)
             };
 
-            // Deactivate the first weight
             weights[0].Deactivate();
 
             _timeEntryRepositoryMock
@@ -149,7 +148,7 @@ namespace Application.Services
             var result = await _service.CalculateProductivityMetric(employeeId, periodStart, periodEnd);
 
             // Assert
-            result.Should().Be(52.5m); // (40.5 * 1.0) + (20.0 * 0.6) = 40.5 + 12.0 = 52.5
+            result.Should().Be(52.5m);
         }
 
         [Fact]
@@ -162,7 +161,7 @@ namespace Application.Services
 
             var hoursByActivity = new Dictionary<int, decimal>
             {
-                { 0, 30.0m }, // Activity ID 0 should use default weight
+                { 0, 30.0m }, 
                 { 10, 20.0m }
             };
 
@@ -183,7 +182,7 @@ namespace Application.Services
             var result = await _service.CalculateProductivityMetric(employeeId, periodStart, periodEnd);
 
             // Assert
-            result.Should().Be(48.0m); // (30.0 * 1.0) + (20.0 * 0.9) = 30.0 + 18.0 = 48.0
+            result.Should().Be(48.0m); 
         }
 
         [Theory]

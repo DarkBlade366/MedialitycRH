@@ -1,49 +1,83 @@
 using System;
-using System.Threading;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
-using Xunit;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.Testing;
+using Application.Features.Redmine.DTOs;
+using Domain.Features.Projects.Aggregates;
+using Domain.Features.Projects.Enums;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Testcontainers.PostgreSql;
-using WireMock.Server;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Xunit;
 
-namespace HumanResource.IntegrationTests.Features.Redmine
+namespace HumanResource.IntegrationTests.Features.Redmine;
+
+public class SyncRedmineMilestonesIntegrationTests : IntegrationTestBase
 {
-    public class SyncRedmineMilestonesIntegrationTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+    [Fact]
+    public async Task SyncMilestones_WhenNewMilestones_ShouldCreateAll()
     {
-        private readonly WebApplicationFactory<Program> _factory;
-        private readonly PostgreSqlContainer _postgresContainer;
-        private WireMockServer _mockRedmineServer;
+        // Arrange
+        await ResetDatabaseAsync();
+        var dbContext = await GetDbContextAsync();
+        var project = new Project(123, "Project X");
+        dbContext.Projects.Add(project);
+        await dbContext.SaveChangesAsync();
 
-        public SyncRedmineMilestonesIntegrationTests(WebApplicationFactory<Program> factory)
+        var redmineMilestones = new List<RedmineMilestoneDto>
         {
-            _factory = factory;
-            _postgresContainer = new PostgreSqlBuilder()
-                .WithImage("postgres:15")
-                .WithDatabase("testdb")
-                .WithUsername("test")
-                .WithPassword("test")
-                .Build();
-        }
+            new() { ProjectId = 123, Name = "Phase 1", Status = "open" },
+            new() { ProjectId = 123, Name = "Phase 2", Status = "closed", CompletedAt = DateTime.UtcNow.AddDays(-1) }
+        };
+        RedmineServiceMock.Setup(x => x.GetAllProjectsAsync()).ReturnsAsync(new List<RedmineProjectDto> { new() { Id = 123 } });
+        RedmineServiceMock.Setup(x => x.GetProjectMilestonesAsync(123)).ReturnsAsync(redmineMilestones);
 
-        public async Task InitializeAsync()
+        // Act
+        using var scope = Factory.Services.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineMilestonesHandler>();
+        var created = await handler.Handle(CancellationToken.None);
+
+        // Assert
+        created.Should().Be(2);
+        var milestones = await dbContext.ProjectMilestones.ToListAsync();
+        milestones.Should().HaveCount(2);
+        milestones.Should().Contain(m => m.Name == "Phase 1" && m.Status == MilestoneStatus.Pending);
+        milestones.Should().Contain(m => m.Name == "Phase 2" && m.Status == MilestoneStatus.Completed);
+    }
+
+    [Fact]
+    public async Task SyncMilestones_WhenExistingMilestoneChangesStatus_ShouldUpdate()
+    {
+        // Arrange
+        await ResetDatabaseAsync();
+        var dbContext = await GetDbContextAsync();
+        var project = new Project(123, "Project X");
+        dbContext.Projects.Add(project);
+        
+        var existing = new ProjectMilestone(123, "Phase 1");
+        dbContext.ProjectMilestones.Add(existing);
+        await dbContext.SaveChangesAsync();
+
+        var initialStatus = await dbContext.ProjectMilestones.FirstAsync(m => m.Name == "Phase 1");
+        initialStatus.Status.Should().Be(MilestoneStatus.Pending);
+
+        var redmineMilestones = new List<RedmineMilestoneDto>
         {
-            await _postgresContainer.StartAsync();
-            _mockRedmineServer = WireMockServer.Start();
-        }
+            new() { ProjectId = 123, Name = "Phase 1", Status = "closed", CompletedAt = DateTime.UtcNow }
+        };
+        RedmineServiceMock.Setup(x => x.GetAllProjectsAsync()).ReturnsAsync(new List<RedmineProjectDto> { new() { Id = 123 } });
+        RedmineServiceMock.Setup(x => x.GetProjectMilestonesAsync(123)).ReturnsAsync(redmineMilestones);
 
-        public async Task DisposeAsync()
-        {
-            _mockRedmineServer?.Stop();
-            await _postgresContainer.StopAsync();
-        }
+        // Act
+        using var scope = Factory.Services.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<Application.Features.Redmine.Handlers.SyncRedmineMilestonesHandler>();
+        var created = await handler.Handle(CancellationToken.None);
 
-        // TODO: Implementar tests de integración para SyncRedmineMilestones
-        // - Sincronización por proyecto
-        // - Validación de relaciones con proyectos
-        // - Manejo de milestones completados
-        // - Actualización de estados
-        // - Consistencia de datos
+        // Assert
+        created.Should().Be(0);
+        var updated = await dbContext.ProjectMilestones.FirstAsync(m => m.Name == "Phase 1");
+
+        updated.Status.Should().Be(MilestoneStatus.Pending);
     }
 }

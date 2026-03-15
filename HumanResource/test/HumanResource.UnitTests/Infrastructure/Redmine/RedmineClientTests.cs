@@ -13,7 +13,7 @@ using Infrastructure.Redmine;
 using Application.Features.Redmine.DTOs;
 using FluentAssertions;
 
-namespace Infrastructure.Redmine
+namespace HumanResource.UnitTests.Infrastructure.Redmine
 {
     public class RedmineClientTests
     {
@@ -436,7 +436,7 @@ namespace Infrastructure.Redmine
                 x => x.Log(
                     LogLevel.Error,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v!.ToString().Contains("Redmine API request failed")),
+                    It.Is<It.IsAnyType>((v, t) => v != null && v.ToString().Contains("Redmine API request failed")),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
@@ -459,7 +459,7 @@ namespace Infrastructure.Redmine
                 x => x.Log(
                     LogLevel.Error,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v!.ToString().Contains("Redmine API request failed")),
+                    It.Is<It.IsAnyType>((v, t) => v != null && v.ToString().Contains("Redmine API request failed")),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);
@@ -482,7 +482,7 @@ namespace Infrastructure.Redmine
                 x => x.Log(
                     LogLevel.Error,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v!.ToString().Contains("Redmine API request failed")),
+                    It.Is<It.IsAnyType>((v, t) => v != null && v.ToString().Contains("Redmine API request failed")),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 Times.Once);

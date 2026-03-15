@@ -5,7 +5,7 @@ using Domain.Features.Employees.Entities;
 using Xunit;
 using FluentAssertions;
 
-namespace Domain.Features.Employees
+namespace HumanResource.UnitTests.Domain.Features.Employees
 {
     public class EmployeeTests
     {
@@ -225,7 +225,7 @@ namespace Domain.Features.Employees
             // Arrange
             var employee = CreateValidEmployee();
             var beforeUpdate = employee.UpdatedAt;
-            System.Threading.Thread.Sleep(10); // Pequeña pausa
+            System.Threading.Thread.Sleep(10);
 
             // Act
             employee.Update("New Name", "new@email.com", EmployeeRole.Employee);
@@ -434,7 +434,7 @@ namespace Domain.Features.Employees
             // Arrange
             var employee = CreateValidEmployee();
             employee.AccrueVacationDays(1);
-            // Force last accrual to previous month
+            
             var balance = employee.VacationBalance;
             typeof(EmployeeVacationBalance)
                 .GetProperty("LastAccrualDate")
