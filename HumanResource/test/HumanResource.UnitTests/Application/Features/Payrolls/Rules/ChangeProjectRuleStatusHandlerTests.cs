@@ -18,13 +18,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
     {
         private readonly Mock<IProjectRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly ChangeProjectRuleStatusHandler _handler;
 
         public ChangeProjectRuleStatusHandlerTests()
         {
             _repositoryMock = new Mock<IProjectRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new ChangeProjectRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new ChangeProjectRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

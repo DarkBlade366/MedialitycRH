@@ -23,6 +23,7 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
         private readonly Mock<IRedmineService> _redmineServiceMock;
         private readonly Mock<IEmployeeRepository> _employeeRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly SyncRedmineUsersHandler _handler;
 
         public SyncRedmineUsersHandlerTests()
@@ -30,10 +31,12 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
             _redmineServiceMock = new Mock<IRedmineService>();
             _employeeRepositoryMock = new Mock<IEmployeeRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _cacheMock = new Mock<ICacheService>();
             _handler = new SyncRedmineUsersHandler(
                 _redmineServiceMock.Object,
                 _employeeRepositoryMock.Object,
-                _unitOfWorkMock.Object);
+                _unitOfWorkMock.Object,
+                _cacheMock.Object);
         }
 
         [Fact]

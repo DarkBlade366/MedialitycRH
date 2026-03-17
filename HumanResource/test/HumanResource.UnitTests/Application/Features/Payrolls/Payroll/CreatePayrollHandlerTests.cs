@@ -50,6 +50,7 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Payroll
         private readonly Mock<IProjectRuleRepository> _projectRuleRepositoryMock;
         private readonly Mock<IProjectRepository> _projectRepositoryMock;
         private readonly Mock<IActivityProductivityWeightRepository> _activityWeightRepositoryMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly ProductivityService _productivityService;
         private readonly PayrollEngine _payrollEngine;
         private readonly CreatePayrollHandler _handler;
@@ -72,6 +73,7 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Payroll
             _projectRuleRepositoryMock = new Mock<IProjectRuleRepository>();
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _activityWeightRepositoryMock = new Mock<IActivityProductivityWeightRepository>();
+            _cacheMock = new Mock<ICacheService>();
 
             _activityWeightRepositoryMock
                 .Setup(x => x.GetAllAsync())
@@ -131,7 +133,8 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Payroll
                 _milestoneParticipationRepositoryMock.Object,
                 _productivityService,
                 _projectRuleRepositoryMock.Object,
-                _projectRepositoryMock.Object);
+                _projectRepositoryMock.Object,
+                _cacheMock.Object);
         }
 
         [Fact]

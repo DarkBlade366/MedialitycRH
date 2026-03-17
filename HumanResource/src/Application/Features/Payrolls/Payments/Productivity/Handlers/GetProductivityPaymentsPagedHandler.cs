@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Interfaces;
 using Application.Features.Payrolls.Payments.Productivity.DTOs;
 using Application.Features.Payrolls.Payments.Productivity.Queries;
+using Domain.Features.Payrolls.Aggregates.Payments;
 using Domain.Features.Payrolls.Interfaces;
 
 namespace Application.Features.Payrolls.Payments.Productivity.Handlers
@@ -12,44 +14,42 @@ namespace Application.Features.Payrolls.Payments.Productivity.Handlers
     public class GetProductivityPaymentsPagedHandler
     {
         private readonly IProductivityPaymentRepository _repository;
+        private readonly ICacheService _cache;
 
-        public GetProductivityPaymentsPagedHandler(IProductivityPaymentRepository repository)
+        public GetProductivityPaymentsPagedHandler(IProductivityPaymentRepository repository, ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
-        public async Task<PagedResponse<ProductivityPaymentResponse>> HandleAsync(
-            GetProductivityPaymentsPagedQuery query)
+        public async Task<PagedResponse<ProductivityPaymentResponse>> HandleAsync(GetProductivityPaymentsPagedQuery query)
         {
-            var payments = await _repository.GetAllAsync();
+            string cacheKey = "productivityPayments:all";
+            var payments = await _cache.GetAsync<List<ProductivityPayment>>(cacheKey);
+            if (payments == null)
+            {
+                payments = (await _repository.GetAllAsync())?.ToList() ?? new List<ProductivityPayment>();
+                await _cache.SetAsync(cacheKey, payments, TimeSpan.FromMinutes(10));
+            }
+
+            var filtered = payments.AsEnumerable();
 
             if (query.PayrollId.HasValue)
-                payments = payments
-                    .Where(p => p.PayrollId == query.PayrollId.Value)
-                    .ToList();
+                filtered = filtered.Where(p => p.PayrollId == query.PayrollId.Value);
 
             if (query.ProductivityRuleId.HasValue)
-                payments = payments
-                    .Where(p => p.ProductivityRuleId == query.ProductivityRuleId.Value)
-                    .ToList();
+                filtered = filtered.Where(p => p.ProductivityRuleId == query.ProductivityRuleId.Value);
 
             if (query.From.HasValue)
-                payments = payments
-                    .Where(p => p.PaidAt >= query.From.Value)
-                    .ToList();
+                filtered = filtered.Where(p => p.PaidAt >= query.From.Value);
 
             if (query.To.HasValue)
-                payments = payments
-                    .Where(p => p.PaidAt <= query.To.Value)
-                    .ToList();
+                filtered = filtered.Where(p => p.PaidAt <= query.To.Value);
 
-            var orderedPayments = payments
-                .OrderByDescending(p => p.PaidAt)
-                .ToList();
+            var ordered = filtered.OrderByDescending(p => p.PaidAt).ToList();
+            var totalItems = ordered.Count;
 
-            var totalItems = orderedPayments.Count;
-
-            var items = orderedPayments
+            var items = ordered
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .Select(p => new ProductivityPaymentResponse

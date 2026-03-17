@@ -21,6 +21,7 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
         private readonly Mock<IProjectRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IProjectRepository> _projectRepositoryMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly CreateProjectRuleHandler _handler;
 
         public CreateProjectRuleHandlerTests()
@@ -28,7 +29,8 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
             _repositoryMock = new Mock<IProjectRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _projectRepositoryMock = new Mock<IProjectRepository>();
-            _handler = new CreateProjectRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _projectRepositoryMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new CreateProjectRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _projectRepositoryMock.Object, _cacheMock.Object);
         }
 
         [Fact]

@@ -22,6 +22,7 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
         private readonly Mock<IMilestoneParticipationRepository> _milestoneParticipationRepositoryMock;
         private readonly Mock<IEmployeeRepository> _employeeRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly CreateMilestoneParticipationHandler _handler;
 
         public CreateMilestoneParticipationHandlerTests()
@@ -29,10 +30,12 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
             _milestoneParticipationRepositoryMock = new Mock<IMilestoneParticipationRepository>();
             _employeeRepositoryMock = new Mock<IEmployeeRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _cacheMock = new Mock<ICacheService>();
             _handler = new CreateMilestoneParticipationHandler(
                 _milestoneParticipationRepositoryMock.Object,
                 _employeeRepositoryMock.Object,
-                _unitOfWorkMock.Object);
+                _unitOfWorkMock.Object,
+                _cacheMock.Object);
         }
 
         [Fact]

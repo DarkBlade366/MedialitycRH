@@ -12,11 +12,13 @@ namespace Application.Features.Projects.Handlers
     {
         private readonly IMilestoneParticipationRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
-        public ChangeMilestoneParticipationStatusHandler(IMilestoneParticipationRepository repository, IUnitOfWork unitOfWork)
+        public ChangeMilestoneParticipationStatusHandler(IMilestoneParticipationRepository repository, IUnitOfWork unitOfWork, ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task HandleAsync(ChangeMilestoneParticipationStatusCommand command)
@@ -46,6 +48,9 @@ namespace Application.Features.Projects.Handlers
         
             _repository.Update(participation);
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync($"milestoneParticipation:{participation.Id}");
+            await _cache.RemoveAsync("milestoneParticipations:all");
         }
     }
 }

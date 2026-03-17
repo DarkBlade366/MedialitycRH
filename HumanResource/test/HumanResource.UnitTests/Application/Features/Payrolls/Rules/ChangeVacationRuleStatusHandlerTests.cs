@@ -20,13 +20,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
     {
         private readonly Mock<IVacationRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly ChangeVacationRuleStatusHandler _handler;
 
         public ChangeVacationRuleStatusHandlerTests()
         {
             _repositoryMock = new Mock<IVacationRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new ChangeVacationRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new ChangeVacationRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

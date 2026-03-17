@@ -14,13 +14,16 @@ namespace Application.Features.Employees.Handlers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public CreateEmployeeHandler(
             IEmployeeRepository employeeRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _employeeRepository = employeeRepository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<Guid> Handle(
@@ -55,6 +58,7 @@ namespace Application.Features.Employees.Handlers
             await _employeeRepository.AddAsync(employee);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _cache.RemoveAsync("employees:all", cancellationToken);
 
             return employee.Id;
         }

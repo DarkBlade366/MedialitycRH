@@ -36,6 +36,7 @@ namespace Application.Features.Payrolls.Payroll.Handlers
         private readonly ProductivityService _productivityService;
         private readonly IProjectRuleRepository _projectRuleRepository;
         private readonly IProjectRepository _projectRepository;
+        private readonly ICacheService _cache;
 
         public CreatePayrollHandler(
             IEmployeeRepository employeeRepository,
@@ -54,7 +55,8 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             IMilestoneParticipationRepository milestoneParticipationRepository,
             ProductivityService productivityService,
             IProjectRuleRepository projectRuleRepository,
-            IProjectRepository projectRepository)
+            IProjectRepository projectRepository,
+            ICacheService cache)
         {
             _employeeRepository = employeeRepository;
             _payrollRepository = payrollRepository;
@@ -73,6 +75,7 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             _productivityService = productivityService;
             _projectRepository = projectRepository;
             _projectRuleRepository = projectRuleRepository;
+            _cache = cache;
         }
 
         public async Task<PayrollResponse> Handle(
@@ -232,6 +235,9 @@ namespace Application.Features.Payrolls.Payroll.Handlers
             await _payrollRepository.AddAsync(payroll);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await _cache.RemoveAsync("payrolls:all");
+            await _cache.RemoveAsync($"payroll:{payroll.EmployeeId}");
 
             Console.WriteLine($"[HANDLER] Nómina creada exitosamente");
             return new PayrollResponse

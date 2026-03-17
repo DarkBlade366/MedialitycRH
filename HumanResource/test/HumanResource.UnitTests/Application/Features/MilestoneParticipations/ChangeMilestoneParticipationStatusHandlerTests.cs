@@ -16,13 +16,15 @@ namespace HumanResource.UnitTests.Application.Features.MilestoneParticipations
     {
         private readonly Mock<IMilestoneParticipationRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly ChangeMilestoneParticipationStatusHandler _handler;
 
         public ChangeMilestoneParticipationStatusHandlerTests()
         {
             _repositoryMock = new Mock<IMilestoneParticipationRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new ChangeMilestoneParticipationStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new ChangeMilestoneParticipationStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

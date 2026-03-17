@@ -16,15 +16,18 @@ namespace Application.Features.Redmine.Handlers
         private readonly IRedmineService _redmineService;
         private readonly IProjectMilestoneRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public SyncRedmineMilestonesHandler(
             IRedmineService redmineService,
             IProjectMilestoneRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _redmineService = redmineService;
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<int> Handle(CancellationToken ct)
@@ -97,6 +100,9 @@ namespace Application.Features.Redmine.Handlers
             }
 
             await _unitOfWork.SaveChangesAsync(ct);
+
+            await _cache.RemoveAsync("milestones:all", ct);
+
             return created;
         }
 

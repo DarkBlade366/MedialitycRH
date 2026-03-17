@@ -16,14 +16,17 @@ namespace Application.Features.Redmine.Handlers
     private readonly IRedmineService _redmineService;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICacheService _cache;
 
     public SyncRedmineUsersHandler(IRedmineService redmineService, 
         IEmployeeRepository employeeRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ICacheService cache)
     {
         _redmineService = redmineService;
         _employeeRepository = employeeRepository;
         _unitOfWork = unitOfWork;
+        _cache = cache;
     }
         public async Task<int> Handle(CancellationToken ct)
         {
@@ -82,10 +85,12 @@ namespace Application.Features.Redmine.Handlers
 
             foreach (var emp in toDeactivate)
             {
-                emp.ChangeStatus(false); //desactivo en vez de borrar
+                emp.ChangeStatus(false);
             }
 
             await _unitOfWork.SaveChangesAsync(ct);
+            
+            await _cache.RemoveAsync("employees:all", ct);
 
             return newEmployees.Count;
         }

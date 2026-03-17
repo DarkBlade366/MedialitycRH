@@ -18,13 +18,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
     {
         private readonly Mock<IAguinaldoRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly ChangeAguinaldoRuleStatusHandler _handler;
 
         public ChangeAguinaldoRuleStatusHandlerTests()
         {
             _repositoryMock = new Mock<IAguinaldoRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new ChangeAguinaldoRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new ChangeAguinaldoRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

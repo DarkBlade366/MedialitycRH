@@ -65,7 +65,6 @@ namespace Application
             services.AddScoped<GetRedmineTimeEntryActivitiesHandler>();
             services.AddScoped<SyncRedmineUsersHandler>();
             services.AddScoped<SyncRedmineProjectsHandler>();
-            services.AddScoped<ListTimeEntriesHandler>();
             services.AddScoped<GetProjectByIdHandler>();
             services.AddScoped<ListPagedTimeEntriesHandler>();
             services.AddScoped<GetProjectsPagedHandler>();
@@ -85,8 +84,8 @@ namespace Application
             services.AddScoped<ChangeBaseSalaryRuleStatusHandler>();
             services.AddScoped<GetBaseSalaryRuleByIdHandler>();
             services.AddScoped<GetBaseSalaryRulesPagedHandler>();
-            services.AddScoped<CreateOvertimeRuleHandler>();
             services.AddScoped<ChangeOvertimeRuleStatusHandler>();
+            services.AddScoped<CreateOvertimeRuleHandler>();
             services.AddScoped<GetOvertimeRuleByIdHandler>();
             services.AddScoped<GetOvertimeRulesPagedHandler>();
             services.AddScoped<CreateProductivityRuleHandler>();
@@ -142,7 +141,6 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<GetEmployeesValidation>();
             services.AddValidatorsFromAssemblyContaining<GetEmployeeByIdValidation>();
             services.AddValidatorsFromAssemblyContaining<ChangeEmployeeStatusValidation>();
-            services.AddValidatorsFromAssemblyContaining<ListTimeEntriesQueryValidator>();
             services.AddValidatorsFromAssemblyContaining<ListPagedTimeEntriesValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProjectByIdValidator>();
             services.AddValidatorsFromAssemblyContaining<GetProjectsPagedValidator>();

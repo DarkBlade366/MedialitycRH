@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
@@ -12,22 +11,24 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
     {
         private readonly IMilestoneRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-    
+        private readonly ICacheService _cache;
+
         public ChangeMilestoneRuleStatusHandler(
             IMilestoneRuleRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
-    
+
         public async Task HandleAsync(ChangeMilestoneRuleStatusCommand command)
         {
             var rule = await _repository.GetByIdAsync(command.Id);
-    
-            if (rule is null)
+            if (rule == null)
                 throw new Exception("Milestone rule not found.");
-    
+
             if (command.IsActive)
             {
                 if (rule.IsActive)
@@ -41,7 +42,7 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
                 if (anyOtherActive)
                     throw new Exception(
                         $"Another active milestone rule already exists for project {rule.RedmineProjectId} " +
-                        $"and milestone '{rule.MilestoneName}'. deactivate it first.");
+                        $"and milestone '{rule.MilestoneName}'. Deactivate it first.");
 
                 rule.Activate();
             }
@@ -51,10 +52,12 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
                     throw new Exception("Milestone rule is already inactive.");
                 rule.Deactivate();
             }
-    
+
             _repository.Update(rule);
-    
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync("milestoneRules:all");
+            await _cache.RemoveAsync($"milestoneRule:{rule.Id}");
         }
     }
 }

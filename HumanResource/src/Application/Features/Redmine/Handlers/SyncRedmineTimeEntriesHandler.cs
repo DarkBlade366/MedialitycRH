@@ -17,17 +17,20 @@ namespace Application.Features.Redmine.Handlers
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ITimeEntryRepository _timeRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public SyncRedmineTimeEntriesHandler(
             IRedmineService redmineService,
             IEmployeeRepository employeeRepository,
             ITimeEntryRepository timeRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _redmineService = redmineService;
             _employeeRepository = employeeRepository;
             _timeRepository = timeRepository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<int> Handle(DateTime from, DateTime to, CancellationToken ct = default)
@@ -96,6 +99,9 @@ namespace Application.Features.Redmine.Handlers
             }
 
             await _unitOfWork.SaveChangesAsync(ct);
+
+            //No invalidamos actualmente, pq son muchos los posibles cambios, dejo inyectado el cache para futuro anadido si se quiere
+
             return created;
         }
     }

@@ -6,20 +6,28 @@ using Domain.Features.TimeEntries.Interfaces;
 using Application.Common;
 using Application.Features.TimeEntries.DTOs;
 using Application.Features.TimeEntries.Queries;
+using Application.Common.Interfaces;
 
 namespace Application.Features.TimeEntries.Handlers
 {
     public class ListPagedTimeEntriesHandler
     {
         private readonly ITimeEntryRepository _repository;
+        private readonly ICacheService _cache;
 
-        public ListPagedTimeEntriesHandler(ITimeEntryRepository repository)
+        public ListPagedTimeEntriesHandler(ITimeEntryRepository repository, ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<PagedResponse<TimeEntryDto>> Handle(ListPagedTimeEntriesQuery query)
         {
+            string cacheKey = $"timeentries:paged:{query.EmployeeId}:{query.From}:{query.To}:{query.Page}:{query.PageSize}";
+            var cached = await _cache.GetAsync<PagedResponse<TimeEntryDto>>(cacheKey);
+            if (cached != null) 
+                return cached;
+
             DateTime? fromUtc = null;
             DateTime? toUtc = null;
 
@@ -51,7 +59,7 @@ namespace Application.Features.TimeEntries.Handlers
 
             var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
 
-            return new PagedResponse<TimeEntryDto>
+            var response = new PagedResponse<TimeEntryDto>
             {
                 Items = dtos,
                 Page = query.Page,
@@ -59,6 +67,10 @@ namespace Application.Features.TimeEntries.Handlers
                 TotalItems = totalItems,
                 TotalPages = totalPages
             };
+
+            await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(5));
+
+            return response;
         }
     }
 }

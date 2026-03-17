@@ -21,6 +21,7 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
         private readonly Mock<IRedmineService> _redmineServiceMock;
         private readonly Mock<IProjectMilestoneRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly SyncRedmineMilestonesHandler _handler;
 
         public SyncRedmineMilestonesHandlerTests()
@@ -28,10 +29,12 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
             _redmineServiceMock = new Mock<IRedmineService>();
             _repositoryMock = new Mock<IProjectMilestoneRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _cacheMock = new Mock<ICacheService>();
             _handler = new SyncRedmineMilestonesHandler(
                 _redmineServiceMock.Object,
                 _repositoryMock.Object,
-                _unitOfWorkMock.Object);
+                _unitOfWorkMock.Object,
+                _cacheMock.Object);
         }
 
         [Fact]

@@ -19,13 +19,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
     {
         private readonly Mock<IProductivityRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly ChangeProductivityRuleStatusHandler _handler;
 
         public ChangeProductivityRuleStatusHandlerTests()
         {
             _repositoryMock = new Mock<IProductivityRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new ChangeProductivityRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new ChangeProductivityRuleStatusHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

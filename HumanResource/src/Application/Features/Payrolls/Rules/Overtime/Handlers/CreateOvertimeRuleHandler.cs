@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
@@ -14,22 +13,23 @@ namespace Application.Features.Payrolls.Rules.Overtime.Handlers
     {
         private readonly IOvertimeRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-    
+        private readonly ICacheService _cache;
+
         public CreateOvertimeRuleHandler(
-            IOvertimeRuleRepository repository, 
-            IUnitOfWork unitOfWork)
+            IOvertimeRuleRepository repository,
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<OvertimeRuleResponse> HandleAsync(CreateOvertimeRuleCommand command)
         {
             var allRules = (await _repository.GetAllAsync()).ToList();
 
-            var anyActive = allRules.Any(r => r.IsActive);
-
-            if (anyActive)
+            if (allRules.Any(r => r.IsActive))
                 throw new Exception("There is already an active overtime rule; only one can be active at a time.");
 
             var identical = allRules.FirstOrDefault(r =>
@@ -40,24 +40,16 @@ namespace Application.Features.Payrolls.Rules.Overtime.Handlers
             if (identical != null)
             {
                 if (identical.IsActive)
-                    throw new Exception(
-                        $"An overtime rule with {command.StandardHoursPerPeriod} standard hours, " +
-                        $"multiplier {command.OvertimeMultiplier} and rate {command.HourlyRate:C} " +
-                        "already exists and is active.");
+                    throw new Exception($"An overtime rule with {command.StandardHoursPerPeriod} standard hours, multiplier {command.OvertimeMultiplier} and rate {command.HourlyRate:C} already exists and is active.");
                 else
-                    throw new Exception(
-                        $"An overtime rule with {command.StandardHoursPerPeriod} standard hours, " +
-                        $"multiplier {command.OvertimeMultiplier} and rate {command.HourlyRate:C} " +
-                        "already exists but is disabled. Enable it instead of creating a new one.");
+                    throw new Exception($"An overtime rule with {command.StandardHoursPerPeriod} standard hours, multiplier {command.OvertimeMultiplier} and rate {command.HourlyRate:C} already exists but is disabled. Enable it instead of creating a new one.");
             }
 
-            var rule = new OvertimeRule(
-                command.StandardHoursPerPeriod,
-                command.OvertimeMultiplier,
-                command.HourlyRate);
-
+            var rule = new OvertimeRule(command.StandardHoursPerPeriod, command.OvertimeMultiplier, command.HourlyRate);
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync("overtimeRules:all");
 
             return new OvertimeRuleResponse
             {

@@ -21,6 +21,7 @@ using Application.Common.Interfaces;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Infrastructure.BackgroundJobs;
+using StackExchange.Redis;
 
 namespace Infrastructure
 {
@@ -50,6 +51,12 @@ namespace Infrastructure
                 client.DefaultRequestHeaders.Add("X-Redmine-API-Key", apiKey);
             })
             .AddPolicyHandler(GetRedmineRetryPolicy());
+
+            //Redis
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");
+            });
 
             // Repositories
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -83,6 +90,9 @@ namespace Infrastructure
             services.AddScoped<IPayrollPdfGenerator, PayrollPdfGenerator>();
             services.AddScoped<IPayrollExcelGenerator, PayrollExcelGenerator>();
             services.AddScoped<IRedmineSyncJob, RedmineSyncJob>();
+
+            //Cache
+            services.AddScoped<ICacheService, RedisCacheService>();
 
             //Audi
             services.AddScoped<AuditInterceptor>();

@@ -22,6 +22,7 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IProjectRepository> _projectRepositoryMock;
         private readonly Mock<IProjectMilestoneRepository> _projectMilestoneRepositoryMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly CreateMilestoneRuleHandler _handler;
 
         public CreateMilestoneRuleHandlerTests()
@@ -30,11 +31,13 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectMilestoneRepositoryMock = new Mock<IProjectMilestoneRepository>();
+            _cacheMock = new Mock<ICacheService>();
             _handler = new CreateMilestoneRuleHandler(
                 _repositoryMock.Object,
                 _unitOfWorkMock.Object,
                 _projectRepositoryMock.Object,
-                _projectMilestoneRepositoryMock.Object);
+                _projectMilestoneRepositoryMock.Object,
+                _cacheMock.Object);
         }
 
         [Fact]
@@ -162,7 +165,7 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
                 () => _handler.HandleAsync(command));
 
             exception.Message.Should().Contain("There is already an active milestone rule for project 123 and milestone 'Phase 1' with bonus");
-            exception.Message.Should().Contain("disable it before creating a different one.");
+            exception.Message.Should().Contain("Disable it before creating a different one.");
 
             _repositoryMock.Verify(x => x.AddAsync(It.IsAny<MilestoneRule>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);

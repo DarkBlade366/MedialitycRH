@@ -18,13 +18,15 @@ namespace HumanResource.UnitTests.Application.Features.Employees
     {
         private readonly Mock<IEmployeeRepository> _employeeRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly ChangeEmployeeStatusHandler _handler;
 
         public ChangeEmployeeStatusHandlerTests()
         {
             _employeeRepositoryMock = new Mock<IEmployeeRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new ChangeEmployeeStatusHandler(_employeeRepositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new ChangeEmployeeStatusHandler(_employeeRepositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

@@ -16,15 +16,18 @@ namespace Application.Features.Projects.Handlers
         private readonly IMilestoneParticipationRepository _repositoryMilestoneParticipation;
         private readonly IEmployeeRepository _repositoryEmployee;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public CreateMilestoneParticipationHandler(
             IMilestoneParticipationRepository repositoryMilestoneParticipation,
             IEmployeeRepository repositoryEmployee,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repositoryMilestoneParticipation = repositoryMilestoneParticipation;
             _repositoryEmployee = repositoryEmployee;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<MilestoneParticipationResponse> HandleAsync(CreateMilestoneParticipationCommand command)
@@ -48,6 +51,8 @@ namespace Application.Features.Projects.Handlers
 
             await _repositoryMilestoneParticipation.AddAsync(participation);
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync("milestoneParticipations:all");
 
             return new MilestoneParticipationResponse
             {

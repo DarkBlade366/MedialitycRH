@@ -15,32 +15,35 @@ namespace Application.Features.Payrolls.Rules.Deduction.Handlers
     {
         private readonly IDeductionRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-    
+        private readonly ICacheService _cache;
+
         public CreateDeductionRuleHandler(
-            IDeductionRuleRepository repository, 
-            IUnitOfWork unitOfWork)
+            IDeductionRuleRepository repository,
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<DeductionRuleResponse> HandleAsync(CreateDeductionRuleCommand command)
         {
-            var roleEnum = Enum.Parse<DeductionType>(command.Type, true);
+            var typeEnum = Enum.Parse<DeductionType>(command.Type, true);
 
             var allRules = (await _repository.GetAllAsync()).ToList();
-            
+
             var activeSame = allRules.Any(r =>
                 r.IsActive &&
-                r.Type == roleEnum &&
+                r.Type == typeEnum &&
                 r.Description == command.Description);
             if (activeSame)
                 throw new Exception(
-                $"An active deduction rule with type '{command.Type}' " +
-                $"and description '{command.Description}' already exists.");
-        
+                    $"An active deduction rule with type '{command.Type}' " +
+                    $"and description '{command.Description}' already exists.");
+
             var identical = allRules.FirstOrDefault(r =>
-                r.Type == roleEnum &&
+                r.Type == typeEnum &&
                 r.Description == command.Description &&
                 r.Percentage == command.Percentage);
 
@@ -55,15 +58,14 @@ namespace Application.Features.Payrolls.Rules.Deduction.Handlers
                         $"A deduction rule of type '{command.Type}', description '{command.Description}' " +
                         $"and percentage {command.Percentage} already exists but is disabled. Enable it instead of creating a new one.");
             }
-            
-            var rule = new DeductionRule(
-                command.Percentage,
-                command.Description,
-                roleEnum);
+
+            var rule = new DeductionRule(command.Percentage, command.Description, typeEnum);
 
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();
-    
+
+            await _cache.RemoveAsync("deductionRules:all");
+
             return new DeductionRuleResponse
             {
                 Id = rule.Id,

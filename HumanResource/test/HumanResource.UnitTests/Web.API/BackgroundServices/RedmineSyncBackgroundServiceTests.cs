@@ -5,6 +5,7 @@ using Xunit;
 using Moq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using FluentAssertions;
 using Application.Common.Interfaces;
 using Web.API.BackgroundServices;
@@ -14,12 +15,18 @@ namespace HumanResource.UnitTests.Web.API.BackgroundServices
     public class RedmineSyncBackgroundServiceTests
     {
         private readonly Mock<IRedmineSyncJob> _jobMock;
+        private readonly Mock<IServiceScopeFactory> _scopeFactoryMock;
+        private readonly Mock<IServiceScope> _scopeMock;
+        private readonly Mock<IServiceProvider> _serviceProviderMock;
         private readonly Mock<ILogger<RedmineSyncBackgroundService>> _loggerMock;
         private readonly IOptions<RedmineSyncScheduleOptions> _options;
 
         public RedmineSyncBackgroundServiceTests()
         {
             _jobMock = new Mock<IRedmineSyncJob>();
+            _scopeMock = new Mock<IServiceScope>();
+            _serviceProviderMock = new Mock<IServiceProvider>();
+            _scopeFactoryMock = new Mock<IServiceScopeFactory>();
             _loggerMock = new Mock<ILogger<RedmineSyncBackgroundService>>();
             _options = Options.Create(new RedmineSyncScheduleOptions
             {
@@ -27,6 +34,15 @@ namespace HumanResource.UnitTests.Web.API.BackgroundServices
                 IntervalHours = 24,
                 InitialDelaySeconds = 1
             });
+
+            // Setup the scope factory to return our mock scope
+            _scopeFactoryMock.Setup(x => x.CreateScope()).Returns(_scopeMock.Object);
+            
+            // Setup the scope to return our mock service provider
+            _scopeMock.Setup(x => x.ServiceProvider).Returns(_serviceProviderMock.Object);
+            
+            // Setup the service provider to return our mock job
+            _serviceProviderMock.Setup(x => x.GetService(typeof(IRedmineSyncJob))).Returns(_jobMock.Object);
         }
 
         [Fact]
@@ -35,7 +51,7 @@ namespace HumanResource.UnitTests.Web.API.BackgroundServices
             // Arrange
             var service = new RedmineSyncBackgroundService(
                 _loggerMock.Object,
-                _jobMock.Object,
+                _scopeFactoryMock.Object,
                 _options);
 
             using var cts = new CancellationTokenSource();
@@ -65,7 +81,7 @@ namespace HumanResource.UnitTests.Web.API.BackgroundServices
 
             var service = new RedmineSyncBackgroundService(
                 _loggerMock.Object,
-                _jobMock.Object,
+                _scopeFactoryMock.Object,
                 disabledOptions);
 
             using var cts = new CancellationTokenSource();

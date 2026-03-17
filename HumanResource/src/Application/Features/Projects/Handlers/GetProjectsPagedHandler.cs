@@ -6,22 +6,33 @@ using Application.Common;
 using Application.Features.Projects.DTOs;
 using Application.Features.Projects.Queries;
 using Domain.Features.Projects.Interfaces;
+using Domain.Features.Projects.Aggregates;
+using Application.Common.Interfaces;
 
 namespace Application.Features.Projects.Handlers
 {
     public class GetProjectsPagedHandler
     {
         private readonly IProjectRepository _repository;
+        private readonly ICacheService _cache;
 
-        public GetProjectsPagedHandler(IProjectRepository repository)
+        public GetProjectsPagedHandler(IProjectRepository repository, ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<PagedResponse<ProjectDto>> Handle(GetProjectsPagedQuery query)
         {
-            var allProjects = await _repository.GetAllAsync();
-            var totalItems = allProjects.Count;
+            string cacheKey = "projects:all";
+
+            var allProjects = await _cache.GetAsync<List<Project>>(cacheKey);
+            if (allProjects == null)
+            {
+                allProjects = await _repository.GetAllAsync();
+                await _cache.SetAsync(cacheKey, allProjects, TimeSpan.FromMinutes(10));
+            }
+            var totalItems = allProjects.Count; 
 
             var paged = allProjects
                 .Skip((query.Page - 1) * query.PageSize)

@@ -6,31 +6,44 @@ using Application.Common;
 using Application.Features.Projects.DTOs;
 using Application.Features.Projects.Queries;
 using Domain.Features.Projects.Interfaces;
+using Application.Common.Interfaces;
+using Domain.Features.Projects.Aggregates;
 
 namespace Application.Features.Projects.Handlers
 {
     public class GetMilestoneParticipationsPagedHandler
     {
         private readonly IMilestoneParticipationRepository _repository;
+        private readonly ICacheService _cache;
 
-        public GetMilestoneParticipationsPagedHandler(IMilestoneParticipationRepository repository)
+        public GetMilestoneParticipationsPagedHandler(IMilestoneParticipationRepository repository, ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<PagedResponse<MilestoneParticipationResponse>> HandleAsync(GetMilestoneParticipationsPagedQuery query)
         {
-            var allItems = await _repository.GetAllAsync();
+            string cacheKey = "milestoneParticipations:all";
+            var allItems = await _cache.GetAsync<List<MilestoneParticipation>>(cacheKey);
+            if (allItems == null)
+            {
+                allItems = await _repository.GetAllAsync(); 
+                await _cache.SetAsync(cacheKey, allItems, TimeSpan.FromMinutes(5)); 
+            }
+
+            var filtered = allItems.AsEnumerable();
 
             if (query.ProjectMilestoneId.HasValue)
-                allItems = allItems.Where(x => x.ProjectMilestoneId == query.ProjectMilestoneId.Value).ToList();
+                filtered = filtered.Where(x => x.ProjectMilestoneId == query.ProjectMilestoneId.Value);
 
             if (query.IsActive.HasValue)
-                allItems = allItems.Where(x => x.IsActive).ToList();
+                filtered = filtered.Where(x => x.IsActive == query.IsActive.Value);
 
-            var totalItems = allItems.Count;
+            var filteredList = filtered.ToList();
+            var totalItems = filteredList.Count;
 
-            var paged = allItems
+            var paged = filteredList
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .Select(x => new MilestoneParticipationResponse
@@ -39,7 +52,7 @@ namespace Application.Features.Projects.Handlers
                     ProjectMilestoneId = x.ProjectMilestoneId,
                     EmployeeId = x.EmployeeId,
                     IsPaid = x.IsPaid,
-                    IsActive = true
+                    IsActive = x.IsActive
                 }).ToList();
 
             var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);

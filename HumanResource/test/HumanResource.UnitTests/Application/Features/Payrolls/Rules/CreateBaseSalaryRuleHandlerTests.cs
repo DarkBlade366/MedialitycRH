@@ -21,13 +21,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
     {
         private readonly Mock<IBaseSalaryRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly CreateBaseSalaryRuleHandler _handler;
 
         public CreateBaseSalaryRuleHandlerTests()
         {
             _repositoryMock = new Mock<IBaseSalaryRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new CreateBaseSalaryRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new CreateBaseSalaryRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]
@@ -107,7 +109,7 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
             var exception = await Assert.ThrowsAsync<Exception>(
                 () => _handler.HandleAsync(command));
 
-            exception.Message.Should().Be("A base salary rule for role Employee  with amount $5000 is already disabled; enable it.");
+            exception.Message.Should().Be("A base salary rule for role Employee with amount $5000 is already disabled; enable it.");
 
             _repositoryMock.Verify(x => x.AddAsync(It.IsAny<BaseSalaryRule>()), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);

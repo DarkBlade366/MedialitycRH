@@ -1,23 +1,35 @@
 using Application.Common;
+using Application.Common.Interfaces;
 using Application.Features.Payrolls.Rules.ActivityProductivityWeight.DTOs;
 using Application.Features.Payrolls.Rules.ActivityProductivityWeight.Queries;
 using Domain.Features.Payrolls.Interfaces;
+using ActivityProductivityWeightEntity = Domain.Features.Payrolls.Entities.ActivityProductivityWeight;
 
 namespace Application.Features.Payrolls.Rules.ActivityProductivityWeight.Handlers
 {
     public class GetActivityProductivityWeightsPagedHandler
     {
         private readonly IActivityProductivityWeightRepository _repository;
+        private readonly ICacheService _cache;
 
-        public GetActivityProductivityWeightsPagedHandler(IActivityProductivityWeightRepository repository)
+        public GetActivityProductivityWeightsPagedHandler(
+            IActivityProductivityWeightRepository repository,
+            ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<PagedResponse<ActivityProductivityWeightResponse>> HandleAsync(
             GetActivityProductivityWeightsPagedQuery query)
         {
-            var all = await _repository.GetAllAsync();
+            string cacheKey = "activityProductivityWeights:all";
+            var all = await _cache.GetAsync<List<ActivityProductivityWeightEntity>>(cacheKey);
+            if (all == null)
+            {
+                all = (await _repository.GetAllAsync())?.ToList() ?? new List<ActivityProductivityWeightEntity>();
+                await _cache.SetAsync(cacheKey, all, TimeSpan.FromMinutes(10));
+            }
 
             if (query.IsActive.HasValue)
                 all = all.Where(x => x.IsActive == query.IsActive.Value).ToList();

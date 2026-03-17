@@ -2,6 +2,7 @@ using Application.Common.Interfaces;
 using Application.Features.Payrolls.Rules.ActivityProductivityWeight.Commands;
 using Application.Features.Payrolls.Rules.ActivityProductivityWeight.DTOs;
 using Domain.Features.Payrolls.Interfaces;
+using ActivityProductivityWeightEntity = Domain.Features.Payrolls.Entities.ActivityProductivityWeight;
 
 namespace Application.Features.Payrolls.Rules.ActivityProductivityWeight.Handlers
 {
@@ -9,13 +10,16 @@ namespace Application.Features.Payrolls.Rules.ActivityProductivityWeight.Handler
     {
         private readonly IActivityProductivityWeightRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public CreateActivityProductivityWeightHandler(
             IActivityProductivityWeightRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<ActivityProductivityWeightResponse> HandleAsync(CreateActivityProductivityWeightCommand command)
@@ -25,13 +29,15 @@ namespace Application.Features.Payrolls.Rules.ActivityProductivityWeight.Handler
                 throw new InvalidOperationException(
                     $"An activity weight for RedmineActivityId {command.RedmineActivityId} ('{existing.ActivityName}') already exists.");
 
-            var entity = new Domain.Features.Payrolls.Entities.ActivityProductivityWeight(
+            var entity = new ActivityProductivityWeightEntity(
                 command.RedmineActivityId,
                 command.ActivityName,
                 command.Weight);
 
             await _repository.AddAsync(entity);
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync("activityProductivityWeights:all");
 
             return new ActivityProductivityWeightResponse
             {

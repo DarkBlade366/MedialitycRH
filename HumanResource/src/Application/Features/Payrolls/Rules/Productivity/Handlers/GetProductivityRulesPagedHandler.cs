@@ -3,38 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Interfaces;
 using Application.Features.Payrolls.Rules.Productivity.DTOs;
 using Application.Features.Payrolls.Rules.Productivity.Queries;
 using Domain.Features.Payrolls.Interfaces;
+using Domain.Features.Payrolls.Rules;
 
 namespace Application.Features.Payrolls.Rules.Productivity.Handlers
 {
     public class GetProductivityRulesPagedHandler
     {
         private readonly IProductivityRuleRepository _repository;
-    
-        public GetProductivityRulesPagedHandler(IProductivityRuleRepository repository)
+        private readonly ICacheService _cache;
+
+        public GetProductivityRulesPagedHandler(IProductivityRuleRepository repository, ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<PagedResponse<ProductivityRuleResponse>> HandleAsync(GetProductivityRulesPagedQuery query)
         {
-            var allRules = await _repository.GetAllAsync();
-    
+            string cacheKey = "productivityRules:all";
+            var allRules = await _cache.GetAsync<List<ProductivityRule>>(cacheKey);
+            if (allRules == null)
+            {
+                allRules = (await _repository.GetAllAsync())?.ToList() ?? new List<ProductivityRule>();
+                await _cache.SetAsync(cacheKey, allRules, TimeSpan.FromMinutes(10));
+            }
+
+            var filtered = allRules.AsEnumerable();
+
             if (query.IsActive.HasValue)
-                allRules = allRules
-                    .Where(x => x.IsActive == query.IsActive.Value)
-                    .ToList();
-    
+                filtered = filtered.Where(x => x.IsActive == query.IsActive.Value);
+
             if (!string.IsNullOrWhiteSpace(query.BonusType))
-                allRules = allRules
-                    .Where(x => x.BonusType.ToString().Equals(query.BonusType, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-    
-            var totalItems = allRules.Count;
-    
-            var paged = allRules
+                filtered = filtered.Where(x => x.BonusType.ToString().Equals(query.BonusType, StringComparison.OrdinalIgnoreCase));
+
+            var filteredList = filtered.ToList();
+            var totalItems = filteredList.Count;
+
+            var paged = filteredList
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .Select(r => new ProductivityRuleResponse
@@ -48,9 +57,9 @@ namespace Application.Features.Payrolls.Rules.Productivity.Handlers
                     IsActive = r.IsActive
                 })
                 .ToList();
-    
+
             var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
-    
+
             return new PagedResponse<ProductivityRuleResponse>
             {
                 Items = paged,

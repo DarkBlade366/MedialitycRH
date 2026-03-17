@@ -14,13 +14,16 @@ namespace Application.Features.Employees.Handlers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public ChangeEmployeeStatusHandler(
             IEmployeeRepository employeeRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _employeeRepository = employeeRepository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task Handle(
@@ -34,6 +37,10 @@ namespace Application.Features.Employees.Handlers
             employee.ChangeStatus(command.IsActive);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+                        
+            await _cache.RemoveAsync($"employee:{employee.Id}", cancellationToken); 
+            await _cache.RemoveAsync($"employee:redmine:{employee.RedmineUserId}", cancellationToken); 
+            await _cache.RemoveAsync("employees:all", cancellationToken);
         }
     }
 }

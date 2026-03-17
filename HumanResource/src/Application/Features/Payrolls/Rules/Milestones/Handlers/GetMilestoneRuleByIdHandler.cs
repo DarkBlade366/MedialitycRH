@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Application.Features.Payrolls.Rules.Milestones.DTOs;
@@ -13,20 +10,26 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
     public class GetMilestoneRuleByIdHandler
     {
         private readonly IMilestoneRuleRepository _repository;
-    
-        public GetMilestoneRuleByIdHandler(IMilestoneRuleRepository repository)
+        private readonly ICacheService _cache;
+
+        public GetMilestoneRuleByIdHandler(IMilestoneRuleRepository repository, ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
-    
+
         public async Task<MilestoneRuleResponse?> HandleAsync(GetMilestoneRuleByIdQuery query)
         {
+            string cacheKey = $"milestoneRule:{query.Id}";
+            var cached = await _cache.GetAsync<MilestoneRuleResponse>(cacheKey);
+            if (cached != null)
+                return cached;
+
             var rule = await _repository.GetByIdAsync(query.Id);
-    
-            if (rule is null)
+            if (rule == null)
                 return null;
-    
-            return new MilestoneRuleResponse
+
+            var response = new MilestoneRuleResponse
             {
                 Id = rule.Id,
                 RedmineProjectId = rule.RedmineProjectId,
@@ -34,6 +37,10 @@ namespace Application.Features.Payrolls.Rules.Milestones.Handlers
                 BonusAmount = rule.BonusAmount,
                 IsActive = rule.IsActive
             };
+
+            await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
+            
+            return response;
         }
     }
 }

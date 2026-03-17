@@ -19,13 +19,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
     {
         private readonly Mock<IOvertimeRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly CreateOvertimeRuleHandler _handler;
 
         public CreateOvertimeRuleHandlerTests()
         {
             _repositoryMock = new Mock<IOvertimeRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new CreateOvertimeRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new CreateOvertimeRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

@@ -12,13 +12,16 @@ namespace Application.Features.Employees.Handlers
     {
         private readonly IEmployeeRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public UseVacationHandler(
             IEmployeeRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task Handle(UseVacationCommand request, CancellationToken cancellationToken)
@@ -31,6 +34,11 @@ namespace Application.Features.Employees.Handlers
             employee.UseVacationDays(request.Days);
     
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await _cache.RemoveAsync($"employee:{employee.Id}", cancellationToken);
+            await _cache.RemoveAsync($"employee:redmine:{employee.RedmineUserId}", cancellationToken);
+            await _cache.RemoveAsync("employees:all", cancellationToken);
+            await _cache.RemoveAsync($"employee:vacation:{employee.Id}", cancellationToken);
         }
     }
 }

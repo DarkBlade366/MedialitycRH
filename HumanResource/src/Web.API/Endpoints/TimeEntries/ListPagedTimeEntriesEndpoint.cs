@@ -20,7 +20,7 @@ namespace Web.API.Endpoints.TimeEntries
 
         public override void Configure()
         {
-            Get("/time-entries/paged");
+            Get("/time-entries");
             Roles("Administrator", "HumanResources", "ProjectManager");
             Validator<ListPagedTimeEntriesValidator>();
             Summary(s =>

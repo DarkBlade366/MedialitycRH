@@ -16,15 +16,18 @@ namespace Application.Features.Payrolls.Rules.Project.Handlers
         private readonly IProjectRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProjectRepository _projectRepository;
+        private readonly ICacheService _cache;
     
         public CreateProjectRuleHandler(
             IProjectRuleRepository repository,
             IUnitOfWork unitOfWork,
-            IProjectRepository projectRepository)
+            IProjectRepository projectRepository,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
             _projectRepository = projectRepository;
+            _cache = cache;
         }
     
         public async Task<ProjectRuleResponse> HandleAsync(CreateProjectRuleCommand command)
@@ -65,6 +68,8 @@ namespace Application.Features.Payrolls.Rules.Project.Handlers
     
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync("projectRules:all");
     
             return new ProjectRuleResponse
             {

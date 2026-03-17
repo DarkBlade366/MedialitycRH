@@ -21,13 +21,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Payroll
     {
         private readonly Mock<IPayrollRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly PaidPayrollHandler _handler;
 
         public PaidPayrollHandlerTests()
         {
             _repositoryMock = new Mock<IPayrollRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new PaidPayrollHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new PaidPayrollHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

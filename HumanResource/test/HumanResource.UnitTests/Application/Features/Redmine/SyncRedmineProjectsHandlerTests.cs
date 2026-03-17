@@ -21,6 +21,7 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
         private readonly Mock<IRedmineService> _redmineServiceMock;
         private readonly Mock<IProjectRepository> _projectRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheServiceMock;
         private readonly SyncRedmineProjectsHandler _handler;
 
         public SyncRedmineProjectsHandlerTests()
@@ -28,10 +29,12 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
             _redmineServiceMock = new Mock<IRedmineService>();
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _cacheServiceMock = new Mock<ICacheService>();
             _handler = new SyncRedmineProjectsHandler(
                 _redmineServiceMock.Object,
                 _projectRepositoryMock.Object,
-                _unitOfWorkMock.Object);
+                _unitOfWorkMock.Object,
+                _cacheServiceMock.Object);
         }
 
         [Fact]
@@ -123,7 +126,7 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
             result.Should().Be(0);
             _projectRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Project>()), Times.Never);
             _projectRepositoryMock.Verify(x => x.Update(It.Is<Project>(p =>
-                p.RedmineProjectId == 1 && p.Name == "Updated Project A" && p.Status == ProjectStatus.Completed)), Times.Exactly(2));
+                p.RedmineProjectId == 1 && p.Name == "Updated Project A" && p.Status == ProjectStatus.Completed)), Times.Once);
             _projectRepositoryMock.Verify(x => x.Update(It.Is<Project>(p => p.RedmineProjectId == 2)), Times.Never);
             _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }

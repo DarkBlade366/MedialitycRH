@@ -12,24 +12,31 @@ namespace Application.Features.Employees.Handlers
     public class GetEmployeeByRedmineUserIdHandler
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly ICacheService _cache;
 
         public GetEmployeeByRedmineUserIdHandler(
             IEmployeeRepository employeeRepository,
-            IUnitOfWork unitOfWork)
+            ICacheService cache)
         {
             _employeeRepository = employeeRepository;
+            _cache = cache;
         }
 
         public async Task<GetEmployeeByIdResponse> Handle(
             GetEmployeeByRedmineUserIdQuery query, 
             CancellationToken ct)
         {
+            string cacheKey = $"employee:redmine:{query.RedmineUserId}"; 
+            var cached = await _cache.GetAsync<GetEmployeeByIdResponse>(cacheKey);
+            if (cached != null)
+                return cached;
+            
             var employee = await _employeeRepository.GetByRedmineUserIdAsync(query.RedmineUserId);
 
             if (employee == null)
                 throw new KeyNotFoundException($"Employee with RedmineUserId {query.RedmineUserId} not found.");
 
-            return new GetEmployeeByIdResponse
+            var response = new GetEmployeeByIdResponse
             {
                 Id = employee.Id,
                 FullName = employee.FullName,
@@ -42,6 +49,10 @@ namespace Application.Features.Employees.Handlers
                 CreatedAt = employee.CreatedAt,
                 UpdatedAt = employee.UpdatedAt
             };
+
+            await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
+
+            return response;
         }
     }
 }

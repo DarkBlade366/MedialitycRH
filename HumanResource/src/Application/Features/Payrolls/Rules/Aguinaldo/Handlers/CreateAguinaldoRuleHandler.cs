@@ -14,13 +14,16 @@ namespace Application.Features.Payrolls.Rules.Aguinaldo.Handlers
     {
         private readonly IAguinaldoRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public CreateAguinaldoRuleHandler(
-            IAguinaldoRuleRepository repository, 
-            IUnitOfWork unitOfWork)
+            IAguinaldoRuleRepository repository,
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task<AguinaldoRuleResponse> HandleAsync(CreateAguinaldoRuleCommand command)
@@ -43,12 +46,12 @@ namespace Application.Features.Payrolls.Rules.Aguinaldo.Handlers
                     throw new Exception($"An aguinaldo rule with {command.MonthlyAccrualPercentage}% monthly accrual for month {command.PayMonth} already exists but is disabled. Enable it instead of creating a new one.");
             }
 
-            var rule = new AguinaldoRule(
-                command.MonthlyAccrualPercentage,
-                command.PayMonth);
+            var rule = new AguinaldoRule(command.MonthlyAccrualPercentage, command.PayMonth);
             
             await _repository.AddAsync(rule);
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync("aguinaldoRules:all");
 
             return new AguinaldoRuleResponse
             {

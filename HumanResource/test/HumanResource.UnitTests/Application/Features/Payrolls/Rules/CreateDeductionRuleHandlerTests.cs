@@ -20,13 +20,15 @@ namespace HumanResource.UnitTests.Application.Features.Payrolls.Rules
     {
         private readonly Mock<IDeductionRuleRepository> _repositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly CreateDeductionRuleHandler _handler;
 
         public CreateDeductionRuleHandlerTests()
         {
             _repositoryMock = new Mock<IDeductionRuleRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _handler = new CreateDeductionRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+            _cacheMock = new Mock<ICacheService>();
+            _handler = new CreateDeductionRuleHandler(_repositoryMock.Object, _unitOfWorkMock.Object, _cacheMock.Object);
         }
 
         [Fact]

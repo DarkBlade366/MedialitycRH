@@ -6,23 +6,42 @@ using Application.Common;
 using Application.Features.Employees.DTOs;
 using Application.Features.Employees.Queries;
 using Domain.Features.Employees.Interfaces;
+using Application.Common.Interfaces;
+using Domain.Features.Employees.Aggregates;
 
 namespace Application.Features.Employees.Handlers
 {
     public class GetEmployeesHandler
     {
         private readonly IEmployeeRepository _repository;
+        private readonly ICacheService _cache;
 
-        public GetEmployeesHandler(IEmployeeRepository repository)
+        public GetEmployeesHandler(IEmployeeRepository repository, ICacheService cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<PagedResponse<GetEmployeesResponse>> Handle(GetEmployeesQuery query)
         {
-            var (employees, total) = await _repository.GetPagedAsync(query.Page, query.PageSize);
+            string cacheKey = "employees:all";
+            var allEmployees = await _cache.GetAsync<List<Employee>>(cacheKey);
 
-            var items = employees.Select(e => new GetEmployeesResponse
+            if (allEmployees == null)
+            {
+                var (employees, total) = await _repository.GetPagedAsync(1, int.MaxValue);
+                allEmployees = employees.ToList();
+                await _cache.SetAsync(cacheKey, allEmployees, TimeSpan.FromMinutes(5));
+            }
+
+            var totalItems = allEmployees.Count;
+            var pagedEmployees = allEmployees
+                .OrderBy(e => e.FullName)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToList();
+
+            var items = pagedEmployees.Select(e => new GetEmployeesResponse
             {
                 Id = e.Id,
                 RedmineUserId = e.RedmineUserId,
@@ -32,14 +51,14 @@ namespace Application.Features.Employees.Handlers
                 IsActive = e.IsActive
             }).ToList();
 
-            var totalPages = (int)Math.Ceiling(total / (double)query.PageSize);
+            var totalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize);
 
             return new PagedResponse<GetEmployeesResponse>
             {
                 Items = items,
                 Page = query.Page,
                 PageSize = query.PageSize,
-                TotalItems = total,
+                TotalItems = totalItems,
                 TotalPages = totalPages
             };
         }

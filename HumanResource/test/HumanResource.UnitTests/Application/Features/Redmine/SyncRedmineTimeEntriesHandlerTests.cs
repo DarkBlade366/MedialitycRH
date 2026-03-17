@@ -24,6 +24,7 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
         private readonly Mock<IEmployeeRepository> _employeeRepositoryMock;
         private readonly Mock<ITimeEntryRepository> _timeRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ICacheService> _cacheMock;
         private readonly SyncRedmineTimeEntriesHandler _handler;
 
         public SyncRedmineTimeEntriesHandlerTests()
@@ -32,11 +33,13 @@ namespace HumanResource.UnitTests.Application.Features.Redmine
             _employeeRepositoryMock = new Mock<IEmployeeRepository>();
             _timeRepositoryMock = new Mock<ITimeEntryRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _cacheMock = new Mock<ICacheService>();
             _handler = new SyncRedmineTimeEntriesHandler(
                 _redmineServiceMock.Object,
                 _employeeRepositoryMock.Object,
                 _timeRepositoryMock.Object,
-                _unitOfWorkMock.Object);
+                _unitOfWorkMock.Object,
+                _cacheMock.Object);
         }
 
         [Fact]

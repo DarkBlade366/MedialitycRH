@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
@@ -12,22 +11,24 @@ namespace Application.Features.Payrolls.Rules.Deduction.Handlers
     {
         private readonly IDeductionRuleRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-    
+        private readonly ICacheService _cache;
+
         public ChangeDeductionRuleStatusHandler(
-            IDeductionRuleRepository repository, 
-            IUnitOfWork unitOfWork)
+            IDeductionRuleRepository repository,
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task HandleAsync(ChangeDeductionRuleStatusCommand command)
         {
             var rule = await _repository.GetByIdAsync(command.Id);
-    
-            if (rule is null)
+            if (rule == null)
                 throw new Exception("Deduction rule not found.");
-    
+
             if (command.IsActive)
             {
                 if (rule.IsActive)
@@ -50,9 +51,12 @@ namespace Application.Features.Payrolls.Rules.Deduction.Handlers
                     throw new Exception("Deduction rule is already inactive.");
                 rule.Deactivate();
             }
-    
+
             _repository.Update(rule);
             await _unitOfWork.SaveChangesAsync();
+
+            await _cache.RemoveAsync("deductionRules:all");
+            await _cache.RemoveAsync($"deductionRule:{rule.Id}");
         }
     }
 }

@@ -8,13 +8,16 @@ namespace Application.Features.Payrolls.Rules.ActivityProductivityWeight.Handler
     {
         private readonly IActivityProductivityWeightRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cache;
 
         public ChangeActivityProductivityWeightStatusHandler(
             IActivityProductivityWeightRepository repository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cache)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
+            _cache = cache;
         }
 
         public async Task HandleAsync(ChangeActivityProductivityWeightStatusCommand command)
@@ -31,6 +34,9 @@ namespace Application.Features.Payrolls.Rules.ActivityProductivityWeight.Handler
 
             _repository.Update(entity);
             await _unitOfWork.SaveChangesAsync();
+            
+            await _cache.RemoveAsync("activityProductivityWeights:all");
+            await _cache.RemoveAsync($"activityProductivityWeight:{entity.Id}");
         }
     }
 }
