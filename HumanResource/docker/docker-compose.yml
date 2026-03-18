@@ -19,6 +19,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      seq:
+        condition: service_started
+      redis:
+        condition: service_healthy
+
   postgres:
     image: postgres:18
     container_name: payments_postgres
@@ -37,5 +42,33 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/18/docker
 
+  seq:
+    image: datalust/seq:latest
+    container_name: payments_seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
+      - "5342:5342"
+    volumes:
+      - seq_data:/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: payments_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
+  seq_data:
+  redis_data:

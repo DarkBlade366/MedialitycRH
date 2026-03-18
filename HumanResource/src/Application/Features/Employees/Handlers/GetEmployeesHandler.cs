@@ -26,7 +26,6 @@ namespace Application.Features.Employees.Handlers
         {
             string cacheKey = "employees:all";
             var allEmployees = await _cache.GetAsync<List<Employee>>(cacheKey);
-
             if (allEmployees == null)
             {
                 var (employees, total) = await _repository.GetPagedAsync(1, int.MaxValue);

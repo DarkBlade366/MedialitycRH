@@ -15,8 +15,18 @@ using Domain.Features.Payrolls.Services.Calculators;
 using Web.API.BackgroundServices;
 using Application.Common.Interfaces;
 using Infrastructure.Services;
+using Serilog;
+
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Seq("http://seq")
+    .Enrich.WithProperty("Application", "Payments.API")
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Conexion con Infrastructure
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -85,6 +95,7 @@ builder.Services
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+
 //await DatabaseSeeder.SeedAsync(app.Services);
 using (var scope = app.Services.CreateScope())
 {
@@ -106,4 +117,5 @@ app.UseSwaggerGen();
 
 app.Run();
 
+Log.CloseAndFlush();
 public partial class Program { }
