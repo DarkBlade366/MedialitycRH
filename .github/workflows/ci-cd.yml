@@ -82,6 +82,18 @@ jobs:
           name: api-publish
           path: ./publish
 
+      - name: Debug Docker build context
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contenido de HumanResource/:"
+          ls -la HumanResource/
+          echo "Contenido de HumanResource/src/:"
+          ls -la HumanResource/src/ || echo "No existe HumanResource/src/"
+          echo "Buscando Dockerfile en HumanResource/src/Web.API/:"
+          ls -la HumanResource/src/Web.API/ || echo "No existe HumanResource/src/Web.API/"
+          echo "Buscando archivos .csproj:"
+          find . -name "*.csproj" | sort
+
       - name: Build Docker image
         run: |
           docker build -f src/Web.API/Dockerfile \
