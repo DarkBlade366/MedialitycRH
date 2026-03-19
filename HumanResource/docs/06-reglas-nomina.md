@@ -1,120 +1,250 @@
 # 06 - Reglas de Nómina
 
 ## Descripción General
-Las reglas de nómina definen cómo se calculan los diferentes componentes del sueldo. Cada tipo de regla tiene sus propios endpoints de creación, consulta y cambio de estado. Solo las reglas activas (`IsActive = true`) se aplican al generar una nómina.
 
-Todos los endpoints de reglas requieren rol **Administrator**.
+Las reglas definen cómo se calculan los componentes de la nómina. Todas las reglas pueden estar activas o inactivas. Solo una regla activa de cada tipo (salario base por rol, horas extra, etc.) puede existir al mismo tiempo.
 
-## Tipos de Reglas
+## 6.1. Salario Base (BaseSalaryRule)
 
-### 1. Base Salary (Salario Base)
-Define el monto fijo mensual por rol.
+### POST /base-salary-rules
 
-**Endpoints**:
-- `POST /base-salary-rules` — Crear regla
-- `GET /base-salary-rules` — Listar paginado
-- `GET /base-salary-rules/{id:guid}` — Obtener por ID
-- `PUT /base-salary-rules/{id:guid}/status` — Cambiar estado
+**Acceso**: Administrator
 
-**Request de creación**:
+**Descripción**: Crea una nueva regla de salario base.
+
+**Request Body**:
 ```json
 {
-  "amount": 3000.00,
-  "role": "Employee"
+  "role": "Employee",
+  "amount": 3000.00
 }
 ```
 
----
+**Response (200 OK)**:
+```json
+{
+  "id": "guid",
+  "role": "Employee",
+  "amount": 3000.00,
+  "isActive": true
+}
+```
 
-### 2. Overtime (Horas Extra)
-Define el multiplicador para horas que excedan el umbral configurado. Se calculan desde las horas registradas en Redmine.
+### GET /base-salary-rules
 
-**Endpoints**:
-- `POST /overtime-rules` — Crear regla
-- `GET /overtime-rules` — Listar paginado
-- `GET /overtime-rules/{id:guid}` — Obtener por ID
-- `PUT /overtime-rules/{id:guid}/status` — Cambiar estado
+**Acceso**: Administrator
 
----
+**Descripción**: Lista reglas de salario base con paginación y filtros.
 
-### 3. Productivity (Productividad)
-Define bonificaciones basadas en la productividad del empleado (horas registradas en Redmine vs umbrales configurados).
+**Query Parameters**:
+- `page` (int, requerido)
+- `pageSize` (int, requerido)
+- `isActive` (bool, opcional)
+- `role` (EmployeeRole, opcional)
 
-**Endpoints**:
-- `POST /productivity-rules` — Crear regla
-- `GET /productivity-rules` — Listar paginado
-- `GET /productivity-rules/{id:guid}` — Obtener por ID
-- `PUT /productivity-rules/{id:guid}/status` — Cambiar estado
+**Response (200 OK)**: Lista paginada.
 
----
+### GET /base-salary-rules/{id}
 
-### 4. Milestone
-Define pagos por completar milestones de proyectos Redmine. Se vincula con las participaciones de empleados en milestones.
+**Acceso**: Administrator
 
-**Endpoints**:
-- `POST /milestone-rules` — Crear regla
-- `GET /milestone-rules` — Listar paginado
-- `GET /milestone-rules/{id:guid}` — Obtener por ID
-- `PUT /milestone-rules/{id:guid}/status` — Cambiar estado
+**Descripción**: Obtiene una regla por ID.
 
----
+### PUT /base-salary-rules/{id}/status
 
-### 5. Aguinaldo
-Define las reglas de cálculo de aguinaldo (bono anual).
+**Acceso**: Administrator
 
-**Endpoints**:
-- `POST /aguinaldo-rules` — Crear regla
-- `GET /aguinaldo-rules` — Listar paginado
-- `GET /aguinaldo-rules/{id:guid}` — Obtener por ID
-- `PUT /aguinaldo-rules/{id:guid}/status` — Cambiar estado
+**Descripción**: Activa o desactiva una regla.
 
----
-
-### 6. Vacation (Vacaciones)
-Define las reglas de acumulación y pago de vacaciones.
-
-**Endpoints**:
-- `POST /vacation-rules` — Crear regla
-- `GET /vacation-rules` — Listar paginado
-- `GET /vacation-rules/{id:guid}` — Obtener por ID
-- `PUT /vacation-rules/{id:guid}/status` — Cambiar estado
-
----
-
-### 7. Deduction (Deducciones)
-Define deducciones aplicables (legales, seguridad social, etc.).
-
-**Endpoints**:
-- `POST /deduction-rules` — Crear regla
-- `GET /deduction-rules` — Listar paginado
-- `GET /deduction-rules/{id:guid}` — Obtener por ID
-- `PUT /deduction-rules/{id:guid}/status` — Cambiar estado
-
-## Patrón Común
-
-Todos los tipos de regla siguen el mismo patrón:
-
-### Crear regla: POST /{tipo}-rules
-**Request**: Campos específicos de cada tipo + configuración.
-**Response** (200 OK): Objeto de la regla creada con su ID.
-
-### Listar paginado: GET /{tipo}-rules
-**Query Parameters**: `page`, `pageSize`
-**Response** (200 OK): Lista paginada de reglas.
-
-### Obtener por ID: GET /{tipo}-rules/{id:guid}
-**Response** (200 OK / 404 Not Found)
-
-### Cambiar estado: PUT /{tipo}-rules/{id:guid}/status
-**Request**:
+**Request Body**:
 ```json
 {
   "isActive": true
 }
 ```
-**Response** (204 No Content)
 
-## Notas
-- Solo puede haber una regla activa de cada tipo por rol/configuración (dependiendo del tipo).
-- Al crear una nómina, el motor de cálculo (`PayrollEngine`) aplica todas las reglas activas correspondientes.
-- Las reglas no se eliminan, solo se desactivan.
+**Response (204 No Content)**
+
+## 6.2. Horas Extra (OvertimeRule)
+
+### POST /overtime-rules
+
+**Acceso**: Administrator
+
+**Request Body**:
+```json
+{
+  "standardHoursPerPeriod": 160,
+  "overtimeMultiplier": 1.5,
+  "hourlyRate": 25.0
+}
+```
+
+**Response**:
+```json
+{
+  "id": "guid",
+  "standardHoursPerPeriod": 160,
+  "overtimeMultiplier": 1.5,
+  "hourlyRate": 25.0,
+  "isActive": true
+}
+```
+
+## 6.3. Deducciones (DeductionRule)
+
+### POST /deduction-rules
+
+**Acceso**: Administrator
+
+**Request Body**:
+```json
+{
+  "description": "ISR",
+  "percentage": 0.08,
+  "type": "BasicSalary"  // o "TotalEarnings"
+}
+```
+
+**Response**:
+```json
+{
+  "id": "guid",
+  "description": "ISR",
+  "percentage": 0.08,
+  "type": "BasicSalary",
+  "isActive": true
+}
+```
+
+## 6.4. Aguinaldo (AguinaldoRule)
+
+### POST /aguinaldo-rules
+
+**Acceso**: Administrator
+
+**Request Body**:
+```json
+{
+  "monthlyAccrualPercentage": 0.08333,
+  "payMonth": 12
+}
+```
+
+**Response**:
+```json
+{
+  "id": "guid",
+  "monthlyAccrualPercentage": 0.08333,
+  "payMonth": 12,
+  "isActive": true
+}
+```
+
+## 6.5. Vacaciones (VacationRule)
+
+### POST /vacation-rules
+
+**Acceso**: Administrator
+
+**Request Body**:
+```json
+{
+  "accrualRatePerMonth": 1.25
+}
+```
+
+**Response**:
+```json
+{
+  "id": "guid",
+  "accrualRatePerMonth": 1.25,
+  "isActive": true
+}
+```
+
+## 6.6. Productividad (ProductivityRule)
+
+### POST /productivity-rules
+
+**Acceso**: Administrator
+
+**Request Body**:
+```json
+{
+  "minimumTarget": 80,
+  "fullBonusTarget": 100,
+  "bonusValue": 500,
+  "bonusType": "FixedAmount",  // o "Percentage"
+  "maxBonusCap": 1000
+}
+```
+
+**Response**:
+```json
+{
+  "id": "guid",
+  "minimumTarget": 80,
+  "fullBonusTarget": 100,
+  "bonusValue": 500,
+  "bonusType": "FixedAmount",
+  "maxBonusCap": 1000,
+  "isActive": true
+}
+```
+
+## 6.7. Hitos (MilestoneRule)
+
+### POST /milestone-rules
+
+**Acceso**: Administrator
+
+**Request Body**:
+```json
+{
+  "redmineProjectId": 123,
+  "milestoneName": "Fase 1",
+  "bonusAmount": 2000
+}
+```
+
+**Response**:
+```json
+{
+  "id": "guid",
+  "redmineProjectId": 123,
+  "milestoneName": "Fase 1",
+  "bonusAmount": 2000,
+  "isActive": true
+}
+```
+
+## 6.8. Proyectos (ProjectRule)
+
+### POST /project-payment-rules
+
+**Acceso**: Administrator, HumanResources
+
+**Request Body**:
+```json
+{
+  "redmineProjectId": 123,
+  "bonusAmount": 5000
+}
+```
+
+**Response**:
+```json
+{
+  "id": "guid",
+  "redmineProjectId": 123,
+  "bonusAmount": 5000,
+  "isActive": true
+}
+```
+
+## Notas Generales
+
+- Todas las reglas tienen endpoints similares para listar, obtener por ID y cambiar estado.
+- Solo puede haber una regla activa de cada tipo (salario base por rol, horas extra, etc.). Al activar una nueva, se debe desactivar la anterior.
+- Las reglas de hitos y proyectos requieren que el proyecto/milestone exista en la base de datos (sincronizado desde Redmine).
