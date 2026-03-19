@@ -29,10 +29,10 @@ jobs:
         run: dotnet build HumanResource/src/Web.API/Web.API.csproj --no-restore --configuration Release
 
       - name: Run unit tests
-        run: dotnet test tests/HumanResource.UnitTests/HumanResource.UnitTests.csproj --configuration Release --no-build --verbosity normal
+        run: dotnet test HumanResource/test/HumanResource.UnitTests/HumanResource.UnitTests.csproj --configuration Release --no-build --verbosity normal
 
       - name: Run integration tests
-        run: dotnet test HumanResource/tests/HumanResource.IntegrationTests/HumanResource.IntegrationTests.csproj --configuration Release --no-build --verbosity normal
+        run: dotnet test HumanResource/test/HumanResource.IntegrationTests/HumanResource.IntegrationTests.csproj --configuration Release --no-build --verbosity normal
 
   security-scan:
     runs-on: ubuntu-latest
