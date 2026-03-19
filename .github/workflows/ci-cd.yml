@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master, develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ master ]  
 
 env:
   DOTNET_VERSION: '9.0.x'
@@ -37,22 +37,14 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     needs: build-and-test
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
 
       - name: Run .NET security check
         run: dotnet list HumanResource/src/Web.API/Web.API.csproj package --vulnerable --include-transitive
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: csharp
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
 
   publish-artifacts:
     runs-on: ubuntu-latest
