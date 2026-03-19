@@ -42,14 +42,10 @@ namespace HumanResource.IntegrationTests.Services
             result1.Items.Should().HaveCount(1);
             result1.Items.First().Amount.Should().Be(3000);
 
-            // Verificar si el caché está disponible
             var cachedList = await cache.GetAsync<List<BaseSalaryRule>>("baseSalaryRules:all");
             
-            // Si el caché no está disponible (Redis no conectado), el test debe continuar
-            // pero verificando que la lógica de negocio funciona correctamente
             if (cachedList != null)
             {
-                // El caché está funcionando, verificar que tenga los datos correctos
                 cachedList.Count.Should().Be(1);
             }
 
@@ -65,18 +61,16 @@ namespace HumanResource.IntegrationTests.Services
             };
             await createHandler.HandleAsync(createCommand);
 
-            // Verificar que los resultados se actualizan correctamente
+            if (cachedList != null)
+            {
+                var updatedCache = await cache.GetAsync<List<BaseSalaryRule>>("baseSalaryRules:all");
+                updatedCache.Should().BeNull();
+            }
+
             var result3 = await getPagedHandler.HandleAsync(query);
             result3.Items.Should().HaveCount(2);
             result3.Items.Should().Contain(r => r.Role == "Employee" && r.Amount == 3000);
             result3.Items.Should().Contain(r => r.Role == "ProjectManager" && r.Amount == 5000);
-
-            // Si el caché estaba disponible originalmente, verificar que se invalidó
-            if (cachedList != null)
-            {
-                var updatedCache = await cache.GetAsync<List<BaseSalaryRule>>("baseSalaryRules:all");
-                updatedCache.Should().BeNull(); // Debería estar invalidado
-            }
         }
     }
 }

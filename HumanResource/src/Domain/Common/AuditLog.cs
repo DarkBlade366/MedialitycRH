@@ -10,9 +10,9 @@ namespace Domain.Common
         public Guid Id { get; set; }
         public string EntityName { get; set; } = null!;
         public string EntityId { get; set; } = null!;
-        public string Action { get; set; } = null!; // Create, Update, Delete
-        public string? OldValues { get; set; } // JSON
-        public string? NewValues { get; set; } // JSON
+        public string Action { get; set; } = null!; 
+        public string? OldValues { get; set; }
+        public string? NewValues { get; set; }
         public string UserName { get; set; } = null!;
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
