@@ -65,6 +65,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Convert repository name to lowercase
+        run: echo "LOWERCASE_REPO=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -82,8 +85,8 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -f HumanResource/src/Web.API/Dockerfile \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -t ${{ env.REGISTRY }}/${{ env.LOWERCASE_REPO }}:latest \
+            -t ${{ env.REGISTRY }}/${{ env.LOWERCASE_REPO }}:${{ github.sha }} \
             .
 
       - name: Log in to GitHub Container Registry
@@ -95,5 +98,5 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ env.LOWERCASE_REPO }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.LOWERCASE_REPO }}:${{ github.sha }}
