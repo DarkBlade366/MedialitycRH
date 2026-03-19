@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run .NET security check
-        run: dotnet list package --vulnerable --include-transitive
+        run: dotnet list HumanResource/src/Web.API/Web.API.csproj package --vulnerable --include-transitive
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
