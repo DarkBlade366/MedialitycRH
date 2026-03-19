@@ -96,7 +96,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f src/Web.API/Dockerfile \
+          docker build -f HumanResource/Dockerfile \
             -t ${{ env.REGISTRY }}/${{ env.LOWERCASE_REPO }}:latest \
             -t ${{ env.REGISTRY }}/${{ env.LOWERCASE_REPO }}:${{ github.sha }} \
             HumanResource
